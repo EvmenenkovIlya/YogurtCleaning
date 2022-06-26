@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace YogutrCleaning.Controllers
+namespace YogurtCleaning.Controllers
 {
     [ApiController]
     [Route("[controller]")]
