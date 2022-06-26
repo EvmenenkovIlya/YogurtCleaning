@@ -30,7 +30,7 @@ namespace YogutrCleaning.Controllers
         [HttpPost("{name}/{priceForRoom}/{priceForBathroom}/{priceForSquareMeter}/{services}")]
         public int AddPacket(string name, decimal priceForRoom, decimal priceForBathroom, decimal priceForSquareMeter, List<Service> services)
         {
-            return new Order().Id;
+            return new Packet().Id;
         }
 
         [HttpDelete("{id}")]
