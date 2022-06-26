@@ -1,4 +1,4 @@
-namespace YogutrCleaning
+namespace YogurtCleaning
 {
     public class Client
     {
