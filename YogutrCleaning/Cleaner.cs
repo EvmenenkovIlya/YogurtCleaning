@@ -9,6 +9,7 @@
         public string Email { get; set; }
         public DateTime BirthDate { get; set; }
         public decimal Rating { get; set; }
-        public List<string> Areas;//enum in future
-    }
+        public List<string> Areas { get; set; }//enum in future
+        public List<Service> Services { get; set; }
+    } 
 }
