@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace YogutrCleaning.Controllers
+namespace YogurtCleaning.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class ClientsController : ControllerBase
     {
@@ -33,7 +35,7 @@ namespace YogutrCleaning.Controllers
         {
             return new Client().Id;
         }
-
+        [Authorize(Roles = nameof(Role.Admin))]
         [HttpDelete("{id}")]
         public int DeleteClient(int id)
         {

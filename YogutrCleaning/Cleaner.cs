@@ -1,6 +1,6 @@
-namespace YogurtCleaning
+﻿namespace YogurtCleaning
 {
-    public class Client
+    public class Cleaner
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -8,7 +8,8 @@ namespace YogurtCleaning
         public string Phone { get; set; }
         public string Email { get; set; }
         public DateTime BirthDate { get; set; }
-        public List<CleaningObject> Addresses { get; set;}
         public decimal Rating { get; set; }
-    }
+        public List<string> Areas { get; set; }//enum in future
+        public List<Service> Services { get; set; }
+    } 
 }
