@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace YogurtCleaning.Controllers
 {
@@ -18,6 +19,7 @@ namespace YogurtCleaning.Controllers
         {
             return new Bundle();
         }
+
         [HttpGet]
         public List<Bundle> GetAllBundles()
         {
