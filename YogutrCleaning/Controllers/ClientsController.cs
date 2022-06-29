@@ -41,7 +41,7 @@ public class ClientsController : ControllerBase
     [HttpPost()]
     public int AddClient([FromBody] ClientRegisterRequest client)
     {
-        return new Client().Id;
+        return new ClientResponse().Id;
     }
 
     [AuthorizeRoles(Role.Admin)]
