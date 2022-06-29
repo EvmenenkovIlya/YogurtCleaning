@@ -1,45 +1,51 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+//[Authorize]
+[Route("[controller]")]
+public class ServicesController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ServicesController : ControllerBase
+    private readonly ILogger<ServicesController> _logger;
+
+    public ServicesController(ILogger<ServicesController> logger)
     {
-        private readonly ILogger<ServicesController> _logger;
+        _logger = logger;
+    }
 
-        public ServicesController(ILogger<ServicesController> logger)
-        {
-            _logger = logger;
-        }
+    [HttpGet("{id}")]
+    public ServiceResponce GetService(int id)
+    {
+        return new ServiceResponce();
+    }
 
-        [HttpGet("{id}")]
-        public Service GetService(int id)
-        {
-            return new Service();
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpGet]
+    public List<ServiceResponce> GetAllServices()
+    {
+        return new List<ServiceResponce>();
+    }
 
-        [HttpGet]
-        public List<Service> GetAllServices()
-        {
-            return new List<Service>();
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpPut("{id}")]
+    public void UpdateService([FromBody] ServiceRequest service, int id)
+    {           
+    }
 
-        [HttpPut("{id}/{name}/{price}/{unit}")]
-        public void UpdateService(int id, string name, decimal price, string unit)
-        {           
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpPost]
+    public int AddService([FromBody] ServiceRequest service)
+    {
+        return new ServiceResponce().Id;
+    }
 
-        [HttpPost("{name}/{price}/{unit}")]
-        public int AddService(string name, decimal price, string unit)
-        {
-            return new Service().Id;
-        }
-
-        [HttpDelete("{id}")]
-        public int DeleteService(int id)
-        {
-            return new Service().Id;
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpDelete("{id}")]
+    public void DeleteService(int id)
+    {
     }
 }
