@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace YogurtCleaning.Infrastructure;
@@ -10,4 +11,11 @@ public class AuthOptions
     const string KEY = "mysupersecret_secretkey!123";   // ключ для шифрации
     public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
+}
+public class AuthorizeRolesAttribute : AuthorizeAttribute
+{
+    public AuthorizeRolesAttribute(params Role[] roles) : base()
+    {
+        Roles = string.Join(",", roles);
+    }
 }
