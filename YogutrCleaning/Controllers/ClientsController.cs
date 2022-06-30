@@ -1,43 +1,53 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
-namespace YogutrCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("[controller]")]
+public class ClientsController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ClientsController : ControllerBase
+    private readonly ILogger<ClientsController> _logger;
+
+    public ClientsController(ILogger<ClientsController> logger)
     {
-        private readonly ILogger<ClientsController> _logger;
+        _logger = logger;
+    }
 
-        public ClientsController(ILogger<ClientsController> logger)
-        {
-            _logger = logger;
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}")]
+    public ClientResponse GetClient(int id)
+    {
+        return new ClientResponse();
+    }
 
-        [HttpGet("{id}")]
-        public Client GetClient(int id)
-        {
-            return new Client();
-        }
-        [HttpGet]
-        public List<Client> GetAllClients()
-        {
-            return new List<Client>();
-        }
-        [HttpPut("{id}")]
-        public Client UpdateClient(int id)
-        {
-            return new Client();
-        }
-        [HttpPost()]
-        public int AddClient()
-        {
-            return new Client().Id;
-        }
+    [AuthorizeRoles(Role.Admin, Role.Client)]
+    [HttpGet]
+    public List<ClientResponse> GetAllClients()
+    {
+        return new List<ClientResponse>();
+    }
 
-        [HttpDelete("{id}")]
-        public int DeleteClient(int id)
-        {
-            return new Client().Id;
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpPut("{id}")]
+    public ClientResponse UpdateClient([FromBody] ClientUpdateRequest client, int id)
+    {
+        return new ClientResponse();
+    }
+
+    [HttpPost()]
+    public int AddClient([FromBody] ClientRegisterRequest client)
+    {
+        return new ClientResponse().Id;
+    }
+
+    [AuthorizeRoles(Role.Admin)]
+    [HttpDelete("{id}")]
+    public void DeleteClient(int id)
+    {
+       
     }
 }
