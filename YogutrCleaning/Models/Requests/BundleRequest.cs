@@ -6,5 +6,5 @@ public class BundleRequest
     public decimal? PriceForRoom { get; set; }
     public decimal? PriceForBathroom { get; set; }
     public decimal? PriceForSquareMeter { get; set; }
-    public List<ServiceResponce> Services { get; set; }
+    public List<ServiceResponse> Services { get; set; }
 }

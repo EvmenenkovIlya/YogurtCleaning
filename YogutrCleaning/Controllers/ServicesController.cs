@@ -19,19 +19,19 @@ public class ServicesController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ServiceResponce), StatusCodes.Status200OK)]
-    public ActionResult<ServiceResponce> GetService(int id)
+    [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
+    public ActionResult<ServiceResponse> GetService(int id)
     {
-        return Ok(new ServiceResponce());
+        return Ok(new ServiceResponse());
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(List<ServiceResponce>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<ServiceResponce>> GetAllServices()
+    public ActionResult<List<ServiceResponse>> GetAllServices()
     {
-        return Ok(new List<ServiceResponce>());
+        return Ok(new List<ServiceResponse>());
     }
 
     [HttpPut("{id}")]
@@ -51,7 +51,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
-        int userId = new ServiceResponce().Id;
+        int userId = new ServiceResponse().Id;
         return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{userId}", userId);
     }
 

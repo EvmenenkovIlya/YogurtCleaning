@@ -18,28 +18,28 @@ public class BundleController : ControllerBase
     }
     [AllowAnonymous]
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(BundleResponce), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<BundleResponce> GetBundle(int id)
+    [ProducesResponseType(typeof(BundleResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    public ActionResult<BundleResponse> GetBundle(int id)
     {
-        return Ok(new BundleResponce());
+        return Ok(new BundleResponse());
     }
     [AuthorizeRoles(Role.Admin)]
     [HttpGet]
-    [ProducesResponseType(typeof(List<BundleResponce>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<BundleResponce>> GetAllBundles()
+    [ProducesResponseType(typeof(List<BundleResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<List<BundleResponse>> GetAllBundles()
     {
-        return Ok(new List<BundleResponce>());
+        return Ok(new List<BundleResponse>());
     }
 
     [AuthorizeRoles(Role.Admin)]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult UpdateBundle([FromBody] BundleRequest bundle, int id)
     {
         return NoContent();
@@ -48,21 +48,21 @@ public class BundleController : ControllerBase
     [AuthorizeRoles(Role.Admin)]
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddBundle([FromBody] BundleRequest bundle)
     {
-        int bundleId = new BundleResponce().Id;
+        int bundleId = new BundleResponse().Id;
         return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{bundleId}", bundleId);
     }
 
     [AuthorizeRoles(Role.Admin)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult DeleteBundle(int id)
     {
         return Ok();
