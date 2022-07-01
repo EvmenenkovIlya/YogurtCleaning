@@ -6,7 +6,7 @@ using YogurtCleaning.Models;
 namespace YogurtCleaning.Controllers;
 
 [ApiController]
-[Authorize]
+[AuthorizeRoles]
 [Route("[controller]")]
 public class ServicesController : ControllerBase
 {
@@ -19,26 +19,26 @@ public class ServicesController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ServiceResponce), StatusCodes.Status200OK)]
-    public ActionResult<ServiceResponce> GetService(int id)
+    [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
+    public ActionResult<ServiceResponse> GetService(int id)
     {
-        return Ok(new ServiceResponce());
+        return Ok(new ServiceResponse());
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(List<ServiceResponce>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<ServiceResponce>> GetAllServices()
+    [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
+    public ActionResult<List<ServiceResponse>> GetAllServices()
     {
-        return Ok(new List<ServiceResponce>());
+        return Ok(new List<ServiceResponse>());
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateService([FromBody] ServiceRequest service, int id)
     {
         return NoContent();
@@ -46,19 +46,19 @@ public class ServicesController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
-        int userId = new ServiceResponce().Id;
+        int userId = new ServiceResponse().Id;
         return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{userId}", userId);
     }
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteService(int id)
     {
         return Ok();
