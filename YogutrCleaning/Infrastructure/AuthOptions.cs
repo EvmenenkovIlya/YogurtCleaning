@@ -16,6 +16,8 @@ public class AuthorizeRolesAttribute : AuthorizeAttribute
 {
     public AuthorizeRolesAttribute(params Role[] roles) : base()
     {
-        Roles = string.Join(",", roles);
+        var rolesList = roles.ToList();
+        rolesList.Add(Role.Admin);
+        Roles = string.Join(",", rolesList);
     }
 }

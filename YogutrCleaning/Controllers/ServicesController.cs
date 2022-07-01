@@ -25,7 +25,6 @@ public class ServicesController : ControllerBase
         return Ok(new ServiceResponce());
     }
 
-    [AuthorizeRoles(Role.Admin)]
     [HttpGet]
     [ProducesResponseType(typeof(List<ServiceResponce>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -35,7 +34,6 @@ public class ServicesController : ControllerBase
         return Ok(new List<ServiceResponce>());
     }
 
-    [AuthorizeRoles(Role.Admin)]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -46,7 +44,6 @@ public class ServicesController : ControllerBase
         return NoContent();
     }
 
-    [AuthorizeRoles(Role.Admin)]
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -58,7 +55,6 @@ public class ServicesController : ControllerBase
         return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{userId}", userId);
     }
 
-    [AuthorizeRoles(Role.Admin)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
