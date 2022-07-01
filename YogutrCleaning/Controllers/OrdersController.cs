@@ -22,15 +22,20 @@ namespace YogurtCleaning.Controllers
         {
             return Ok(new OrderResponse());
         }
+
         [HttpGet]
         public List<Order> GetAllOrders()
         {
             return new List<Order>();
         }
+
+        [AuthorizeRoles(Role.Client)]
         [HttpPut("{id}")]
         public void UpdateOrder(int id)
         {           
         }
+
+        [AuthorizeRoles(Role.Client)]
         [HttpPost()]
         public int AddOrder()
         {

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -52,7 +53,7 @@ public class ClientsController : ControllerBase
     public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
     {       
         var clientCreated = new ClientResponse() { Id = 5 };
-        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{clientCreated.Id}", clientCreated.Id);
+        return Created($"{this.GetRequestFullPath()}/{clientCreated.Id}", clientCreated.Id);
     }
 
     [AuthorizeRoles]
