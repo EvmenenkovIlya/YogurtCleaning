@@ -6,7 +6,7 @@ using YogurtCleaning.Models;
 namespace YogurtCleaning.Controllers;
 
 [ApiController]
-[AuthorizeRoles]
+[Authorize]
 [Route("[controller]")]
 public class ServicesController : ControllerBase
 {
@@ -17,31 +17,50 @@ public class ServicesController : ControllerBase
         _logger = logger;
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
-    public ServiceResponce GetService(int id)
+    [ProducesResponseType(typeof(ServiceResponce), StatusCodes.Status200OK)]
+    public ActionResult<ServiceResponce> GetService(int id)
     {
-        return new ServiceResponce();
+        return Ok(new ServiceResponce());
     }
 
     [HttpGet]
-    public List<ServiceResponce> GetAllServices()
+    [ProducesResponseType(typeof(List<ServiceResponce>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult<List<ServiceResponce>> GetAllServices()
     {
-        return new List<ServiceResponce>();
+        return Ok(new List<ServiceResponce>());
     }
 
     [HttpPut("{id}")]
-    public void UpdateService([FromBody] ServiceRequest service, int id)
-    {           
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult UpdateService([FromBody] ServiceRequest service, int id)
+    {
+        return NoContent();
     }
 
     [HttpPost]
-    public int AddService([FromBody] ServiceRequest service)
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
-        return new ServiceResponce().Id;
+        int userId = new ServiceResponce().Id;
+        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{userId}", userId);
     }
 
     [HttpDelete("{id}")]
-    public void DeleteService(int id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult DeleteService(int id)
     {
+        return Ok();
     }
 }
