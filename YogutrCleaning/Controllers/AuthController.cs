@@ -12,6 +12,7 @@ namespace YogurtCleaning.Controllers;
 public class AuthController : Controller
 {
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public string Login([FromBody] UserLoginRequest request)
     {
         if (request == default || request.Email == default) return string.Empty;

@@ -19,49 +19,69 @@ public class ClientsController : ControllerBase
 
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}")]
-    public ActionResult GetClient(int id)
+    [ProducesResponseType(typeof(ClientResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<ClientResponse> GetClient(int id)
     {
-        //return
-        var client = new ClientResponse() { Id = id};
-        return Created($"Clients/{client.Id}", client.Id);
+        return Ok(new ClientResponse() { Id = id });
     }
 
     [AuthorizeRoles]
     [HttpGet]
-    public List<ClientResponse> GetAllClients()
+    [ProducesResponseType(typeof(List<ClientResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<List<ClientResponse>> GetAllClients()
     {
-        return new List<ClientResponse>();
+        return Ok(new List<ClientResponse>());
     }
 
     [AuthorizeRoles(Role.Client)]
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
     {
         return NoContent();
     }
+
     [AllowAnonymous]
     [HttpPost]
-    public ActionResult AddClient([FromBody] ClientRegisterRequest client)
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
     {       
         var clientCreated = new ClientResponse() { Id = 5 };
         return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{clientCreated.Id}", clientCreated.Id);
     }
+
     [AuthorizeRoles]
     [HttpDelete("{id}")]
-    public void DeleteClient(int id)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult DeleteClient(int id)
     {
-       
+        return NoContent();
     }
+
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}/comments")]
-    public List<Comment> GetAllCommentsByClient(int id)
+    [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<List<CommentResponse>> GetAllCommentsByClient(int id)
     {
-        return new();
+        return Ok(new List<CommentResponse>()); ;
     }
+
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}/comments/{commentId}")]
-    public Comment GetComment(int id, int commentId)
+    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<CommentResponse> GetComment(int id, int commentId)
     {
-        return new();
+        return Ok(new CommentResponse());
     }
 }
