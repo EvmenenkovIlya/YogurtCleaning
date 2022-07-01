@@ -1,41 +1,64 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("[controller]")]
+
+public class CommentsController : Controller
 {
-    [ApiController]
-    [Route("[controller]")]
+    private readonly ILogger<CommentsController> _logger;
 
-    public class CommentsController : Controller
+    public CommentsController(ILogger<CommentsController> logger)
     {
-        private readonly ILogger<CommentsController> _logger;
+        _logger = logger;
+    }
 
-        public CommentsController(ILogger<CommentsController> logger)
-        {
-            _logger = logger;
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(CommentResponce), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<CommentResponce> GetComment(int id)
+    {
+        return Ok(new CommentResponce());
+    }
 
-        [HttpGet("{id}")]
-        public Comment GetComment(int id)
-        {
-            return new Comment();
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpGet]
+    [ProducesResponseType(typeof(List<CommentResponce>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult<List<CommentResponce>> GetAllComments()
+    {
+        return Ok(new List<CommentResponce>());
+    }
 
-        [HttpGet]
-        public List<Comment> GetAllComments()
-        {
-            return new List<Comment>();
-        }
+    [AuthorizeRoles(Role.Client, Role.Cleaner)]
+    [HttpPost]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public ActionResult<int> AddComment([FromBody] CommentRequest comment)
+    {
+        int commentId = new CommentResponce().Id;
+        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{commentId}", commentId);
+    }
 
-        [HttpPost("{summary}/{clientId}/{cleanerId}/{orderId}/{rating}")]
-        public int AddComment(string summary, int clientId, int cleanerId, int orderId, int rating)
-        {
-            return new Comment().Id;
-        }
-
-        [HttpDelete("{id}")]
-        public int DeleteComment(int id)
-        {
-            return new Comment().Id;
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult DeleteComment(int id)
+    {
+        return Ok();
     }
 }
