@@ -1,43 +1,88 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Extensions;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("[controller]")]
+public class ClientsController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ClientsController : ControllerBase
+    private readonly ILogger<ClientsController> _logger;
+
+    public ClientsController(ILogger<ClientsController> logger)
     {
-        private readonly ILogger<ClientsController> _logger;
+        _logger = logger;
+    }
 
-        public ClientsController(ILogger<ClientsController> logger)
-        {
-            _logger = logger;
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ClientResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<ClientResponse> GetClient(int id)
+    {
+        return Ok(new ClientResponse() { Id = id });
+    }
 
-        [HttpGet("{id}")]
-        public Client GetClient(int id)
-        {
-            return new Client();
-        }
-        [HttpGet]
-        public List<Client> GetAllClients()
-        {
-            return new List<Client>();
-        }
-        [HttpPut("{id}")]
-        public Client UpdateClient(int id)
-        {
-            return new Client();
-        }
-        [HttpPost()]
-        public int AddClient()
-        {
-            return new Client().Id;
-        }
+    [AuthorizeRoles]
+    [HttpGet]
+    [ProducesResponseType(typeof(List<ClientResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<List<ClientResponse>> GetAllClients()
+    {
+        return Ok(new List<ClientResponse>());
+    }
 
-        [HttpDelete("{id}")]
-        public int DeleteClient(int id)
-        {
-            return new Client().Id;
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
+    {
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
+    {       
+        var clientCreated = new ClientResponse() { Id = 5 };
+        return Created($"{this.GetRequestFullPath()}/{clientCreated.Id}", clientCreated.Id);
+    }
+
+    [AuthorizeRoles]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult DeleteClient(int id)
+    {
+        return NoContent();
+    }
+
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}/comments")]
+    [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<List<CommentResponse>> GetAllCommentsByClient(int id)
+    {
+        return Ok(new List<CommentResponse>()); ;
+    }
+
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}/comments/{commentId}")]
+    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<CommentResponse> GetComment(int id, int commentId)
+    {
+        return Ok(new CommentResponse());
     }
 }
