@@ -40,7 +40,7 @@ namespace YogurtCleaning.Controllers
         [AuthorizeRoles(Role.Cleaner)]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult UpdateCleaner(int id, [FromBody] Cleaner model)
+        public ActionResult UpdateCleaner(int id, [FromBody] CleanerUpdateRequest model)
         {
             return NoContent();
         }
@@ -49,9 +49,9 @@ namespace YogurtCleaning.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public ActionResult<int> AddCleaner([FromBody] Cleaner model)
+        public ActionResult<int> AddCleaner([FromBody] CleanerRegisterRequest model)
         {
-            var CleanerCreated = new ClientResponse() { Id = 5 };
+            var CleanerCreated = new CleanerResponse() { Id = 5 };
             return Created($"{this.GetRequestFullPath()}/{CleanerCreated.Id}", CleanerCreated.Id);
         }
 
