@@ -1,4 +1,4 @@
-﻿namespace YogurtCleaning.Models.Requests
+﻿namespace YogurtCleaning.Models
 {
     public class CleanerUpdateRequest
     {

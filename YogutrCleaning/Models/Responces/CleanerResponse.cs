@@ -1,4 +1,4 @@
-﻿namespace YogurtCleaning.Models.Responces
+﻿namespace YogurtCleaning.Models
 {
     public class CleanerResponse
     {
