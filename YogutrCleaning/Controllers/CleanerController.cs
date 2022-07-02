@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Extensions;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
 namespace YogurtCleaning.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class CleanerController : ControllerBase
     {
@@ -13,33 +18,71 @@ namespace YogurtCleaning.Controllers
             _logger = logger;
         }
 
+        [AuthorizeRoles(Role.Cleaner)]
         [HttpGet("{id}")]
-        public Cleaner GetCleaner(int id)
+        [ProducesResponseType(typeof(CleanerResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<CleanerResponse> GetCleaner(int id)
         {
-            return new Cleaner();
+            return Ok(new CleanerResponse() { Id = id });
         }
 
+        [AuthorizeRoles]
         [HttpGet]
-        public List<Cleaner> GetAllCleaner()
+        [ProducesResponseType(typeof(List<CleanerResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<List<CleanerResponse>> GetAllCleaner()
         {
-            return new List<Cleaner>();
+            return Ok(new List<CleanerResponse>());
         }
-
+        [AuthorizeRoles(Role.Cleaner)]
         [HttpPut("{id}")]
-        public void UpdateCleaner(int id, [FromBody] Cleaner model)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult UpdateCleaner(int id, [FromBody] Cleaner model)
         {
+            return NoContent();
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        public int AddCleaner([FromBody] Cleaner model)
+        [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public ActionResult<int> AddCleaner([FromBody] Cleaner model)
         {
-            return new Cleaner().Id;
+            var CleanerCreated = new ClientResponse() { Id = 5 };
+            return Created($"{this.GetRequestFullPath()}/{CleanerCreated.Id}", CleanerCreated.Id);
         }
 
+        [AuthorizeRoles]
         [HttpDelete("{id}")]
-        public int DeleteCleaner(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult DeleteCleaner(int id)
         {
-            return new Cleaner().Id;
+            return NoContent();
+        }
+
+        [AuthorizeRoles(Role.Cleaner)]
+        [HttpGet("{id}/comments")]
+        [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<List<CommentResponse>> GetAllCommentsByCleaner (int id)
+        {
+            return Ok(new List<CommentResponse>()); ;
+        }
+
+        [AuthorizeRoles(Role.Cleaner)]
+        [HttpGet("{id}/comments/{commentId}")]
+        [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<CommentResponse> GetComment(int id, int commentId)
+        {
+            return Ok(new CommentResponse());
         }
     }
 }
