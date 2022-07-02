@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
 namespace YogurtCleaning.Controllers
 {
     [ApiController]
+    [AuthorizeRoles]
     [Route("[controller]")]
     public class OrdersController : ControllerBase
     {
@@ -13,20 +16,26 @@ namespace YogurtCleaning.Controllers
             _logger = logger;
         }
 
+        [AuthorizeRoles(Role.Client, Role.Cleaner)]
         [HttpGet("{id}")]
-        public Order GetOrder(int id)
+        public ActionResult<OrderResponse> GetOrder(int id)
         {
-            return new Order();
+            return Ok(new OrderResponse());
         }
+
         [HttpGet]
         public List<Order> GetAllOrders()
         {
             return new List<Order>();
         }
+
+        [AuthorizeRoles(Role.Client)]
         [HttpPut("{id}")]
         public void UpdateOrder(int id)
         {           
         }
+
+        [AuthorizeRoles(Role.Client)]
         [HttpPost()]
         public int AddOrder()
         {
