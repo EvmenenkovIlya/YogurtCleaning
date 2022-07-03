@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Enams;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.Controllers
 {
     [ApiController]
-    [AuthorizeRoles]
+    [Authorize]
     [Route("[controller]")]
     public class OrdersController : ControllerBase
     {
@@ -17,40 +20,85 @@ namespace YogurtCleaning.Controllers
         }
 
         [AuthorizeRoles(Role.Client, Role.Cleaner)]
-        [HttpGet("{id}")]
-        public ActionResult<OrderResponse> GetOrder(int id)
+        [HttpGet("{orderId}")]
+        [ProducesResponseType(typeof(OrderResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<OrderResponse> GetOrder(int orderId)
         {
             return Ok(new OrderResponse());
         }
 
+        [AuthorizeRoles]
         [HttpGet]
-        public List<Order> GetAllOrders()
+        [ProducesResponseType(typeof(OrderResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<List<OrderResponse>> GetAllOrders()
         {
-            return new List<Order>();
+            return Ok(new List<OrderResponse>());
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpPut("{id}")]
-        public void UpdateOrder(int id)
-        {           
+        [HttpPut("{orderId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult UpdateOrder([FromBody] OrderRequest order)
+        {
+            return NoContent();
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpPost()]
-        public int AddOrder()
+        [HttpPost]
+        [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public ActionResult<int> AddOrder(OrderRequest order)
         {
-            return new Order().Id;
+            var orderCreated = new OrderResponse() { Id = 5 };
+            return Created($"{this.GetRequestFullPath()}/{orderCreated.Id}", orderCreated.Id);
         }
 
-        [HttpDelete("{id}")]
-        public int DeleteOrder(int id)
+        [AuthorizeRoles]
+        [HttpDelete("{orderId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult DeleteOrder(int orderId)
         {
-            return new Order().Id;
+            return NoContent();
         }
-        [HttpGet("{id}/services")]
-        public List<Service> GetServices(int id)
+
+        [AuthorizeRoles(Role.Client, Role.Cleaner)]
+        [HttpGet("{orderId}/services")]
+        [ProducesResponseType(typeof(List<Service>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<List<Service>> GetServices(int orderId)
         {
-            return new List<Service>();
+            return Ok(new List<Service>());
+        }
+
+        [AuthorizeRoles]
+        [HttpPatch("{orderId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult UpdateOrderStatus(int orderId, [FromBody] OrderUpdateRequest orderUpdateRequest)
+        {
+            return NoContent();
+        }
+
+        [AuthorizeRoles(Role.Client, Role.Cleaner)]
+        [HttpGet("{orderId}/CleaningObject/{CleaningObjectId}")]
+        [ProducesResponseType(typeof(CleaningObject), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        public ActionResult<CleaningObject> GetCleaningObject(int CleaningObjectId)
+        {
+            return Ok(new CleaningObject());
         }
     }
 }
