@@ -37,6 +37,7 @@ namespace YogurtCleaning.Controllers
         {
             return Ok(new List<CleanerResponse>());
         }
+
         [AuthorizeRoles(Role.Cleaner)]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -51,11 +52,11 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public ActionResult<int> AddCleaner([FromBody] CleanerRegisterRequest model)
         {
-            var CleanerCreated = new CleanerResponse() { Id = 5 };
+            var CleanerCreated = new CleanerResponse() { Id = 42 };
             return Created($"{this.GetRequestFullPath()}/{CleanerCreated.Id}", CleanerCreated.Id);
         }
 
-        [AuthorizeRoles]
+        [AuthorizeRoles(Role.Cleaner)]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
