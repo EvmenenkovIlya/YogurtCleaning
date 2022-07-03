@@ -21,7 +21,7 @@ public class ClientRegisterRequest
     [MaxLength(50, ErrorMessage = ApiErrorMessages.ConfirmPasswordMaxLength)]
     public string ConfirmPassword { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.EmailIsRequired)]
-    [EmailAddress]
+    [EmailAddress(ErrorMessage = ApiErrorMessages.EmailNotValid)]
     public string Email { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PhoneIsRequired)]
     public string Phone { get; set; }
