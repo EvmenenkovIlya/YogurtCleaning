@@ -4,25 +4,25 @@ namespace YogurtCleaning.Models;
 
 public class ClientRegisterRequest
 {
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.NameIsRequired)]
     [MaxLength(50)]
     public string Name { get; set; }
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.LastNameIsRequired)]
     [MaxLength(50)]
     public string LastName { get; set; }
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.BirthDateIsRequired)]
     public DateTime BirthDate { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PasswordIsRequired)]
     [MinLength(8)]
     [MaxLength(50)]
     public string Password { get; set; }
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.ConfirmPasswordIsRequired)]
     [MinLength(8)]
     [MaxLength(50)]
     public string ConfirmPassword { get; set; }
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.EmailIsRequired)]
     [EmailAddress]
     public string Email { get; set; }
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.PhoneIsRequired)]
     public string Phone { get; set; }
 }
