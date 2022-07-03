@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Enams;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -40,16 +41,28 @@ public class CommentsController : Controller
         return Ok(new List<CommentResponse>());
     }
 
-    [AuthorizeRoles(Role.Client, Role.Cleaner)]
+    [AuthorizeRoles(Role.Client)]
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddComment([FromBody] CommentRequest comment)
+    public ActionResult<int> AddCommentByClient([FromBody] CommentRequest comment)
     {
         int commentId = new CommentResponse().Id;
-        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{commentId}", commentId);
+        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
+    }
+
+    [AuthorizeRoles(Role.Cleaner)]
+    [HttpPost]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public ActionResult<int> AddCommentByCleaner([FromBody] CommentRequest comment)
+    {
+        int commentId = new CommentResponse().Id;
+        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
     }
 
     [AuthorizeRoles]
