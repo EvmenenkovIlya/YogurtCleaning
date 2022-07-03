@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using YogurtCleaning.Enams;
 
 namespace YogurtCleaning.Infrastructure;
 
@@ -16,6 +17,8 @@ public class AuthorizeRolesAttribute : AuthorizeAttribute
 {
     public AuthorizeRolesAttribute(params Role[] roles) : base()
     {
-        Roles = string.Join(",", roles);
+        var rolesList = roles.ToList();
+        rolesList.Add(Role.Admin);
+        Roles = string.Join(",", rolesList);
     }
 }

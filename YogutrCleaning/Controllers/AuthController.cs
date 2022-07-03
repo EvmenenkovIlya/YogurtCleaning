@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using YogurtCleaning.Enams;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -12,10 +13,25 @@ namespace YogurtCleaning.Controllers;
 public class AuthController : Controller
 {
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public string Login([FromBody] UserLoginRequest request)
     {
         if (request == default || request.Email == default) return string.Empty;
-        var roleClaim = new Claim(ClaimTypes.Role, (request.Email == "Admin@bla.com" ? Role.Admin : Role.Client).ToString());
+        dynamic roleClaim;
+        switch (request.Email)
+        {
+            case "Admin@gmail.com":
+                roleClaim = new Claim(ClaimTypes.Role, Role.Admin.ToString());
+                break;
+            case "Cleaner@gmail.com":
+                roleClaim = new Claim(ClaimTypes.Role, Role.Cleaner.ToString());
+                break;
+            case "Client@gmail.com":
+                roleClaim = new Claim(ClaimTypes.Role, Role.Client.ToString());
+                break;
+            default:
+                return string.Empty;
+        }
         var claims = new List<Claim> { new Claim(ClaimTypes.Name, request.Email), roleClaim };
         var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
