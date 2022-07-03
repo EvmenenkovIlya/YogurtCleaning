@@ -18,6 +18,8 @@ public class ClientsController : ControllerBase
         _logger = logger;
     }
 
+    //public ClientsController() { }
+
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ClientResponse), StatusCodes.Status200OK)]
