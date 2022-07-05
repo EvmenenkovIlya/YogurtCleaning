@@ -93,12 +93,12 @@ namespace YogurtCleaning.Controllers
 
         [AuthorizeRoles(Role.Client, Role.Cleaner)]
         [HttpGet("{orderId}/CleaningObject/{CleaningObjectId}")]
-        [ProducesResponseType(typeof(CleaningObject), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        public ActionResult<CleaningObject> GetCleaningObject(int CleaningObjectId)
+        public ActionResult<CleaningObjectResponse> GetCleaningObject(int CleaningObjectId)
         {
-            return Ok(new CleaningObject());
+            return Ok(new CleaningObjectResponse());
         }
     }
 }
