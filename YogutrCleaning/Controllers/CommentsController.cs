@@ -21,17 +21,6 @@ public class CommentsController : Controller
     }
 
     [AuthorizeRoles]
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CommentResponse> GetComment(int id)
-    {
-        return Ok(new CommentResponse());
-    }
-
-    [AuthorizeRoles]
     [HttpGet]
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
@@ -42,7 +31,7 @@ public class CommentsController : Controller
     }
 
     [AuthorizeRoles(Role.Client)]
-    [HttpPost]
+    [HttpPost("by-client")]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -54,7 +43,7 @@ public class CommentsController : Controller
     }
 
     [AuthorizeRoles(Role.Cleaner)]
-    [HttpPost]
+    [HttpPost("by-cleaner")]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
