@@ -25,11 +25,9 @@ public class CommentsControllerTests
     {
         CommentRequest comment = new CommentRequest();
         List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.SummaryMaxLenght,
             ApiErrorMessages.AuthorIdIsRequred,
             ApiErrorMessages.OrderIdIsRequred,
-            ApiErrorMessages.RatingIsRequred,
-            ApiErrorMessages.RatingIsOutOfRange
+            ApiErrorMessages.RatingIsRequred
         };
         var validationResults = new List<ValidationResult>();
         var isValid = Validator.TryValidateObject(comment, new ValidationContext(comment), validationResults, true);
