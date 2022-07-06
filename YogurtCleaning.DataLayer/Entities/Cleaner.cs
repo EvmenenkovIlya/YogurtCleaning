@@ -15,4 +15,6 @@ public class Cleaner
     public decimal Rating { get; set; }
     public List<District> Districts { get; set; }
     public List<Service> Services { get; set; }
+    public List<Comment> Comments { get; set; }
+    public List<Order> Orders { get; set; }
 }

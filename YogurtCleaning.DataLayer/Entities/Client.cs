@@ -12,5 +12,7 @@
         public DateTime RegistrationDate { get; set; }
         public decimal Rating { get; set; }
         public List<CleaningObject> Addresses { get; set; }
+        public List<Comment> Comments { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }

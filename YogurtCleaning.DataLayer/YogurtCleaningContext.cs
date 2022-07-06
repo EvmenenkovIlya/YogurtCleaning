@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Extensions;
 
 namespace YogurtCleaning.DataLayer;
 
@@ -26,15 +27,18 @@ public class YogurtCleaningContext : DbContext
         {
             entity.ToTable(nameof(Order));
             entity.HasKey(e => e.Id);
-            entity.HasOne(e => e.CleaningObject);
-            
-            //entity.HasMany<Cleaner>
+            entity.HasOne(e => e.CleaningObject).WithMany(c => c.Orders);
+            entity.HasMany(e => e.Services);
+            entity.HasMany<Cleaner>(e => e.CleanersBand);
+            entity.HasMany(e => e.Comments).WithOne(com => com.Order);
         });
         modelBuilder.Entity<Client>(entity =>
         {
             entity.ToTable(nameof(Client));
             entity.HasKey(e => e.Id);
             entity.HasMany(e => e.Addresses).WithOne(co => co.Client);
+            entity.HasMany(e => e.Comments).WithOne(com => com.Client);
+            entity.HasMany(e => e.Orders);
         });
 
         modelBuilder.Entity<Cleaner>(entity =>
@@ -42,6 +46,8 @@ public class YogurtCleaningContext : DbContext
             entity.ToTable(nameof(Cleaner));
             entity.HasKey(e => e.Id);
             //entity.HasMany(e => e.Districts).WithOne(co => co.Client);
+            entity.HasMany(e => e.Comments).WithOne(com => com.Cleaner);
+            entity.HasMany(e => e.Orders).WithMany(o => o.CleanersBand);
         });
 
         modelBuilder.Entity<CleaningObject>(entity =>
@@ -49,6 +55,7 @@ public class YogurtCleaningContext : DbContext
             entity.ToTable(nameof(CleaningObject));
             entity.HasKey(e => e.Id);
             entity.HasOne(e => e.Client);
+            entity.HasMany(e => e.Orders).WithOne(o => o.CleaningObject);
         });
 
         modelBuilder.Entity<Comment>(entity =>
@@ -63,6 +70,7 @@ public class YogurtCleaningContext : DbContext
         modelBuilder.Entity<Bundle>(entity =>
         {
             entity.ToTable(nameof(Bundle));
+            entity.HasMany(e => e.Services);
         });
 
         modelBuilder.Entity<Service>(entity =>

@@ -12,4 +12,5 @@ public class Order
     public decimal Price { get; set; }
     public List<Service> Services { get; set; }
     public List<Cleaner>? CleanersBand { get; set; }
+    public List<Comment> Comments { get; set; }
 }
