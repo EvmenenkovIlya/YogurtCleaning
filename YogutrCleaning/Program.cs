@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using YogurtCleaning.DataLayer;
 using YogurtCleaning.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +47,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
+//builder.Services.AddDbContext<YogurtCleaningContext>(o =>
+//{
+//    o.UseSqlServer(ServerOptions.ConnectionOption);
+//});
+
+//builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
+
 
 var app = builder.Build();
 
