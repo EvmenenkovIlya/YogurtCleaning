@@ -6,70 +6,73 @@ namespace YogurtCleaning.Tests.ModelSources;
 
 public class ClientUpdateRequestTestSource : IEnumerable
 {
+    public ClientUpdateRequest GetClientUpdateRequestModel()
+    {
+        return new ClientUpdateRequest()
+        {
+            Name = "Adam",
+            LastName = "Smith",
+            Phone = "85559997264",
+            BirthDate = DateTime.Today
+        };
+    }
+    
     public IEnumerator GetEnumerator()
     {
+        ClientUpdateRequest model = GetClientUpdateRequestModel();
+        model.Name = null;
         yield return new object[]
         {
-            new ClientUpdateRequest()
-            {
-                LastName = "Smith",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today
-            },
+            model,
             ApiErrorMessages.NameIsRequired
         };
+
+        model = GetClientUpdateRequestModel();
+        model.LastName = null;
         yield return new object[]
         {
-            new ClientUpdateRequest()
-            {
-                Name = "Adam",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today
-            },
+            model,
             ApiErrorMessages.LastNameIsRequired
         };
+
+        model = GetClientUpdateRequestModel();
+        model.Phone = null;
         yield return new object[]
         {
-            new ClientUpdateRequest()
-            {
-                Name = "Adam",
-                LastName = "Smith",
-                BirthDate = DateTime.Today
-            },
+            model,
             ApiErrorMessages.PhoneIsRequired
-        }; 
+        };
+
+        model = GetClientUpdateRequestModel();
+        model.BirthDate = null;
         yield return new object[]
         {
-            new ClientUpdateRequest()
-            {
-                Name = "Adam",
-                LastName = "Smith",
-                Phone = "85559997264",
-                BirthDate = null
-            },
+            model,
             ApiErrorMessages.BirthDateIsRequired
         };
+
+        model = GetClientUpdateRequestModel();
+        model.Name = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
-            new ClientUpdateRequest()
-            {
-                Name = "This String has more than fifty chars. i promise123451",
-                LastName = "Smith",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today
-            },
+            model,
             ApiErrorMessages.NameMaxLength
         };
+
+        model = GetClientUpdateRequestModel();
+        model.LastName = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
-            new ClientUpdateRequest()
-            {
-                Name = "Adam",
-                LastName = "This String has more than fifty chars. i promise123451",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today
-            },
+            model,
             ApiErrorMessages.LastNameMaxLength
+        };
+
+        model = GetClientUpdateRequestModel();
+        model.Phone = "+123456789012345";
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.PhoneMaxLength
         };
     }
 }

@@ -16,8 +16,8 @@ public static class ApiErrorMessages
     public const string ConfirmPasswordMinLength = "ConfirmPassword min length is 8";
     public const string ConfirmPasswordMaxLength = "ConfirmPassword max length is 50";
     public const string EmailNotValid = "Email is not valid";
-    //public const string
-    //public const string
+    public const string EmailMaxLength = "Email max Length is 256";
+    public const string PhoneMaxLength = "Phone max length is 15";
     //public const string
     //public const string
     //public const string

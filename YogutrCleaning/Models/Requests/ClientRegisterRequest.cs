@@ -22,7 +22,9 @@ public class ClientRegisterRequest
     public string ConfirmPassword { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.EmailIsRequired)]
     [EmailAddress(ErrorMessage = ApiErrorMessages.EmailNotValid)]
+    [MaxLength(255, ErrorMessage = ApiErrorMessages.EmailMaxLength)]
     public string Email { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PhoneIsRequired)]
+    [MaxLength(15, ErrorMessage = ApiErrorMessages.PhoneMaxLength)]
     public string Phone { get; set; }
 }

@@ -14,5 +14,6 @@ public class ClientUpdateRequest
     [Required(ErrorMessage = ApiErrorMessages.BirthDateIsRequired)]
     public DateTime? BirthDate { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PhoneIsRequired)]
+    [MaxLength(15, ErrorMessage = ApiErrorMessages.PhoneMaxLength)]
     public string Phone { get; set; }
 }
