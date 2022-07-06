@@ -9,7 +9,9 @@ public class Order
     public Status Status { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
+    public DateTime UpdateTime { get; set; }
     public decimal Price { get; set; }
+    public List<Bundle> Bundles { get; set; }
     public List<Service> Services { get; set; }
     public List<Cleaner>? CleanersBand { get; set; }
     public List<Comment> Comments { get; set; }

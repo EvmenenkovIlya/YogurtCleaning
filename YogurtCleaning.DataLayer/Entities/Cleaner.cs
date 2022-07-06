@@ -12,6 +12,8 @@ public class Cleaner
     public string Phone { get; set; }
     public string Email { get; set; }
     public DateTime BirthDate { get; set; }
+    public DateTime DateOfStartWork { get; set; }
+    public Schedule Schedule { get; set; }
     public decimal Rating { get; set; }
     public List<District> Districts { get; set; }
     public List<Service> Services { get; set; }
