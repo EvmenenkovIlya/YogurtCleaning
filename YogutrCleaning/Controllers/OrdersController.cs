@@ -24,6 +24,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(OrderResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public ActionResult<OrderResponse> GetOrder(int orderId)
         {
             return Ok(new OrderResponse());
@@ -86,6 +87,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public ActionResult UpdateOrderStatus(int orderId, [FromBody] OrderUpdateRequest orderUpdateRequest)
         {
             return NoContent();
@@ -96,7 +98,8 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        public ActionResult<CleaningObjectResponse> GetCleaningObject(int CleaningObjectId)
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        public ActionResult<CleaningObject> GetCleaningObject(int CleaningObjectId)
         {
             return Ok(new CleaningObjectResponse());
         }
