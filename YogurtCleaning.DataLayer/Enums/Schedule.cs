@@ -1,7 +1,7 @@
 ﻿namespace YogurtCleaning.DataLayer.Enums;
 public enum Schedule
 {
-    FullTime,
+    FullTime = 1,
     ShiftWork,
     FreeSchedule
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Extensions;
 using YogurtCleaning.DataLayer.Seed;
 
 namespace YogurtCleaning.DataLayer;
@@ -21,9 +20,9 @@ public class YogurtCleaningContext : DbContext
     {
         //Database.EnsureCreated();
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-       // modelBuilder.RemovePluralizingTableNameConvention();
         modelBuilder.Entity<District>(entity =>
         {
             entity.ToTable(nameof(District));
