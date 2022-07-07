@@ -11,6 +11,7 @@ public class Cleaner
     public string Password { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
+    public string Passport { get; set; }
     public DateTime BirthDate { get; set; }
     public DateTime DateOfStartWork { get; set; }
     public Schedule Schedule { get; set; }
@@ -19,4 +20,5 @@ public class Cleaner
     public List<Service> Services { get; set; }
     public List<Comment> Comments { get; set; }
     public List<Order> Orders { get; set; }
+    public bool IsDeleted { get; set; }
 }

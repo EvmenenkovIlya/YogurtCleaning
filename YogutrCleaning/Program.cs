@@ -47,10 +47,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
-//builder.Services.AddDbContext<YogurtCleaningContext>(o =>
-//{
-//    o.UseSqlServer(ServerOptions.ConnectionOption);
-//});
+builder.Services.AddDbContext<YogurtCleaningContext>(o =>
+{
+    o.UseSqlServer(ServerOptions.ConnectionOption);
+});
 
 //builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 

@@ -1,8 +1,8 @@
 ﻿namespace YogurtCleaning.DataLayer.Enums
 {
-    public enum District
+    public enum DistrictEnum
     {
-        Admiralteisky,
+        Admiralteisky = 1,
         Vasileostrovskiy,
         Vyborgsky,
         Kalininsky,

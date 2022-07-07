@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Extensions;
+using YogurtCleaning.DataLayer.Seed;
 
 namespace YogurtCleaning.DataLayer;
 
@@ -13,15 +15,22 @@ public class YogurtCleaningContext : DbContext
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Bundle> Bundles { get; set; }
     public DbSet<Service> Services { get; set; }
-
+    public DbSet<District> Districts { get; set; }
     public YogurtCleaningContext(DbContextOptions<YogurtCleaningContext> options)
             : base(options)
     {
-        Database.EnsureCreated();
+        //Database.EnsureCreated();
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.RemovePluralizingTableNameConvention();
+       // modelBuilder.RemovePluralizingTableNameConvention();
+        modelBuilder.Entity<District>(entity =>
+        {
+            entity.ToTable(nameof(District));
+            entity.HasData(EnumFunctions.GetModelsFromEnum<District, DistrictEnum>());
+            entity.HasMany(d => d.Cleaners).WithMany(c => c.Districts);
+
+        });
 
         modelBuilder.Entity<Order>(entity =>
         {
@@ -45,7 +54,7 @@ public class YogurtCleaningContext : DbContext
         {
             entity.ToTable(nameof(Cleaner));
             entity.HasKey(e => e.Id);
-            //entity.HasMany(e => e.Districts).WithOne(co => co.Client);
+            entity.HasMany(e => e.Districts).WithMany(co => co.Cleaners);
             entity.HasMany(e => e.Comments).WithOne(com => com.Cleaner);
             entity.HasMany(e => e.Orders).WithMany(o => o.CleanersBand);
         });

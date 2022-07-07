@@ -14,5 +14,6 @@
         public List<CleaningObject> Addresses { get; set; }
         public List<Comment> Comments { get; set; }
         public List<Order> Orders { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

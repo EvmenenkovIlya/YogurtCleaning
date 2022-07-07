@@ -9,4 +9,5 @@ public class Bundle
     public decimal? PriceForBathroom { get; set; }
     public decimal? PriceForSquareMeter { get; set; }
     public List<Service> Services { get; set; }
+    public bool IsDeleted { get; set; }
 }
