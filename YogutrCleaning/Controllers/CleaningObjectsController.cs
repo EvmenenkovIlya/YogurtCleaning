@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -9,10 +10,10 @@ namespace YogurtCleaning.Controllers
     [ApiController]
     [Authorize]
     [Route("[controller]")]
-    public class CleaningObjectController : ControllerBase
+    public class CleaningObjectsController : ControllerBase
     {
-        private readonly ILogger<CleanerController> _logger;
-        public CleaningObjectController(ILogger<CleanerController> logger)
+        private readonly ILogger<CleanersController> _logger;
+        public CleaningObjectsController(ILogger<CleanersController> logger)
         {
             _logger = logger;
         }

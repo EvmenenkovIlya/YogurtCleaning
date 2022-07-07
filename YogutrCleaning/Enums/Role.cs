@@ -1,4 +1,4 @@
-﻿namespace YogurtCleaning;
+﻿namespace YogurtCleaning.Enams;
 
 public enum Role
 {

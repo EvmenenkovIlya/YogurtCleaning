@@ -10,7 +10,8 @@ namespace YogurtCleaning
         public string Addresses { get; set; }
         public decimal Price { get; set; }
         public List<Service> Services;
-        //public List<Cleaners> ?
+        public Cleaner MainCleaner { get; set; } // not include in band
+        public List<Cleaner>? Band { get; set; } 
         //public Comment
     }
 }

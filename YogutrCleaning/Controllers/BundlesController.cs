@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Enams;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -24,6 +25,7 @@ public class BundleController : ControllerBase
     {
         return Ok(new BundleResponse());
     }
+
     [AuthorizeRoles(Role.Admin)]
     [HttpGet]
     [ProducesResponseType(typeof(List<BundleResponse>), StatusCodes.Status200OK)]

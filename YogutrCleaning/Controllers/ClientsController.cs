@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -25,6 +26,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(ClientResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<ClientResponse> GetClient(int id)
     {
         return Ok(new ClientResponse() { Id = id });
@@ -73,6 +75,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<List<CommentResponse>> GetAllCommentsByClient(int id)
     {
         return Ok(new List<CommentResponse>()); ;
@@ -83,8 +86,11 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<CommentResponse> GetComment(int id, int commentId)
     {
         return Ok(new CommentResponse());
     }
+
+    // get all cleaning obj
 }
