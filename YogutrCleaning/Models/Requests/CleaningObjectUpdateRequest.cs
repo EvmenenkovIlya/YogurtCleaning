@@ -1,9 +1,7 @@
-﻿namespace YogurtCleaning
+﻿namespace YogurtCleaning.Models
 {
-    public class CleaningObject
+    public class CleaningObjectUpdateRequest
     {
-        public int Id { get; set; }
-        public int ClientId { get; set; }
         public int NumberOfRooms { get; set; }
         public int NumberOfBathrooms { get; set; }
         public int Square { get; set; }

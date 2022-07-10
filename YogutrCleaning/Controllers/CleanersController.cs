@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -9,11 +10,11 @@ namespace YogurtCleaning.Controllers
     [ApiController]
     [Authorize]
     [Route("[controller]")]
-    public class CleanerController : ControllerBase
+    public class CleanersController : ControllerBase
     {
-        private readonly ILogger<CleanerController> _logger;
+        private readonly ILogger<CleanersController> _logger;
 
-        public CleanerController(ILogger<CleanerController> logger)
+        public CleanersController(ILogger<CleanersController> logger)
         {
             _logger = logger;
         }
@@ -37,10 +38,11 @@ namespace YogurtCleaning.Controllers
         {
             return Ok(new List<CleanerResponse>());
         }
+
         [AuthorizeRoles(Role.Cleaner)]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult UpdateCleaner(int id, [FromBody] Cleaner model)
+        public ActionResult UpdateCleaner(int id, [FromBody] CleanerUpdateRequest model)
         {
             return NoContent();
         }
@@ -49,13 +51,13 @@ namespace YogurtCleaning.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public ActionResult<int> AddCleaner([FromBody] Cleaner model)
+        public ActionResult<int> AddCleaner([FromBody] CleanerRegisterRequest model)
         {
-            var CleanerCreated = new ClientResponse() { Id = 5 };
+            var CleanerCreated = new CleanerResponse() { Id = 42 };
             return Created($"{this.GetRequestFullPath()}/{CleanerCreated.Id}", CleanerCreated.Id);
         }
 
-        [AuthorizeRoles]
+        [AuthorizeRoles(Role.Cleaner)]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
