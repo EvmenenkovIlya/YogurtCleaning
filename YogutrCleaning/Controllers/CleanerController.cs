@@ -10,11 +10,11 @@ namespace YogurtCleaning.Controllers
     [ApiController]
     [Authorize]
     [Route("[controller]")]
-    public class CleanersController : ControllerBase
+    public class CleanerController : ControllerBase
     {
-        private readonly ILogger<CleanersController> _logger;
+        private readonly ILogger<CleanerController> _logger;
 
-        public CleanersController(ILogger<CleanersController> logger)
+        public CleanerController(ILogger<CleanerController> logger)
         {
             _logger = logger;
         }
