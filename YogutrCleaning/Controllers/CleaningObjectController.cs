@@ -10,16 +10,16 @@ namespace YogurtCleaning.Controllers
     [ApiController]
     [Authorize]
     [Route("[controller]")]
-    public class CleaningObjectsController : ControllerBase
+    public class CleaningObjectController : ControllerBase
     {
-        private readonly ILogger<CleanersController> _logger;
-        public CleaningObjectsController(ILogger<CleanersController> logger)
+        private readonly ILogger<CleanerController> _logger;
+        public CleaningObjectController(ILogger<CleanerController> logger)
         {
             _logger = logger;
         }
 
         [AuthorizeRoles(Role.Cleaner,Role.Client)]
-        [HttpGet("{id}")]
+        [HttpGet("/Cleaning-Object/{id}")]
         [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -29,7 +29,7 @@ namespace YogurtCleaning.Controllers
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpGet]
+        [HttpGet("/Cleaning-Object")]
         [ProducesResponseType(typeof(List<CleaningObjectResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -38,16 +38,20 @@ namespace YogurtCleaning.Controllers
             return Ok(new List<CleaningObjectResponse>());
         }
         [AuthorizeRoles(Role.Client)]
-        [HttpPut("{id}")]
+        [HttpPut("/Cleaning-Object/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
         public ActionResult UpdateCleaningObject(int id, [FromBody] CleaningObjectUpdateRequest model)
         {
             return NoContent();
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpPost]
+        [HttpPost("/Cleaning-Object")]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public ActionResult<int> AddCleaningObject([FromBody] CleaningObjectRequest model)
         {
@@ -56,7 +60,7 @@ namespace YogurtCleaning.Controllers
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpDelete("{id}")]
+        [HttpDelete("/Cleaning-Object/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
