@@ -31,7 +31,7 @@ public class BundleModelsRequestTests
         List<string> expectedMessages = new List<string>() {
             ApiErrorMessages.NameIsRequired, 
             ApiErrorMessages.PriceIsRequired,
-            ApiErrorMessages.MeasureIsRequred,
+            ApiErrorMessages.MeasureIsRequired,
             ApiErrorMessages.ServicesIsRequired
         };
         var validationResults = new List<ValidationResult>();

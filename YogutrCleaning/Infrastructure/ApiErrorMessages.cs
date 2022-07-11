@@ -25,8 +25,11 @@ public static class ApiErrorMessages
     public const string PhoneMaxLength = "Phone max length is 15";
     public const string BundleNameMaxLenght = "Bundel's name max lenght is 100";
     public const string PriceIsRequired = "Price was not entered";
-    public const string MeasureIsRequred = "Measure was not entered";
+    public const string MeasureIsRequired = "Measure was not entered";
     public const string ServicesIsRequired = "Services was not entered";
+    //public const string
+    //public const string
+    //public const string
     //public const string
     //public const string
     //public const string

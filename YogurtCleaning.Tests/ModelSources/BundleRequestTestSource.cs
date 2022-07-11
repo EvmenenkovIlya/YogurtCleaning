@@ -50,7 +50,7 @@ public class BundleRequestTestSource : IEnumerable
         yield return new object[]
         {
             model,
-            ApiErrorMessages.MeasureIsRequred
+            ApiErrorMessages.MeasureIsRequired
         };
 
         model = GetBundleRequestModel();
