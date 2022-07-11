@@ -7,7 +7,6 @@ namespace YogurtCleaning.Tests;
 
 public class BundleModelsRequestTests
 {
-    [Test]
     [TestCaseSource(typeof(BundleRequestTestSource))]
     public async Task BundleRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(BundleRequest bundle, string errorMessage)
     {
@@ -24,7 +23,6 @@ public class BundleModelsRequestTests
     }
 
     [Test]
-    [TestCase]
     public async Task BundleRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived()
     {
         //given
@@ -50,7 +48,6 @@ public class BundleModelsRequestTests
     }
 
     [Test]
-    [TestCase]
     public async Task BundleRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given

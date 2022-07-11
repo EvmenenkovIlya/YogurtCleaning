@@ -2,7 +2,7 @@
 
 public enum Measure
 {
-    Room,
+    Room = 1,
     Apartment,
     SquareMeter,
     Unit
