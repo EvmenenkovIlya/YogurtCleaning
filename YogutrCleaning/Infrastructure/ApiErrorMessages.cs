@@ -14,7 +14,15 @@ public static class ApiErrorMessages
     public const string OrderIdIsRequred = "Order's Id was not entered";
     public const string RatingIsRequred = "Rating was not entered";
     public const string RatingIsOutOfRange = "Rating must be from 1 to 5";
-    //public const string
+    public const string NameMaxLength = "Name max length is 50";
+    public const string LastNameMaxLength = "LastName max length is 50";
+    public const string PasswordMinLength = "Password min length is 8";
+    public const string PasswordMaxLength = "Password max length is 50";
+    public const string ConfirmPasswordMinLength = "ConfirmPassword min length is 8";
+    public const string ConfirmPasswordMaxLength = "ConfirmPassword max length is 50";
+    public const string EmailNotValid = "Email is not valid";
+    public const string EmailMaxLength = "Email max Length is 256";
+    public const string PhoneMaxLength = "Phone max length is 15";
     //public const string
     //public const string
     //public const string

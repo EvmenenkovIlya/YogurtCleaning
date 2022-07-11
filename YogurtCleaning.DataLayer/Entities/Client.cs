@@ -1,6 +1,6 @@
-﻿namespace YogurtCleaning
+﻿namespace YogurtCleaning.DataLayer.Entities
 {
-    public class Cleaner
+    public class Client
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -9,8 +9,11 @@
         public string Phone { get; set; }
         public string Email { get; set; }
         public DateTime BirthDate { get; set; }
+        public DateTime RegistrationDate { get; set; }
         public decimal Rating { get; set; }
-        public List<string> Areas { get; set; }//enum in future
-        public List<Service> Services { get; set; }
-    } 
+        public List<CleaningObject> Addresses { get; set; }
+        public List<Comment> Comments { get; set; }
+        public List<Order> Orders { get; set; }
+        public bool IsDeleted { get; set; }
+    }
 }
