@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using YogurtCleaning.Enams;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 
 namespace YogurtCleaning.Models;

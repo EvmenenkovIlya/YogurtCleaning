@@ -32,7 +32,7 @@ namespace YogurtCleaning.Controllers
 
         [AuthorizeRoles]
         [HttpGet]
-        [ProducesResponseType(typeof(OrderResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<OrderResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         public ActionResult<List<OrderResponse>> GetAllOrders()
@@ -74,34 +74,34 @@ namespace YogurtCleaning.Controllers
 
         [AuthorizeRoles(Role.Client, Role.Cleaner)]
         [HttpGet("{orderId}/services")]
-        [ProducesResponseType(typeof(List<Service>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        public ActionResult<List<Service>> GetServices(int orderId)
+        public ActionResult<List<ServiceResponse>> GetServices(int orderId)
         {
-            return Ok(new List<Service>());
+            return Ok(new List<ServiceResponse>());
         }
 
         [AuthorizeRoles]
-        [HttpPatch("{orderId}")]
+        [HttpPatch("{orderId-to-status}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public ActionResult UpdateOrderStatus(int orderId, [FromBody] OrderUpdateRequest orderUpdateRequest)
+        public ActionResult UpdateOrderStatus(int orderId, int statusEnam)
         {
             return NoContent();
         }
 
         [AuthorizeRoles(Role.Client, Role.Cleaner)]
         [HttpGet("{orderId}/CleaningObject/{CleaningObjectId}")]
-        [ProducesResponseType(typeof(CleaningObject), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public ActionResult<CleaningObject> GetCleaningObject(int CleaningObjectId)
+        public ActionResult<CleaningObjectResponse> GetCleaningObject(int CleaningObjectId)
         {
-            return Ok(new CleaningObject());
+            return Ok(new CleaningObjectResponse());
         }
     }
 }

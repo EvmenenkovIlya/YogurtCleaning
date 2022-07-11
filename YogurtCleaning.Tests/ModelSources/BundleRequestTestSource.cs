@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -13,7 +14,7 @@ public class BundleRequestTestSource : IEnumerable
         {
             Name = "Kitchen regular cleaning",
             Price = 1000,
-            Measure = Enams.Measure.Room,
+            Measure = Measure.Room,
             Services = new List<ServiceResponse>()
         };
     }

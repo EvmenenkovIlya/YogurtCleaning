@@ -49,7 +49,7 @@ namespace YogurtCleaning.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public ActionResult<int> AddCleaningObject([FromBody] CleaningObject model)
+        public ActionResult<int> AddCleaningObject([FromBody] CleaningObjectRequest model)
         {
             var CleaningObject = new CleaningObjectResponse() { Id = 42 };
             return Created($"{this.GetRequestFullPath()}/{CleaningObject.Id}", CleaningObject.Id);

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 using YogurtCleaning.Tests.ModelSources;
@@ -55,7 +56,7 @@ public class BundleModelsRequestTests
         {
             Name = "Kitchen regular cleaning",
             Price = 1000,
-            Measure = Enams.Measure.Room,
+            Measure = Measure.Room,
             Services = new List<ServiceResponse>()
         };
         var validationResults = new List<ValidationResult>();
