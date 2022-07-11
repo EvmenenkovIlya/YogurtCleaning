@@ -1,4 +1,4 @@
-﻿using YogurtCleaning.Enums;
+﻿using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Models;
 

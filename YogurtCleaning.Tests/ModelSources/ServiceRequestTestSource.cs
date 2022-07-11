@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using YogurtCleaning.Enums;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
