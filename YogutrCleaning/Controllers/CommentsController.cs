@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Enams;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -20,17 +21,6 @@ public class CommentsController : Controller
     }
 
     [AuthorizeRoles]
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CommentResponse> GetComment(int id)
-    {
-        return Ok(new CommentResponse());
-    }
-
-    [AuthorizeRoles]
     [HttpGet]
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
@@ -40,16 +30,28 @@ public class CommentsController : Controller
         return Ok(new List<CommentResponse>());
     }
 
-    [AuthorizeRoles(Role.Client, Role.Cleaner)]
-    [HttpPost]
+    [AuthorizeRoles(Role.Client)]
+    [HttpPost("by-client")]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddComment([FromBody] CommentRequest comment)
+    public ActionResult<int> AddCommentByClient([FromBody] CommentRequest comment)
     {
         int commentId = new CommentResponse().Id;
-        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{commentId}", commentId);
+        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
+    }
+
+    [AuthorizeRoles(Role.Cleaner)]
+    [HttpPost("by-cleaner")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public ActionResult<int> AddCommentByCleaner([FromBody] CommentRequest comment)
+    {
+        int commentId = new CommentResponse().Id;
+        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
     }
 
     [AuthorizeRoles]
