@@ -9,17 +9,17 @@ namespace YogurtCleaning.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("[controller]")]
+    [Route("cleaning-object")]
     public class CleaningObjectController : ControllerBase
     {
-        private readonly ILogger<CleanerController> _logger;
-        public CleaningObjectController(ILogger<CleanerController> logger)
+        private readonly ILogger<CleaningObjectController> _logger;
+        public CleaningObjectController(ILogger<CleaningObjectController> logger)
         {
             _logger = logger;
         }
 
         [AuthorizeRoles(Role.Cleaner,Role.Client)]
-        [HttpGet("/Cleaning-Object/{id}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -29,7 +29,7 @@ namespace YogurtCleaning.Controllers
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpGet("/Cleaning-Object")]
+        [HttpGet]
         [ProducesResponseType(typeof(List<CleaningObjectResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -38,7 +38,7 @@ namespace YogurtCleaning.Controllers
             return Ok(new List<CleaningObjectResponse>());
         }
         [AuthorizeRoles(Role.Client)]
-        [HttpPut("/Cleaning-Object/{id}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
@@ -48,7 +48,7 @@ namespace YogurtCleaning.Controllers
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpPost("/Cleaning-Object")]
+        [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -60,7 +60,7 @@ namespace YogurtCleaning.Controllers
         }
 
         [AuthorizeRoles(Role.Client)]
-        [HttpDelete("/Cleaning-Object/{id}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
