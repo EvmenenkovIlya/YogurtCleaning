@@ -10,7 +10,6 @@ namespace YogurtCleaning.Tests;
 
 public class CommentsControllerTests
 {
-    [Test]
     [TestCaseSource(typeof(CommentsControllerTestSource))]
     public async Task CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(CommentRequest comment, string errorMessage)
     {
@@ -27,7 +26,6 @@ public class CommentsControllerTests
     }
 
     [Test]
-    [TestCase]
     public async Task CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
@@ -52,7 +50,6 @@ public class CommentsControllerTests
     }
 
     [Test]
-    [TestCase]
     public async Task CommentRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
