@@ -8,4 +8,8 @@ public class ClientResponse
     public string Email { get; set; }
     public string Phone { get; set; }
     public DateTime BirthDate { get; set; }
+    //public override bool Equals(object? obj)
+    //{
+        
+    //}
 }

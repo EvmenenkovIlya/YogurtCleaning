@@ -12,14 +12,12 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class ClientsController : ControllerBase
 {
-    private readonly ILogger<ClientsController> _logger;
+    //private readonly ILogger<ClientsController> _logger;
 
-    public ClientsController(ILogger<ClientsController> logger)
+    public ClientsController(/*ILogger<ClientsController> logger*/)
     {
-        _logger = logger;
+        //_logger = logger;
     }
-
-    //public ClientsController() { }
 
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}")]
@@ -29,7 +27,14 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<ClientResponse> GetClient(int id)
     {
-        return Ok(new ClientResponse() { Id = id });
+        if (id < 1)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return Ok(new ClientResponse() { Id = id });
+        }
     }
 
     [AuthorizeRoles]
@@ -53,7 +58,7 @@ public class ClientsController : ControllerBase
     [AllowAnonymous]
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
     {       
         var clientCreated = new ClientResponse() { Id = 5 };
