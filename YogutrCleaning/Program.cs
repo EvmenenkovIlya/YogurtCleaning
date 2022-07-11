@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using YogurtCleaning.DataLayer;
+using YogurtCleaning.DataLayer.Repositories;
+using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 using YogurtCleaning.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,7 +54,7 @@ builder.Services.AddDbContext<YogurtCleaningContext>(o =>
     o.UseSqlServer(ServerOptions.ConnectionOption);
 });
 
-//builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
+builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 
 
 var app = builder.Build();

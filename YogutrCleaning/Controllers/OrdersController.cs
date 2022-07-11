@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.DataLayer.Repositories;
+using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -12,11 +14,11 @@ namespace YogurtCleaning.Controllers
     [Route("[controller]")]
     public class OrdersController : ControllerBase
     {
-        private readonly ILogger<ClientsController> _logger;
+        private readonly IOrdersRepository _ordersRepository;
 
-        public OrdersController(ILogger<ClientsController> logger)
+        public OrdersController(IOrdersRepository ordersRepository)
         {
-            _logger = logger;
+            _ordersRepository = ordersRepository;
         }
 
         [AuthorizeRoles(Role.Client, Role.Cleaner)]
@@ -27,7 +29,12 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public ActionResult<OrderResponse> GetOrder(int orderId)
         {
-            return Ok(new OrderResponse());
+            var result = _ordersRepository.GetOrderById(orderId);
+
+            if (result == null)
+                return NotFound();
+            else
+                return Ok(result);
         }
 
         [AuthorizeRoles]
@@ -37,7 +44,8 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         public ActionResult<List<OrderResponse>> GetAllOrders()
         {
-            return Ok(new List<OrderResponse>());
+            var result = _ordersRepository.GetOrders();
+            return Ok(result);
         }
 
         [AuthorizeRoles(Role.Client)]
@@ -47,6 +55,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         public ActionResult UpdateOrder([FromBody] OrderRequest order)
         {
+            //_ordersRepository.UpdateOrder(order);
             return NoContent();
         }
 
@@ -58,6 +67,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public ActionResult<int> AddOrder(OrderRequest order)
         {
+           // _ordersRepository.CreateOrder(order);
             var orderCreated = new OrderResponse() { Id = 5 };
             return Created($"{this.GetRequestFullPath()}/{orderCreated.Id}", orderCreated.Id);
         }
