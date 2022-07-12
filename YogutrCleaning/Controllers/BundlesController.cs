@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Enams;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -56,7 +57,7 @@ public class BundleController : ControllerBase
     public ActionResult<int> AddBundle([FromBody] BundleRequest bundle)
     {
         int bundleId = new BundleResponse().Id;
-        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{bundleId}", bundleId);
+        return Created($"{this.GetRequestFullPath()}/{bundleId}", bundleId);
     }
 
     [AuthorizeRoles(Role.Admin)]
