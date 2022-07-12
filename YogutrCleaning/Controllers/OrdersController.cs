@@ -79,6 +79,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         public ActionResult DeleteOrder(int orderId)
         {
+            _ordersRepository.DeleteOrder(orderId);
             return NoContent();
         }
 
@@ -89,6 +90,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         public ActionResult<List<ServiceResponse>> GetServices(int orderId)
         {
+
             return Ok(new List<ServiceResponse>());
         }
 
@@ -109,7 +111,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public ActionResult<CleaningObjectResponse> GetCleaningObject(int CleaningObjectId)
+        public ActionResult<CleaningObjectResponse> GetCleaningObject(int orderId, int CleaningObjectId)
         {
             return Ok(new CleaningObjectResponse());
         }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -12,14 +13,12 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class ClientsController : ControllerBase
 {
-    private readonly ILogger<ClientsController> _logger;
+    private readonly IClientsRepository _clientsRepository;
 
-    public ClientsController(ILogger<ClientsController> logger)
+    public ClientsController(IClientsRepository clientsRepository)
     {
-        _logger = logger;
-    }
-
-    //public ClientsController() { }
+        _clientsRepository = clientsRepository;
+    }   
 
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}")]
@@ -47,7 +46,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
+    public ActionResult UpdateClient([FromBody] ClientUpdateRequest client)
     {
         return NoContent();
     }
@@ -93,6 +92,4 @@ public class ClientsController : ControllerBase
     {
         return Ok(new CommentResponse());
     }
-
-    // get all cleaning obj
 }

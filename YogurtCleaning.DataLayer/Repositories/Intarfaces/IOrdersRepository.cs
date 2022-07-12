@@ -9,5 +9,8 @@ namespace YogurtCleaning.DataLayer.Repositories.Intarfaces
         Order? GetOrderById(int id);
         List<Order> GetOrders();
         void UpdateOrder(Order order);
+        List<Service> GetServices(int orderId);
+        void UpdateOrderStatus(int orderId, int statusEnam);
+        CleaningObject GetCleaningObject(int orderId, int CleaningObjectId);
     }
 }
