@@ -10,11 +10,11 @@ namespace YogurtCleaning.Controllers
     [ApiController]
     [Authorize]
     [Route("[controller]")]
-    public class CleanersController : ControllerBase
+    public class CleanerController : ControllerBase
     {
-        private readonly ILogger<CleanersController> _logger;
+        private readonly ILogger<CleanerController> _logger;
 
-        public CleanersController(ILogger<CleanersController> logger)
+        public CleanerController(ILogger<CleanerController> logger)
         {
             _logger = logger;
         }
@@ -24,6 +24,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(CleanerResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public ActionResult<CleanerResponse> GetCleaner(int id)
         {
             return Ok(new CleanerResponse() { Id = id });
@@ -34,7 +35,7 @@ namespace YogurtCleaning.Controllers
         [ProducesResponseType(typeof(List<CleanerResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        public ActionResult<List<CleanerResponse>> GetAllCleaner()
+        public ActionResult<List<CleanerResponse>> GetAllCleaners()
         {
             return Ok(new List<CleanerResponse>());
         }
@@ -42,6 +43,8 @@ namespace YogurtCleaning.Controllers
         [AuthorizeRoles(Role.Cleaner)]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
         public ActionResult UpdateCleaner(int id, [FromBody] CleanerUpdateRequest model)
         {
             return NoContent();

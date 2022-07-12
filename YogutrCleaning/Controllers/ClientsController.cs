@@ -50,6 +50,8 @@ public class ClientsController : ControllerBase
     [AuthorizeRoles(Role.Client)]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
     {
         return NoContent();
