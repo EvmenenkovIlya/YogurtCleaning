@@ -9,11 +9,11 @@ namespace YogurtCleaning.Controllers
 {
     [ApiController]
     [Authorize]
-    [Route("cleaning-object")]
-    public class CleaningObjectController : ControllerBase
+    [Route("cleaning-objects")]
+    public class CleaningObjectsController : ControllerBase
     {
-        private readonly ILogger<CleaningObjectController> _logger;
-        public CleaningObjectController(ILogger<CleaningObjectController> logger)
+        private readonly ILogger<CleaningObjectsController> _logger;
+        public CleaningObjectsController(ILogger<CleaningObjectsController> logger)
         {
             _logger = logger;
         }
