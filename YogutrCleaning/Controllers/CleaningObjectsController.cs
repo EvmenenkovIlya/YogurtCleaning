@@ -83,3 +83,4 @@ public class CleaningObjectsController : ControllerBase
         return NoContent();
     }
 }
+
