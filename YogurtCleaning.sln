@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning", "YogutrCleaning\YogurtCleaning.csproj", "{F4AE619B-F3E4-435F-93B0-2562590155B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.API", "YogutrCleaning\YogurtCleaning.API.csproj", "{F4AE619B-F3E4-435F-93B0-2562590155B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.Tests", "YogurtCleaning.Tests\YogurtCleaning.Tests.csproj", "{4B11DF4D-781C-4EFE-82FC-1E7E2A2B47E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.API.Tests", "YogurtCleaning.Tests\YogurtCleaning.API.Tests.csproj", "{4B11DF4D-781C-4EFE-82FC-1E7E2A2B47E2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.Business", "YogurtCleaning.Business\YogurtCleaning.Business.csproj", "{6B7B336C-43B6-4F67-999F-E95F439E4670}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer", "YogurtCleaning.DataLayer\YogurtCleaning.DataLayer.csproj", "{8DEC3D58-A3E0-4803-AC79-D54698547038}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YogurtCleaningDataLayerTests", "YogurtCleaningDataLayerTests\YogurtCleaningDataLayerTests.csproj", "{8B74B0C1-C01D-424A-A6CD-AFE7FA8A92FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer.Tests", "YogurtCleaningDataLayerTests\YogurtCleaning.DataLayer.Tests.csproj", "{8B74B0C1-C01D-424A-A6CD-AFE7FA8A92FD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8DEC3D58-A3E0-4803-AC79-D54698547038} = {8DEC3D58-A3E0-4803-AC79-D54698547038}
 	EndProjectSection
