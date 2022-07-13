@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YogurtCleaning.DataLayer.Entities;
+﻿using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -32,4 +27,6 @@ public class CommentsRepository : ICommentsRepository
     }
 
     public List<Comment> GetAllComments() => _context.Comments.Where(c => !c.IsDeleted).ToList();
+
+    public Comment? GetCommentById(int id) => _context.Comments.FirstOrDefault(c => c.Id == id);
 }

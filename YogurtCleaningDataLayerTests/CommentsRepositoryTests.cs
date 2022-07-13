@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
 
-namespace YogurtCleaningDataLayerTests;
+namespace YogurtCleaning.DataLayer.Tests;
 
 public class CommentsRepositoryTests
 {
@@ -37,11 +36,10 @@ public class CommentsRepositoryTests
         };
 
         // when
-        context.Comments.Add(comment);
-        context.SaveChanges();
+        var actual = sut.AddComment(comment);
 
         //then
-        Assert.True(comment.Id > 0);
+        Assert.True(actual > 0);
     }
 
     [Fact]
@@ -73,7 +71,8 @@ public class CommentsRepositoryTests
         sut.DeleteComment(comment.Id);
 
         //then
-        Assert.True(comment.IsDeleted);
+        var actual = sut.GetCommentById(comment.Id);
+        Assert.True(actual.IsDeleted);
     }
 
     [Fact]
@@ -104,7 +103,7 @@ public class CommentsRepositoryTests
         var result = sut.GetAllComments();
 
         //then
-        Assert.True(result.Contains(comment));
+        Assert.Contains(comment, result);
     }
 
     [Fact]
@@ -135,6 +134,6 @@ public class CommentsRepositoryTests
         var result = sut.GetAllComments();
 
         //then
-        Assert.False(result.Contains(comment));
+        Assert.DoesNotContain(comment, result);
     }
 }
