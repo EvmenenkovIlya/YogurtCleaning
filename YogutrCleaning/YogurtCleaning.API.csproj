@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\YogurtCleaning.Business\YogurtCleaning.Business.csproj" />
     <ProjectReference Include="..\YogurtCleaning.DataLayer\YogurtCleaning.DataLayer.csproj" />
   </ItemGroup>
 

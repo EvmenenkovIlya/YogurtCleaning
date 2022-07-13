@@ -12,14 +12,14 @@ public class ClientsService : IClientsService
         _clientsRepository = clientsRepository;
     }
 
-    public void UpdateClient(Client newClient, int id)
+    public void UpdateClient(Client modelToUpdate, int id)
     {
-        Client oldClient = _clientsRepository.GetClient(id);
+        Client client = _clientsRepository.GetClient(id);
 
-        oldClient.FirstName = newClient.FirstName;
-        oldClient.LastName = newClient.LastName;
-        oldClient.Phone = newClient.Phone;
-        oldClient.BirthDate = newClient.BirthDate;
-        _clientsRepository.UpdateClient(oldClient);
+        client.FirstName = modelToUpdate.FirstName;
+        client.LastName = modelToUpdate.LastName;
+        client.Phone = modelToUpdate.Phone;
+        client.BirthDate = modelToUpdate.BirthDate;
+        _clientsRepository.UpdateClient(client);
     }
 }

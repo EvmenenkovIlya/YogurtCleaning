@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
@@ -14,10 +17,14 @@ namespace YogurtCleaning.Controllers;
 public class CleaningObjectsController : ControllerBase
 {
     private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
+    private readonly IMapper _mapper;
+    private readonly ICleaningObjectsService _cleaningObjectsService;
 
-    public CleaningObjectsController(ICleaningObjectsRepository cleaningObjectsRepository)
+    public CleaningObjectsController(ICleaningObjectsRepository cleaningObjectsRepository, IMapper mapper, ICleaningObjectsService cleaningObjectsService)
     {
         _cleaningObjectsRepository = cleaningObjectsRepository;
+        _mapper = mapper;
+        _cleaningObjectsService = cleaningObjectsService;
     }
 
     [AuthorizeRoles(Role.Cleaner,Role.Client)]
@@ -55,7 +62,7 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult UpdateCleaningObject(int id, [FromBody] CleaningObjectUpdateRequest model)
     {
-        // update with mapping
+        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id);
         return NoContent();
     }
 
@@ -67,9 +74,8 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddCleaningObject([FromBody] CleaningObjectRequest model)
     {
-        // add with mapping
-        var CleaningObject = new CleaningObjectResponse() { Id = 42 };
-        return Created($"{this.GetRequestFullPath()}/{CleaningObject.Id}", CleaningObject.Id);
+        int id = _cleaningObjectsRepository.CreateCleaningObject(_mapper.Map<CleaningObject>(model));
+        return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
     [AuthorizeRoles(Role.Client)]

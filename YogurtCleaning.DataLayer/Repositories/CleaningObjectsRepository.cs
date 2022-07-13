@@ -33,17 +33,8 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
         _context.CleaningObjects.AsNoTracking().Where(o => !o.IsDeleted).ToList();
 
     public void UpdateCleaningObject(CleaningObject modelToUpdate)
-    {
-        var cleaningObject = GetCleaningObject(modelToUpdate.Id);
-
-        cleaningObject.NumberOfRooms = modelToUpdate.NumberOfRooms;
-        cleaningObject.NumberOfBathrooms = modelToUpdate.NumberOfBathrooms;
-        cleaningObject.NumberOfWindows = modelToUpdate.NumberOfWindows;
-        cleaningObject.NumberOfBalconies = modelToUpdate.NumberOfBalconies;
-        cleaningObject.Address = modelToUpdate.Address;
-        cleaningObject.Square = modelToUpdate.Square;
-
-        _context.CleaningObjects.Update(cleaningObject);
+    {       
+        _context.CleaningObjects.Update(modelToUpdate);
         _context.SaveChanges();
     }
 }
