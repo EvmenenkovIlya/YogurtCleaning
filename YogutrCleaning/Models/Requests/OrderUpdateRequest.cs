@@ -1,4 +1,4 @@
-﻿using YogurtCleaning.Enams;
+﻿using YogurtCleaning.DataLayer.Enums;
 namespace YogurtCleaning.Models;
 public class OrderUpdateRequest
 {

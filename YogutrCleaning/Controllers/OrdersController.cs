@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -95,26 +95,26 @@ public class OrdersController : ControllerBase
     }
 
     [AuthorizeRoles]
-    [HttpPatch("{orderId-to-status}")]
+    [HttpPatch("{orderId}/status")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateOrderStatus(int orderId, int statusEnam)
+    public ActionResult UpdateOrderStatus(int orderId, [FromBody] Status statusToUpdate)
     {
-        _ordersRepository.UpdateOrderStatus(orderId, statusEnam);
+        _ordersRepository.UpdateOrderStatus(orderId, statusToUpdate);
         return NoContent();
     }
 
     [AuthorizeRoles(Role.Client, Role.Cleaner)]
-    [HttpGet("{orderId}/CleaningObject/{CleaningObjectId}")]
+    [HttpGet("{orderId}/CleaningObject")]
     [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CleaningObjectResponse> GetCleaningObject(int orderId, int CleaningObjectId)
+    public ActionResult<CleaningObjectResponse> GetCleaningObject(int orderId)
     {   
-        var cleaningObject = _ordersRepository.GetCleaningObject(orderId, CleaningObjectId);
+        var cleaningObject = _ordersRepository.GetCleaningObject(orderId);
         return Ok(new CleaningObjectResponse());
     }
 }

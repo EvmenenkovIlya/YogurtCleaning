@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
+using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;

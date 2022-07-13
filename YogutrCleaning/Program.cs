@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 using YogurtCleaning.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

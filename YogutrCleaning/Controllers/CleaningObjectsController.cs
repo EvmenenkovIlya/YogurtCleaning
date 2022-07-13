@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
+using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -10,7 +10,7 @@ namespace YogurtCleaning.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("cleaning-object")]
+[Route("cleaning-objects")]
 public class CleaningObjectsController : ControllerBase
 {
     private readonly ICleaningObjectsRepository _cleaningObjectsRepository;

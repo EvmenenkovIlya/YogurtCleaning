@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -27,26 +26,22 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
         _context.SaveChanges();
     }
 
-    public CleaningObject? GetCleaningObject(int cleaningObjectId)
-    {
-        return _context.CleaningObjects.FirstOrDefault(o => o.Id == cleaningObjectId && !o.IsDeleted);
-    }
+    public CleaningObject? GetCleaningObject(int cleaningObjectId) => 
+        _context.CleaningObjects.FirstOrDefault(o => o.Id == cleaningObjectId);
 
-    public List<CleaningObject> GetAllCleaningObjects()
-    {
-        return _context.CleaningObjects.AsNoTracking().Where(o => !o.IsDeleted).ToList<CleaningObject>();
-    }
+    public List<CleaningObject> GetAllCleaningObjects() => 
+        _context.CleaningObjects.AsNoTracking().Where(o => !o.IsDeleted).ToList();
 
-    public void UpdateCleaningObject(CleaningObject newProperty)
+    public void UpdateCleaningObject(CleaningObject modelToUpdate)
     {
-        var cleaningObject = GetCleaningObject(newProperty.Id);
+        var cleaningObject = GetCleaningObject(modelToUpdate.Id);
 
-        cleaningObject.NumberOfRooms = newProperty.NumberOfRooms;
-        cleaningObject.NumberOfBathrooms = newProperty.NumberOfBathrooms;
-        cleaningObject.NumberOfWindows = newProperty.NumberOfWindows;
-        cleaningObject.NumberOfBalconies = newProperty.NumberOfBalconies;
-        cleaningObject.Address = newProperty.Address;
-        cleaningObject.Square = newProperty.Square;
+        cleaningObject.NumberOfRooms = modelToUpdate.NumberOfRooms;
+        cleaningObject.NumberOfBathrooms = modelToUpdate.NumberOfBathrooms;
+        cleaningObject.NumberOfWindows = modelToUpdate.NumberOfWindows;
+        cleaningObject.NumberOfBalconies = modelToUpdate.NumberOfBalconies;
+        cleaningObject.Address = modelToUpdate.Address;
+        cleaningObject.Square = modelToUpdate.Square;
 
         _context.CleaningObjects.Update(cleaningObject);
         _context.SaveChanges();

@@ -1,0 +1,16 @@
+﻿using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
+
+namespace YogurtCleaning.DataLayer.Repositories;
+
+public interface IOrdersRepository
+{
+    int CreateOrder(Order order);
+    void DeleteOrder(int id);
+    Order? GetOrder(int id);
+    List<Order> GetOrders();
+    void UpdateOrder(Order order);
+    List<Service> GetServices(int orderId);
+    void UpdateOrderStatus(int orderId, Status statusEnam);
+    CleaningObject GetCleaningObject(int orderId);
+}

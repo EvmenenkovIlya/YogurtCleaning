@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -13,13 +12,11 @@ public class ClientsRepository : IClientsRepository
         _context = context;
     }
 
-    public Client? GetClient(int clientId) => _context.Clients
-            .FirstOrDefault(o => o.Id == clientId && !o.IsDeleted);
+    public Client? GetClient(int clientId) => 
+        _context.Clients.FirstOrDefault(o => o.Id == clientId);
 
-    public List<Client> GetAllClients()
-    {
-        return _context.Clients.AsNoTracking().Where(o => !o.IsDeleted).ToList<Client>();
-    }
+    public List<Client> GetAllClients() => 
+        _context.Clients.AsNoTracking().Where(o => !o.IsDeleted).ToList();
 
     public int CreateClient(Client client)
     {
@@ -48,9 +45,6 @@ public class ClientsRepository : IClientsRepository
         _context.SaveChanges();
     }
 
-    public List<Comment> GetAllCommentsByClient(int clientId)
-    {
-        var comments = _context.Comments.AsNoTracking().Where(c => !c.IsDeleted && c.Client.Id == clientId).ToList();
-        return comments;
-    }
+    public List<Comment> GetAllCommentsByClient(int clientId) => 
+        _context.Comments.AsNoTracking().Where(c => c.Client != null && c.Client.Id == clientId).ToList();
 }

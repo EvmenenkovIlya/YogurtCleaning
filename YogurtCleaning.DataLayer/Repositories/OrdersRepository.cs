@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -14,9 +13,7 @@ public class OrdersRepository : IOrdersRepository
         _context = context;
     }
 
-    public Order? GetOrder(int orderId) =>
-        _context.Orders           
-            .FirstOrDefault(o => o.Id == orderId && !o.IsDeleted);
+    public Order? GetOrder(int orderId) => _context.Orders.FirstOrDefault(o => o.Id == orderId);
 
     public List<Order> GetOrders() => _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToList();
 
@@ -69,14 +66,14 @@ public class OrdersRepository : IOrdersRepository
         }
     }
 
-    public void UpdateOrderStatus(int orderId, int statusEnam)
+    public void UpdateOrderStatus(int orderId, Status statusToUpdate)
     {
         var order = GetOrder(orderId);
-        order.Status = (Status)Enum.ToObject(typeof(Status), statusEnam);
+        order.Status = statusToUpdate;
         _context.SaveChanges();
     }
 
-    public CleaningObject GetCleaningObject(int orderId, int CleaningObjectId)
+    public CleaningObject GetCleaningObject(int orderId)
     {
         var order = GetOrder(orderId);
         if (order == null)

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -13,12 +12,11 @@ public class CleanersRepository : ICleanersRepository
         _context = context;
     }
 
-    public Cleaner? GetCleaner(int clientId) => _context.Cleaners
-            .FirstOrDefault(o => o.Id == clientId && !o.IsDeleted);
+    public Cleaner? GetCleaner(int clientId) => _context.Cleaners.FirstOrDefault(o => o.Id == clientId);
 
     public List<Cleaner> GetAllCleaners()
     {
-        return _context.Cleaners.AsNoTracking().Where(o => !o.IsDeleted).ToList<Cleaner>();
+        return _context.Cleaners.AsNoTracking().Where(o => !o.IsDeleted).ToList();
     }
 
     public int CreateCleaner(Cleaner cleaner)
@@ -50,7 +48,7 @@ public class CleanersRepository : ICleanersRepository
 
     public List<Comment> GetAllCommentsByCleaner(int cleanerId)
     {
-        var comments = _context.Comments.AsNoTracking().Where(c => !c.IsDeleted && c.Cleaner.Id == cleanerId).ToList();
+        var comments = _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == cleanerId).ToList();
         return comments;
     }
 }
