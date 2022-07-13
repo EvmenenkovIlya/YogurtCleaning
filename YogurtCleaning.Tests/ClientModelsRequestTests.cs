@@ -96,7 +96,7 @@ public class ClientModelsRequestTests
         //given
         ClientRegisterRequest client = new ClientRegisterRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",
@@ -120,7 +120,7 @@ public class ClientModelsRequestTests
         //given
         ClientUpdateRequest client = new ClientUpdateRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Phone = "85559997264",
             BirthDate = DateTime.Today

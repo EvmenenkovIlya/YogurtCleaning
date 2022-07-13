@@ -25,16 +25,9 @@ public class ClientsRepository : IClientsRepository
         return client.Id;
     }
 
-    public void UpdateClient(Client newProrety)
+    public void UpdateClient(Client newClient)
     {
-        var client = GetClient(newProrety.Id);
-
-        client.FirstName = newProrety.FirstName;
-        client.LastName = newProrety.LastName;
-        client.Phone = newProrety.Phone;
-        client.BirthDate = newProrety.BirthDate;
-
-        _context.Clients.Update(client);
+        _context.Clients.Update(newClient);
         _context.SaveChanges();
     }
 

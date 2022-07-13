@@ -1,5 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
@@ -14,10 +17,13 @@ namespace YogurtCleaning.Controllers;
 public class ClientsController : ControllerBase
 {
     private readonly IClientsRepository _clientsRepository;
-
-    public ClientsController(IClientsRepository clientsRepository)
+    private readonly IMapper _mapper;
+    private readonly IClientsService _clientsService;
+    public ClientsController(IClientsRepository clientsRepository, IMapper mapper, IClientsService clientsService)
     {
         _clientsRepository = clientsRepository;
+        _mapper = mapper;
+        _clientsService = clientsService;
     }   
 
     [AuthorizeRoles(Role.Client)]
@@ -35,7 +41,7 @@ public class ClientsController : ControllerBase
         }
         else
         {
-            return Ok(client);
+            return Ok(_mapper.Map<ClientResponse>(client));
         }
     }
 
@@ -54,9 +60,9 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateClient([FromBody] ClientUpdateRequest client)
+    public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
     {
-        // update with mapping
+        _clientsService.UpdateClient(_mapper.Map<Client>(client), id);
         return NoContent();
     }
 
@@ -66,9 +72,8 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
     {
-        // update with mapping
-        var clientCreated = new ClientResponse() { Id = 5 };
-        return Created($"{this.GetRequestFullPath()}/{clientCreated.Id}", clientCreated.Id);
+        var id = _clientsRepository.CreateClient(_mapper.Map<Client>(client));
+        return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
     [AuthorizeRoles]
