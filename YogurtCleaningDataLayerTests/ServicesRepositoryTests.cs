@@ -85,7 +85,7 @@ public class ServicesRepositoryTests
     }
 
     [Fact]
-    public void GetAllServices_WhenCommentIsDeleted_ThenCommentDoesNotGet()
+    public void GetAllServices_WhenServiceIsDeleted_ThenServiceDoesNotGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
