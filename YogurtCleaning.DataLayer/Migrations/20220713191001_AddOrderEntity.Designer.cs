@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YogurtCleaning.DataLayer;
 
@@ -11,9 +12,10 @@ using YogurtCleaning.DataLayer;
 namespace YogurtCleaning.DataLayer.Migrations
 {
     [DbContext(typeof(YogurtCleaningContext))]
-    partial class YogurtCleaningContextModelSnapshot : ModelSnapshot
+    [Migration("20220713191001_AddOrderEntity")]
+    partial class AddOrderEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

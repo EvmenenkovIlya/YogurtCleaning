@@ -7,4 +7,5 @@ public class Service
     public decimal Price { get; set; }
     public string Unit { get; set; } // единица измерения
     public bool IsDeleted { get; set; }
+    public List<Order> Orders { get; set; }
 }
