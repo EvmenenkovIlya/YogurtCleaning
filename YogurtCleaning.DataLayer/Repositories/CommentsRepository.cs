@@ -16,18 +16,20 @@ public class CommentsRepository : ICommentsRepository
         _context = context;
     }
 
-    public int AddCommentt(Comment comment)
+    public int AddComment(Comment comment)
     {
-        throw new NotImplementedException();
+        _context.Comments.Add(comment);
+        _context.SaveChanges();
+
+        return comment.Id;
     }
 
-    public void DeleteCommentt(Comment comment)
+    public void DeleteComment(int id)
     {
-        throw new NotImplementedException();
+        var comment = _context.Comments.FirstOrDefault(c => c.Id == id);
+        comment.IsDeleted = true;
+        _context.SaveChanges();
     }
 
-    public List<Comment>? GetAllComments()
-    {
-        throw new NotImplementedException();
-    }
+    public List<Comment> GetAllComments() => _context.Comments.Where(c => !c.IsDeleted).ToList();
 }
