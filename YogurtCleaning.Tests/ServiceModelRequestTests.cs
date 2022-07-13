@@ -55,7 +55,7 @@ public class ServiceModelsRequestTests
         {
             Name = "This is some service name",
             Price = 500,
-            Measure = (Measure)4
+            Unit = "Room"
         };
         var validationResults = new List<ValidationResult>();
 

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.Business", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer", "YogurtCleaning.DataLayer\YogurtCleaning.DataLayer.csproj", "{8DEC3D58-A3E0-4803-AC79-D54698547038}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YogurtCleaningDataLayerTests", "YogurtCleaningDataLayerTests\YogurtCleaningDataLayerTests.csproj", "{AD1995D2-6131-4B7D-AFB4-49443FD3063F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer.Tests", "YogurtCleaningDataLayerTests\YogurtCleaning.DataLayer.Tests.csproj", "{AD1995D2-6131-4B7D-AFB4-49443FD3063F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

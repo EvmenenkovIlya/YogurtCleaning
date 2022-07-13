@@ -9,7 +9,7 @@ using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
-namespace YogurtCleaningDataLayerTests;
+namespace YogurtCleaning.DataLayer.Tests;
 
 public class BundlesRepositoryTests
 {

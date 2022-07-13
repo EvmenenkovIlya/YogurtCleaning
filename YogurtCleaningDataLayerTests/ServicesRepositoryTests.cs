@@ -3,7 +3,7 @@ using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
 
-namespace YogurtCleaningDataLayerTests;
+namespace YogurtCleaning.DataLayer.Tests;
 
 public class ServicesRepositoryTests
 {
@@ -30,11 +30,10 @@ public class ServicesRepositoryTests
         };
 
         // when 
-        context.Services.Add(service);
-        context.SaveChanges();
+        var actual = sut.AddService(service);
 
         //then 
-        Assert.True(service.Id > 0);
+        Assert.True(actual > 0);
     }
 
     [Fact]
@@ -82,7 +81,7 @@ public class ServicesRepositoryTests
         var result = sut.GetAllServices();
 
         //then 
-        Assert.True(result.Contains(service));
+        Assert.Contains(service, result);
     }
 
     [Fact]
@@ -106,40 +105,6 @@ public class ServicesRepositoryTests
         var result = sut.GetAllServices();
 
         //then 
-        Assert.False(result.Contains(service));
+        Assert.DoesNotContain(service, result);
     }
-
-    //[Fact]
-    //public void UpdateService_WhenServiceUpdated_ThenPropertiesValuesChandged()
-    //{
-    //    // given
-    //    var context = new YogurtCleaningContext(_dbContextOptions);
-    //    var sut = new ServicesRepository(context);
-    //    var service = new Service
-    //    {
-    //        Name = "qwe",
-    //        Price = 1000,
-    //        Unit = "Unit",
-    //        IsDeleted = true
-    //    };
-
-    //    context.Services.Add(service);
-    //    context.SaveChanges();
-
-    //    var updService = new Service
-    //    {
-    //        Name = "qwe",
-    //        Price = 5000,
-    //        Unit = "Unit",
-    //        IsDeleted = true
-    //    };
-
-    //    // when
-
-    //    sut.UpdateService(updService, service.Id);
-    //    context.SaveChanges();
-
-    //    // then
-    //    Assert.Equal(updService.Price, service.Price);
-    //}
 }

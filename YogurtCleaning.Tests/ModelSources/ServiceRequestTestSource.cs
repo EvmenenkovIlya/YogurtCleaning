@@ -14,7 +14,7 @@ public class ServiceRequestTestSource : IEnumerable
         {
             Name = "This is some service name",
             Price = 500,
-            Measure = (Measure)4
+            Unit = "Hour"
         };
     }
 
@@ -37,7 +37,7 @@ public class ServiceRequestTestSource : IEnumerable
         };
 
         model = GetServiceRequestModel();
-        model.Measure = null;
+        model.Unit = null;
         yield return new object[]
         {
             model,
