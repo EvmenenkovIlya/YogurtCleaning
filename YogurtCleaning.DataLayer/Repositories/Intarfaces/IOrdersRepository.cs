@@ -6,7 +6,7 @@ namespace YogurtCleaning.DataLayer.Repositories.Intarfaces
     {
         int CreateOrder(Order order);
         void DeleteOrder(int id);
-        Order? GetOrderById(int id);
+        Order? GetOrder(int id);
         List<Order> GetOrders();
         void UpdateOrder(Order order);
         List<Service> GetServices(int orderId);

@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 
 namespace YogurtCleaning.Models
 {
     public class CleanerRegisterRequest
     {
-        [Required]
+        [Required(ErrorMessage = ApiErrorMessages.NameIsRequired)]
         [MaxLength(50)]
         public string Name { get; set; }
-        [Required]
+        [Required(ErrorMessage = ApiErrorMessages.LastNameIsRequired)]
         [MaxLength(50)]
         public string LastName { get; set; }
         [Required]
@@ -26,5 +27,7 @@ namespace YogurtCleaning.Models
         public string Email { get; set; }
         [Required]
         public string Phone { get; set; }
+        public List<ServiceResponse> Services { get; set; }
+        public List<DistrictEnum> Districts { get; set; }
     }
 }

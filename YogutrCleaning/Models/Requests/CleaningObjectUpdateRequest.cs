@@ -2,6 +2,7 @@
 {
     public class CleaningObjectUpdateRequest
     {
+        public int Id { get; set; }
         public int NumberOfRooms { get; set; }
         public int NumberOfBathrooms { get; set; }
         public int Square { get; set; }

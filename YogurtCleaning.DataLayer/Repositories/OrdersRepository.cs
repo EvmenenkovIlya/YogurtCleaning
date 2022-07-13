@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
@@ -13,11 +14,11 @@ public class OrdersRepository : IOrdersRepository
         _context = context;
     }
 
-    public Order? GetOrderById(int id) =>
+    public Order? GetOrder(int orderId) =>
         _context.Orders           
-            .FirstOrDefault(o => o.Id == id && !o.IsDeleted);
+            .FirstOrDefault(o => o.Id == orderId && !o.IsDeleted);
 
-    public List<Order> GetOrders() => _context.Orders.AsNoTracking().Where(o => o.StartTime > DateTime.Now.AddDays(-5) && !o.IsDeleted).ToList();
+    public List<Order> GetOrders() => _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToList();
 
     public int CreateOrder(Order order)
     {
@@ -27,9 +28,9 @@ public class OrdersRepository : IOrdersRepository
         return order.Id;
     }
 
-    public void DeleteOrder(int id)
+    public void DeleteOrder(int orderId)
     {
-        var order = _context.Orders.FirstOrDefault(o => o.Id == id);
+        var order = GetOrder(orderId);
         if (order == null)
             return;
         else
@@ -40,15 +41,24 @@ public class OrdersRepository : IOrdersRepository
         }
     }
 
-    public void UpdateOrder(Order order)
+    public void UpdateOrder(Order newProperty)
     {
+        var order = GetOrder(newProperty.Id);
+
+        order.Status = newProperty.Status;
+        order.StartTime = newProperty.StartTime;
+        order.UpdateTime = newProperty.UpdateTime;
+        order.Bundles = newProperty.Bundles;
+        order.Services = newProperty.Services;
+        order.CleanersBand = newProperty.CleanersBand;
+    
         _context.Orders.Update(order);
         _context.SaveChanges();
     }
 
     public List<Service> GetServices(int orderId)
     {
-        var order = GetOrderById(orderId);
+        var order = GetOrder(orderId);
         if (order == null)
         {
             return null;
@@ -61,14 +71,14 @@ public class OrdersRepository : IOrdersRepository
 
     public void UpdateOrderStatus(int orderId, int statusEnam)
     {
-        var order = GetOrderById(orderId);
-        //update order
-        throw new NotImplementedException();
+        var order = GetOrder(orderId);
+        order.Status = (Status)Enum.ToObject(typeof(Status), statusEnam);
+        _context.SaveChanges();
     }
 
     public CleaningObject GetCleaningObject(int orderId, int CleaningObjectId)
     {
-        var order = GetOrderById(orderId);
+        var order = GetOrder(orderId);
         if (order == null)
         {
             return null;

@@ -23,22 +23,28 @@ public class ClientsRepository : IClientsRepository
 
     public int CreateClient(Client client)
     {
-        _context.Add(client);
+        _context.Clients.Add(client);
         _context.SaveChanges();
         return client.Id;
     }
 
-    public void UpdateClient(Client client)
+    public void UpdateClient(Client newProrety)
     {
+        var client = GetClient(newProrety.Id);
+
+        client.FirstName = newProrety.FirstName;
+        client.LastName = newProrety.LastName;
+        client.Phone = newProrety.Phone;
+        client.BirthDate = newProrety.BirthDate;
+
         _context.Clients.Update(client);
         _context.SaveChanges();
     }
 
     public void DeleteClient(int clientId)
     {
-        var client = _context.Clients.FirstOrDefault(o => o.Id == clientId);
+        var client = GetClient(clientId);
         client.IsDeleted = true;
-        _context.Clients.Update(client);
         _context.SaveChanges();
     }
 

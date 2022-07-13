@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json.Serialization;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.DataLayer.Repositories.Intarfaces;
@@ -21,6 +22,11 @@ builder.Services.AddControllers()
 
             return result;
         };
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
     });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -55,6 +61,9 @@ builder.Services.AddDbContext<YogurtCleaningContext>(o =>
 });
 
 builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
+builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
+builder.Services.AddScoped<ICleanersRepository, CleanersRepository>();
+builder.Services.AddScoped<ICleaningObjectsRepository, CleaningObjectsRepository>();
 
 
 var app = builder.Build();
