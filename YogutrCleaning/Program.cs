@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using YogurtCleaning;
+using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.DataLayer.Repositories.Interfaces;
@@ -57,6 +59,10 @@ builder.Services.AddDbContext<YogurtCleaningContext>(o =>
 //builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
+builder.Services.AddScoped<IServicesService, ServicesService>();
+
+builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
+
 
 var app = builder.Build();
 

@@ -11,7 +11,7 @@ public interface IServicesRepository
 {
     Service GetService(int id);
     List<Service> GetAllServices();
-    void UpdateService(Service service, int id);
+    void UpdateService(Service service);
     int AddService(Service service);
     void DeleteService(int id);
 }

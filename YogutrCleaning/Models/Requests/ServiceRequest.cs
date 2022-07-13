@@ -12,5 +12,5 @@ public class ServiceRequest
     [Required(ErrorMessage = ApiErrorMessages.PriceIsRequired)]
     public decimal? Price { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.MeasureIsRequired)]
-    public Measure? Measure { get; set; }
+    public string? Unit { get; set; }
 }

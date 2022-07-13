@@ -1,6 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories.Interfaces;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -13,11 +17,15 @@ public class ServicesController : ControllerBase
 {
     private readonly ILogger<ServicesController> _logger;
     private readonly IServicesRepository _servicesRepository;
+    private readonly IServicesService _servicesService;
+    private readonly IMapper _mapper;
 
-    public ServicesController(ILogger<ServicesController> logger, IServicesRepository servicesRepository)
+    public ServicesController(ILogger<ServicesController> logger, IServicesRepository servicesRepository, IServicesService servicesService, IMapper mapper)
     {
         _logger = logger;
         _servicesRepository = servicesRepository;
+        _servicesService = servicesService;
+        _mapper = mapper;
     }
 
     [AllowAnonymous]
@@ -25,7 +33,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
     public ActionResult<ServiceResponse> GetService(int id)
     {
-        var result = _servicesRepository.GetService(id);
+        var result = _mapper.Map<ServiceResponse>(_servicesRepository.GetService(id));
         return Ok(result);
     }
 
@@ -35,7 +43,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult<List<ServiceResponse>> GetAllServices()
     {
-        var result = _servicesRepository.GetAllServices();
+        var result = _mapper.Map<List<ServiceResponse>>(_servicesRepository.GetAllServices());
         return Ok(result);
     }
 
@@ -46,7 +54,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateService([FromBody] ServiceRequest service, int id)
     {
-        //var result = _servicesRepository.UpdateService(id);
+        _servicesService.UpdateService(_mapper.Map<Service>(service), id);
         return NoContent();
     }
 
@@ -57,9 +65,8 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
-        //var result = _servicesRepository.AddService(service);
-        int userId = new ServiceResponse().Id;
-        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{userId}", userId);
+        var result = _servicesRepository.AddService(_mapper.Map<Service>(service));
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [HttpDelete("{id}")]
