@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.DataLayer.Repositories.Interfaces;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -11,10 +12,12 @@ namespace YogurtCleaning.Controllers;
 public class ServicesController : ControllerBase
 {
     private readonly ILogger<ServicesController> _logger;
+    private readonly IServicesRepository _servicesRepository;
 
-    public ServicesController(ILogger<ServicesController> logger)
+    public ServicesController(ILogger<ServicesController> logger, IServicesRepository servicesRepository)
     {
         _logger = logger;
+        _servicesRepository = servicesRepository;
     }
 
     [AllowAnonymous]
@@ -22,7 +25,8 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
     public ActionResult<ServiceResponse> GetService(int id)
     {
-        return Ok(new ServiceResponse());
+        var result = _servicesRepository.GetService(id);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -31,7 +35,8 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult<List<ServiceResponse>> GetAllServices()
     {
-        return Ok(new List<ServiceResponse>());
+        var result = _servicesRepository.GetAllServices();
+        return Ok(result);
     }
 
     [HttpPut("{id}")]
@@ -41,6 +46,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateService([FromBody] ServiceRequest service, int id)
     {
+        //var result = _servicesRepository.UpdateService(id);
         return NoContent();
     }
 
@@ -51,6 +57,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
+        //var result = _servicesRepository.AddService(service);
         int userId = new ServiceResponse().Id;
         return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{userId}", userId);
     }
@@ -61,6 +68,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteService(int id)
     {
+        _servicesRepository.DeleteService(id);
         return Ok();
     }
 }

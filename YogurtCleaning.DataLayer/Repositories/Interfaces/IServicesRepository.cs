@@ -9,7 +9,7 @@ namespace YogurtCleaning.DataLayer.Repositories.Interfaces;
 
 public interface IServicesRepository
 {
-    int GetService(int id);
+    Service GetService(int id);
     List<Service> GetAllServices();
     void UpdateService(Service service);
     int AddService(Service service);
