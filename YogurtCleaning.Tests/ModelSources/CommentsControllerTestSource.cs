@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Tests.ControllerSources;
+namespace YogurtCleaning.Tests.ModelSources;
 
 public class CommentsControllerTestSource : IEnumerable
 {
