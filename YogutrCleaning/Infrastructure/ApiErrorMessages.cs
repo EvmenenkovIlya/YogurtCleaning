@@ -29,7 +29,7 @@ public static class ApiErrorMessages
     public const string ScheduleIsRequired = "Shedule was not choosen";
     public const string PassportIsRequired = "Passport was not enteres";
     public const string PassportLength = "Passport length is 10";
-    //public const string
+    public const string ServicesIsRequired = "Services were not chosen";
     //public const string
     //public const string
 }
