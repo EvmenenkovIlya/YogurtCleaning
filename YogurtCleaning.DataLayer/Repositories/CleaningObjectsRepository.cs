@@ -4,7 +4,7 @@ using YogurtCleaning.DataLayer.Repositories.Intarfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
-public class CleaningObjectsRepository : ICleaningObjectsRepository
+public class CleaningObjectsRepository :  ICleaningObjectsRepository
 {
     private readonly YogurtCleaningContext _context;
 
@@ -27,7 +27,7 @@ public class CleaningObjectsRepository : ICleaningObjectsRepository
         _context.SaveChanges();
     }
 
-    CleaningObject? GetCleaningObject(int cleaningObjectId)
+    public CleaningObject? GetCleaningObject(int cleaningObjectId)
     {
         return _context.CleaningObjects.FirstOrDefault(o => o.Id == cleaningObjectId && !o.IsDeleted);
     }
@@ -37,8 +37,8 @@ public class CleaningObjectsRepository : ICleaningObjectsRepository
         return _context.CleaningObjects.AsNoTracking().Where(o => !o.IsDeleted).ToList<CleaningObject>();
     }
 
-     public void UpdateCleaningObject(CleaningObject newProperty)
-    {  
+    public void UpdateCleaningObject(CleaningObject newProperty)
+    {
         var cleaningObject = GetCleaningObject(newProperty.Id);
 
         cleaningObject.NumberOfRooms = newProperty.NumberOfRooms;

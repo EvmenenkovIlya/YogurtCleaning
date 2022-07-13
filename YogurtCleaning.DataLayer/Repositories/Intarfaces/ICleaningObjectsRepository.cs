@@ -7,5 +7,7 @@ namespace YogurtCleaning.DataLayer.Repositories.Intarfaces
         int CreateCleaningObject(CleaningObject cleaningObject);
         void DeleteCleaningObject(int cleaningObjectId);
         List<CleaningObject> GetAllCleaningObjects();
+        CleaningObject? GetCleaningObject(int cleaningObjectId);
+        void UpdateCleaningObject(CleaningObject newProperty);
     }
 }

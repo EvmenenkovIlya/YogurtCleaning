@@ -28,7 +28,15 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<ClientResponse> GetClient(int id)
     {
-        return Ok(new ClientResponse() { Id = id });
+        var client = _clientsRepository.GetClient(id);
+        if (client == null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return Ok(client);
+        }
     }
 
     [AuthorizeRoles]
@@ -38,7 +46,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<ClientResponse>> GetAllClients()
     {
-        return Ok(new List<ClientResponse>());
+        return Ok(_clientsRepository.GetAllClients());
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -48,6 +56,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateClient([FromBody] ClientUpdateRequest client)
     {
+        // update with mapping
         return NoContent();
     }
 
@@ -56,7 +65,8 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
-    {       
+    {
+        // update with mapping
         var clientCreated = new ClientResponse() { Id = 5 };
         return Created($"{this.GetRequestFullPath()}/{clientCreated.Id}", clientCreated.Id);
     }
@@ -68,6 +78,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteClient(int id)
     {
+        _clientsRepository.DeleteClient(id);
         return NoContent();
     }
 
@@ -79,17 +90,6 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<List<CommentResponse>> GetAllCommentsByClient(int id)
     {
-        return Ok(new List<CommentResponse>()); ;
-    }
-
-    [AuthorizeRoles(Role.Client)]
-    [HttpGet("{id}/comments/{commentId}")]
-    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CommentResponse> GetComment(int id, int commentId)
-    {
-        return Ok(new CommentResponse());
+        return Ok(_clientsRepository.GetAllCommentsByClient(id));
     }
 }

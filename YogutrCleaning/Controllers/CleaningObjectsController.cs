@@ -11,11 +11,11 @@ namespace YogurtCleaning.Controllers;
 [ApiController]
 [Authorize]
 [Route("cleaning-object")]
-public class CleaningObjectController : ControllerBase
+public class CleaningObjectsController : ControllerBase
 {
     private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
 
-    public CleaningObjectController(ICleaningObjectsRepository cleaningObjectsRepository)
+    public CleaningObjectsController(ICleaningObjectsRepository cleaningObjectsRepository)
     {
         _cleaningObjectsRepository = cleaningObjectsRepository;
     }
@@ -27,7 +27,15 @@ public class CleaningObjectController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<CleaningObjectResponse> GetCleaningObject(int id)
     {
-        return Ok(new CleaningObjectResponse() { Id = id });
+        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
+        if (cleaningObject == null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return Ok(cleaningObject);
+        }
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -37,8 +45,9 @@ public class CleaningObjectController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CleaningObjectResponse>> GetAllCleaningObjectsByClientId(int clientId)
     {
-        return Ok(new List<CleaningObjectResponse>());
+        return Ok(_cleaningObjectsRepository.GetAllCleaningObjects());
     }
+
     [AuthorizeRoles(Role.Client)]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -46,6 +55,7 @@ public class CleaningObjectController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult UpdateCleaningObject(int id, [FromBody] CleaningObjectUpdateRequest model)
     {
+        // update with mapping
         return NoContent();
     }
 
@@ -57,6 +67,7 @@ public class CleaningObjectController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddCleaningObject([FromBody] CleaningObjectRequest model)
     {
+        // add with mapping
         var CleaningObject = new CleaningObjectResponse() { Id = 42 };
         return Created($"{this.GetRequestFullPath()}/{CleaningObject.Id}", CleaningObject.Id);
     }
@@ -68,6 +79,7 @@ public class CleaningObjectController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteCleaningObject(int id)
     {
+        _cleaningObjectsRepository.DeleteCleaningObject(id);
         return NoContent();
     }
 }

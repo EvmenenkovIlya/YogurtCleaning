@@ -11,11 +11,11 @@ namespace YogurtCleaning.Controllers;
 [ApiController]
 [Authorize]
 [Route("[controller]")]
-public class CleanerController : ControllerBase
+public class CleanersController : ControllerBase
 {
     private readonly ICleanersRepository _cleanersRepository;
 
-    public CleanerController(ICleanersRepository cleanersRepository)
+    public CleanersController(ICleanersRepository cleanersRepository)
     {
         _cleanersRepository = cleanersRepository;
     }
@@ -28,7 +28,15 @@ public class CleanerController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<CleanerResponse> GetCleaner(int id)
     {
-        return Ok(new CleanerResponse() { Id = id });
+        var cleaner = _cleanersRepository.GetCleaner(id);
+        if (cleaner == null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return Ok(cleaner);
+        }
     }
 
     [AuthorizeRoles]
@@ -38,7 +46,7 @@ public class CleanerController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CleanerResponse>> GetAllCleaners()
     {
-        return Ok(new List<CleanerResponse>());
+        return Ok(_cleanersRepository.GetAllCleaners());
     }
 
     [AuthorizeRoles(Role.Cleaner)]
@@ -68,6 +76,7 @@ public class CleanerController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteCleaner(int id)
     {
+        _cleanersRepository.DeleteCleaner(id);
         return NoContent();
     }
 
@@ -78,16 +87,6 @@ public class CleanerController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CommentResponse>> GetAllCommentsByCleaner (int id)
     {
-        return Ok(new List<CommentResponse>()); ;
-    }
-
-    [AuthorizeRoles(Role.Cleaner)]
-    [HttpGet("{id}/comments/{commentId}")]
-    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<CommentResponse> GetComment(int id, int commentId)
-    {
-        return Ok(new CommentResponse());
+        return Ok(_cleanersRepository.GetAllCommentsByCleaner(id)); ;
     }
 }

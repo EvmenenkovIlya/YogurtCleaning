@@ -43,8 +43,8 @@ public class CleanersRepository : ICleanersRepository
 
     public void DeleteCleaner(int cleanerId)
     {
-        var client = GetCleaner(cleanerId);
-        client.IsDeleted = true;
+        var cleaner = GetCleaner(cleanerId);
+        cleaner.IsDeleted = true;
         _context.SaveChanges();
     }
 

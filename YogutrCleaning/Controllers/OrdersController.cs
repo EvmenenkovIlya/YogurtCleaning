@@ -55,7 +55,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateOrder([FromBody] OrderRequest order)
     {
-        //_ordersRepository.UpdateOrder(order);
+        // update with mapping
         return NoContent();
     }
 
@@ -67,7 +67,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddOrder(OrderRequest order)
     {
-       // _ordersRepository.CreateOrder(order);
+        //  update with mapping
         var orderCreated = new OrderResponse() { Id = 5 };
         return Created($"{this.GetRequestFullPath()}/{orderCreated.Id}", orderCreated.Id);
     }
@@ -91,7 +91,7 @@ public class OrdersController : ControllerBase
     public ActionResult<List<ServiceResponse>> GetServices(int orderId)
     {
 
-        return Ok(new List<ServiceResponse>());
+        return Ok(_ordersRepository.GetServices(orderId));
     }
 
     [AuthorizeRoles]
@@ -102,6 +102,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateOrderStatus(int orderId, int statusEnam)
     {
+        _ordersRepository.UpdateOrderStatus(orderId, statusEnam);
         return NoContent();
     }
 
@@ -112,7 +113,8 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<CleaningObjectResponse> GetCleaningObject(int orderId, int CleaningObjectId)
-    {
+    {   
+        var cleaningObject = _ordersRepository.GetCleaningObject(orderId, CleaningObjectId);
         return Ok(new CleaningObjectResponse());
     }
 }
