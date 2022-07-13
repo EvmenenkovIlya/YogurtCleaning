@@ -5,10 +5,10 @@ using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaningDataLayerTests;
 
-public class ServiceRepositoryTests
+public class ServicesRepositoryTests
 {
     private readonly DbContextOptions<YogurtCleaningContext> _dbContextOptions;
-    public ServiceRepositoryTests()
+    public ServicesRepositoryTests()
     {
         _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
@@ -108,4 +108,38 @@ public class ServiceRepositoryTests
         //then 
         Assert.False(result.Contains(service));
     }
+
+    //[Fact]
+    //public void UpdateService_WhenServiceUpdated_ThenPropertiesValuesChandged()
+    //{
+    //    // given
+    //    var context = new YogurtCleaningContext(_dbContextOptions);
+    //    var sut = new ServicesRepository(context);
+    //    var service = new Service
+    //    {
+    //        Name = "qwe",
+    //        Price = 1000,
+    //        Unit = "Unit",
+    //        IsDeleted = true
+    //    };
+
+    //    context.Services.Add(service);
+    //    context.SaveChanges();
+
+    //    var updService = new Service
+    //    {
+    //        Name = "qwe",
+    //        Price = 5000,
+    //        Unit = "Unit",
+    //        IsDeleted = true
+    //    };
+
+    //    // when
+
+    //    sut.UpdateService(updService, service.Id);
+    //    context.SaveChanges();
+
+    //    // then
+    //    Assert.Equal(updService.Price, service.Price);
+    //}
 }

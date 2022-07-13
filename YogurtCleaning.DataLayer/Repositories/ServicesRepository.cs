@@ -34,7 +34,7 @@ public class ServicesRepository : IServicesRepository
 
     public Service GetService(int id) => _context.Services.FirstOrDefault(s => s.Id == id && !s.IsDeleted);
 
-    public void UpdateService(Service service)
+    public void UpdateService(Service service, int id)
     {
         _context.Services.Update(service);
         _context.SaveChanges();

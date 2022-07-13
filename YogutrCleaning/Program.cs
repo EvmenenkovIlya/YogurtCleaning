@@ -56,6 +56,7 @@ builder.Services.AddDbContext<YogurtCleaningContext>(o =>
 
 //builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
+builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
 
 var app = builder.Build();
 

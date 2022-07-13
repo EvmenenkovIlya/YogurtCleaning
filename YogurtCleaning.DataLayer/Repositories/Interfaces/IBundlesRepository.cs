@@ -7,11 +7,11 @@ using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories.Interfaces;
 
-public interface IServicesRepository
+public interface IBundlesRepository
 {
-    Service GetService(int id);
-    List<Service> GetAllServices();
-    void UpdateService(Service service, int id);
-    int AddService(Service service);
-    void DeleteService(int id);
+    Bundle GetBundle(int id);
+    List<Bundle> GetAllBundles();
+    void UpdateBundle(Bundle bundle, int id);
+    int AddBundle(Bundle bundle);
+    void DeleteBundle(int id);
 }
