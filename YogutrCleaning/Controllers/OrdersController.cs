@@ -1,5 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
@@ -15,10 +18,13 @@ namespace YogurtCleaning.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly IOrdersRepository _ordersRepository;
-
-    public OrdersController(IOrdersRepository ordersRepository)
+    private readonly IMapper _mapper;
+    private readonly IOrdersService _ordersService;
+    public OrdersController(IOrdersRepository ordersRepository, IMapper mapper, IOrdersService ordersService)
     {
         _ordersRepository = ordersRepository;
+        _mapper = mapper;
+        _ordersService = ordersService;
     }
 
     [AuthorizeRoles(Role.Client, Role.Cleaner)]
@@ -53,9 +59,9 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateOrder([FromBody] OrderRequest order)
+    public ActionResult UpdateOrder([FromBody] OrderUpdateRequest order, int orderId)
     {
-        // update with mapping
+        _ordersService.UpdateOrder(_mapper.Map<Order>(order), orderId);
         return NoContent();
     }
 
@@ -67,9 +73,8 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddOrder(OrderRequest order)
     {
-        //  update with mapping
-        var orderCreated = new OrderResponse() { Id = 5 };
-        return Created($"{this.GetRequestFullPath()}/{orderCreated.Id}", orderCreated.Id);
+        int id = _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
+        return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
     [AuthorizeRoles]

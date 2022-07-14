@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
@@ -14,10 +17,13 @@ namespace YogurtCleaning.Controllers;
 public class CleanersController : ControllerBase
 {
     private readonly ICleanersRepository _cleanersRepository;
-
-    public CleanersController(ICleanersRepository cleanersRepository)
+    private readonly IMapper _mapper;
+    private readonly ICleanersService _cleanersService;
+    public CleanersController(ICleanersRepository cleanersRepository, IMapper mapper, ICleanersService cleanersService)
     {
         _cleanersRepository = cleanersRepository;
+        _mapper = mapper;
+        _cleanersService = cleanersService;
     }
 
     [AuthorizeRoles(Role.Cleaner)]
@@ -56,6 +62,7 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateCleaner(int id, [FromBody] CleanerUpdateRequest model)
     {
+        _cleanersService.UpdateCleaner(_mapper.Map<Cleaner>(model), id);
         return NoContent();
     }
 
@@ -65,8 +72,8 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddCleaner([FromBody] CleanerRegisterRequest model)
     {
-        var CleanerCreated = new CleanerResponse() { Id = 42 };
-        return Created($"{this.GetRequestFullPath()}/{CleanerCreated.Id}", CleanerCreated.Id);
+        int id = _cleanersRepository.CreateCleaner(_mapper.Map<Cleaner>(model));
+        return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
     [AuthorizeRoles(Role.Cleaner)]

@@ -38,18 +38,9 @@ public class OrdersRepository : IOrdersRepository
         }
     }
 
-    public void UpdateOrder(Order newProperty)
+    public void UpdateOrder(Order modelToUpdate)
     {
-        var order = GetOrder(newProperty.Id);
-
-        order.Status = newProperty.Status;
-        order.StartTime = newProperty.StartTime;
-        order.UpdateTime = newProperty.UpdateTime;
-        order.Bundles = newProperty.Bundles;
-        order.Services = newProperty.Services;
-        order.CleanersBand = newProperty.CleanersBand;
-    
-        _context.Orders.Update(order);
+        _context.Orders.Update(modelToUpdate);
         _context.SaveChanges();
     }
 

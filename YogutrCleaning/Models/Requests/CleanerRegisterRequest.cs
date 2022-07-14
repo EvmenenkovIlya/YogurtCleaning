@@ -27,7 +27,7 @@ namespace YogurtCleaning.Models
         public string Email { get; set; }
         [Required]
         public string Phone { get; set; }
-        public List<ServiceResponse> Services { get; set; }
+        public List<int> ServicesIds { get; set; }
         public List<DistrictEnum> Districts { get; set; }
     }
 }
