@@ -1,12 +1,22 @@
-﻿namespace YogurtCleaning.Models
+﻿using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.Infrastructure;
+
+namespace YogurtCleaning.Models
 {
     public class CleaningObjectUpdateRequest
     {
-        public int NumberOfRooms { get; set; }
-        public int NumberOfBathrooms { get; set; }
-        public int Square { get; set; }
-        public int NumberOfWindows { get; set; }
-        public int NumberOfBalconies { get; set; }
-        public string Address { get; set; }
+        [Required(ErrorMessage = ApiErrorMessages.NumberOfRoomsIsRequred)]
+        public int? NumberOfRooms { get; set; }
+        [Required(ErrorMessage = ApiErrorMessages.NumberOfBathroomsIsRequred)]
+        public int? NumberOfBathrooms { get; set; }
+        [Required(ErrorMessage = ApiErrorMessages.SquareIsRequred)]
+        public int? Square { get; set; }
+        [Required(ErrorMessage = ApiErrorMessages.NumberOfWindowsIsRequred)]
+        public int? NumberOfWindows { get; set; }
+        [Required(ErrorMessage = ApiErrorMessages.NumberOfBalconiesIsRequred)]
+        public int? NumberOfBalconies { get; set; }
+        [Required(ErrorMessage = ApiErrorMessages.AddressIsRequired)]
+        [MaxLength(100, ErrorMessage = ApiErrorMessages.AddressMaxLength)]
+        public string? Address { get; set; }
     }
 }

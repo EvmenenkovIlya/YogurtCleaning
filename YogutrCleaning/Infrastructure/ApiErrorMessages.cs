@@ -27,8 +27,14 @@ public static class ApiErrorMessages
     public const string PriceIsRequired = "Price was not entered";
     public const string MeasureIsRequired = "Measure was not entered";
     public const string ServicesIsRequired = "Services was not entered";
-    //public const string
-    //public const string
+    public const string AddressMaxLength = "Address max Length is 256";
+    public const string AddressIsRequired = "Address was not entered";
+    public const string ClientIdIsRequred = "Client's Id was not entered";
+    public const string NumberOfRoomsIsRequred = "Client's Id was not entered";
+    public const string NumberOfBathroomsIsRequred = "Number of bathrooms was not entered";
+    public const string SquareIsRequred = "Square was not entered";
+    public const string NumberOfWindowsIsRequred = "Number of windows was not entered";
+    public const string NumberOfBalconiesIsRequred = "Number of balconies was not entered";
     //public const string
     //public const string
     //public const string
