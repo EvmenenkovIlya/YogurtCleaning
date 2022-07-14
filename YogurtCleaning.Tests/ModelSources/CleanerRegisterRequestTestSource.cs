@@ -77,14 +77,6 @@ public class CleanerRegisterRequestTestSource : IEnumerable
         };
 
         model = GetCleanerRegisterRequestModel();
-        model.BirthDate = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.BirthDateIsRequired
-        };
-
-        model = GetCleanerRegisterRequestModel();
         model.Name = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {

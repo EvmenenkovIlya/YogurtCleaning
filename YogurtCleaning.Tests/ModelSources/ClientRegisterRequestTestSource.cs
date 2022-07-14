@@ -72,14 +72,6 @@ public class ClientRegisterRequestTestSource : IEnumerable
         };
 
         model = GetClientRegisterRequestModel();
-        model.BirthDate = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.BirthDateIsRequired
-        };
-
-        model = GetClientRegisterRequestModel();
         model.Name = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {

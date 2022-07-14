@@ -44,14 +44,6 @@ public class ClientUpdateRequestTestSource : IEnumerable
         };
 
         model = GetClientUpdateRequestModel();
-        model.BirthDate = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.BirthDateIsRequired
-        };
-
-        model = GetClientUpdateRequestModel();
         model.Name = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {

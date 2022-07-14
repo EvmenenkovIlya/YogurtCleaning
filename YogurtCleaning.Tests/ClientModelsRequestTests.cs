@@ -45,7 +45,6 @@ public class ClientModelsRequestTests
         List<string> expectedMessages = new List<string>() {
             ApiErrorMessages.NameIsRequired, 
             ApiErrorMessages.LastNameIsRequired,
-            ApiErrorMessages.BirthDateIsRequired,
             ApiErrorMessages.PasswordIsRequired,
             ApiErrorMessages.ConfirmPasswordIsRequired,
             ApiErrorMessages.EmailIsRequired,
@@ -72,8 +71,7 @@ public class ClientModelsRequestTests
         ClientUpdateRequest client = new ClientUpdateRequest();
         List<string> expectedMessages = new List<string>() {
             ApiErrorMessages.NameIsRequired,
-            ApiErrorMessages.LastNameIsRequired,
-            ApiErrorMessages.BirthDateIsRequired,           
+            ApiErrorMessages.LastNameIsRequired,        
             ApiErrorMessages.PhoneIsRequired
         };
         var validationResults = new List<ValidationResult>();

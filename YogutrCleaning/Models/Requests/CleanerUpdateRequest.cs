@@ -15,7 +15,7 @@ public class CleanerUpdateRequest
     public string LastName { get; set; }
 
     [Required(ErrorMessage = ApiErrorMessages.BirthDateIsRequired)]
-    public DateTime? BirthDate { get; set; }
+    public DateTime BirthDate { get; set; }
 
     [Required(ErrorMessage = ApiErrorMessages.PhoneIsRequired)]
     [MaxLength(15, ErrorMessage = ApiErrorMessages.PhoneMaxLength)]

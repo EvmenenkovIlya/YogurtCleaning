@@ -53,12 +53,12 @@ public class BundleRequestTestSource : IEnumerable
             ApiErrorMessages.MeasureIsRequired
         };
 
-        model = GetBundleRequestModel();
-        model.Services = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.ServicesIsRequired
-        };
+        //model = GetBundleRequestModel();
+        //model.Services = null;
+        //yield return new object[]
+        //{
+        //    model,
+        //    ApiErrorMessages.ServicesIsRequired
+        //};
     }
 }

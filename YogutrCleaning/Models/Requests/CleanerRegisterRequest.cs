@@ -15,7 +15,7 @@ public class CleanerRegisterRequest
     public string LastName { get; set; }
 
     [Required(ErrorMessage = ApiErrorMessages.BirthDateIsRequired)]
-    public DateTime? BirthDate { get; set; }
+    public DateTime BirthDate { get; set; }
 
     [Required(ErrorMessage = ApiErrorMessages.PasswordIsRequired)]
     [MinLength(8, ErrorMessage = ApiErrorMessages.PasswordMinLength)]

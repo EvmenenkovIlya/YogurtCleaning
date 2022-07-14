@@ -47,14 +47,6 @@ public class CleanerUpdateRequestTestSource : IEnumerable
         };
 
         model = GetCleanerUpdateRequestModel();
-        model.BirthDate = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.BirthDateIsRequired
-        };
-
-        model = GetCleanerUpdateRequestModel();
         model.Name = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
