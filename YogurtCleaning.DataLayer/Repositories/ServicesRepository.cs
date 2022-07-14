@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories.Interfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
