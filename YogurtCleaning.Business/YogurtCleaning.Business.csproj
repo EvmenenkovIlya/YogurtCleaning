@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\YogurtCleaning.DataLayer\YogurtCleaning.DataLayer.csproj" />
+  </ItemGroup>
+
 </Project>

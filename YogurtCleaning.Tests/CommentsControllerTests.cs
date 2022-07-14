@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
-using YogurtCleaning.Tests.ControllerSources;
+using YogurtCleaning.Tests.ModelSources;
 
 namespace YogurtCleaning.Tests;
 
