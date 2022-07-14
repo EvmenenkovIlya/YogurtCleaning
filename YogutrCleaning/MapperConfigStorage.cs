@@ -43,5 +43,8 @@ public class MapperConfigStorage : Profile
 		CreateMap<CleanerUpdateRequest, Cleaner>();
 		//.ForMember(o => o.Services, opt => opt.MapFrom();
 		CreateMap<Cleaner, CleanerResponse>();
+
+		CreateMap<ServiceRequest, Service>();
+		CreateMap<Service, ServiceResponse>();
 	}
 }
