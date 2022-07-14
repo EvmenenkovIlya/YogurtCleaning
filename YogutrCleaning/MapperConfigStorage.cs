@@ -7,44 +7,66 @@ namespace YogurtCleaning.API;
 
 public class MapperConfigStorage : Profile
 {
-    private readonly IClientsRepository _clientsRepository;
-	private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
-	private readonly ICleanersRepository _cleanersRepository;
 
-    public MapperConfigStorage(IClientsRepository clientsRepository, ICleaningObjectsRepository cleaningObjectsRepository, ICleanersRepository cleanersRepository)
+    public MapperConfigStorage()
 	{
-		_clientsRepository = clientsRepository;
-		_cleaningObjectsRepository = cleaningObjectsRepository;
-		_cleanersRepository = cleanersRepository;
 
 		CreateMap<ClientRegisterRequest, Client>();
 		CreateMap<ClientUpdateRequest, Client>();
 		CreateMap<Client, ClientResponse>();
 
 		CreateMap<CleaningObjectRequest, CleaningObject>()
-			.ForMember(o => o.Client, opt => opt.MapFrom(src => _clientsRepository.GetClient(src.ClientId)));
+			.ForMember(o => o.Client, opt => opt.MapFrom(src => new Client() { Id = src.ClientId }));
 		CreateMap<CleaningObjectUpdateRequest, CleaningObject>();
 		CreateMap<CleaningObject, CleaningObjectResponse>();
 
-		// for orders neded to add methods from services and bundles repos
 		CreateMap<Order, OrderResponse>();
 		CreateMap<OrderUpdateRequest, Order>()
-			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => _cleanersRepository.GetAllCleanersByListIds(src.CleanersBandIds)));
-		//.ForMember(o => o.Bundles, opt => opt.MapFrom()
-		//.ForMember(o => o.Services, opt => opt.MapFrom();
+			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => GetCleanersByListIds(src.CleanersBandIds)))
+		.ForMember(o => o.Bundles, opt => opt.MapFrom(src => GetBundlesByListIds(src.BundlesIds)))
+		.ForMember(o => o.Bundles, opt => opt.MapFrom(src => GetServicesByListIds(src.ServicesIds)));
 		CreateMap<OrderRequest, Order>()
-			.ForMember(o => o.CleaningObject, opt => opt.MapFrom(src => _cleaningObjectsRepository.GetCleaningObject(src.CleaningObjectId)));
-		//.ForMember(o => o.Bundles, opt => opt.MapFrom()
-		//.ForMember(o => o.Services, opt => opt.MapFrom();
+			.ForMember(o => o.CleaningObject, opt => opt.MapFrom(src => new CleaningObject() { Id = src.CleaningObjectId }))
+		.ForMember(o => o.Bundles, opt => opt.MapFrom(src => GetBundlesByListIds(src.BundlesIds)))
+		.ForMember(o => o.Services, opt => opt.MapFrom(src => GetServicesByListIds(src.ServicesIds)));
 
-		// for Cleaners need to add methods from services repos
-		CreateMap<CleanerRegisterRequest, Cleaner>();
-		//.ForMember(o => o.Services, opt => opt.MapFrom();
-		CreateMap<CleanerUpdateRequest, Cleaner>();
-		//.ForMember(o => o.Services, opt => opt.MapFrom();
+		CreateMap<CleanerRegisterRequest, Cleaner>()
+		.ForMember(o => o.Services, opt => opt.MapFrom(src => GetServicesByListIds(src.ServicesIds)));
+		CreateMap<CleanerUpdateRequest, Cleaner>()
+		.ForMember(o => o.Services, opt => opt.MapFrom(src => GetServicesByListIds(src.ServicesIds)));
 		CreateMap<Cleaner, CleanerResponse>();
 
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
+	}
+	
+	private List<Cleaner> GetCleanersByListIds(List<int> servicesIds)
+    {
+		List<Cleaner> services = new List<Cleaner>();
+		foreach (int serviceId in servicesIds)
+        {
+			services.Add(new Cleaner() { Id = serviceId });
+        }
+		return services;
+    }
+
+	private List<Bundle> GetBundlesByListIds(List<int> bundlesIds)
+	{
+		List<Bundle> bundles = new List<Bundle>();
+		foreach (int bundleId in bundlesIds)
+		{
+			bundles.Add(new Bundle() { Id = bundleId });
+		}
+		return bundles;
+	}
+
+	private List<Service> GetServicesByListIds(List<int> servicesIds)
+	{
+		List<Service> services = new List<Service>();
+		foreach (int serviceId in servicesIds)
+		{
+			services.Add(new Service() { Id = serviceId });
+		}
+		return services;
 	}
 }

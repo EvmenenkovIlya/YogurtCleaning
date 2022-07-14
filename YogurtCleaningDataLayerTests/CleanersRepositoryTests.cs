@@ -216,65 +216,6 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void GetAllCleaners_WhenListCleanersIdsPassed_ThenCleanersGet()
-    {
-        var context = new YogurtCleaningContext(_dbContextOptions);
-        var sut = new CleanersRepository(context);
-        var cleaners = new List<Cleaner>()
-        {
-            new Cleaner()
-            {
-                Id = 8,
-                FirstName = "Adam",
-                LastName = "Smith",
-                Email = "ccc@gmail.c",
-                Password = "1234qwerty",
-                Passport = "0000654321",
-                Phone = "89998887766",
-                IsDeleted = false
-            },
-            new Cleaner()
-            {
-                Id = 9,
-                FirstName = "Madara",
-                LastName = "Smith",
-                Email = "ychiha@gmail.japan",
-                Password = "1234qwerty",
-                Passport = "0000654321",
-                Phone = "899988873456",
-                IsDeleted = false 
-            },
-            new Cleaner()
-            {
-                Id = 10,
-                FirstName = "Adam1",
-                LastName = "Smith",
-                Email = "ccc@gmail.c",
-                Password = "1234qwerty",
-                Passport = "0000654321",
-                Phone = "89998887766",
-                IsDeleted = false
-            }
-        };
-
-        context.Cleaners.AddRange(cleaners);
-        context.SaveChanges();
-
-        // when
-        var result = sut.GetAllCleanersByListIds(new List<int>() { 8, 10});
-
-        //then
-        Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Cleaner>));
-        Assert.True(result.Count == 2);
-        Assert.True(result[0].IsDeleted == false);
-        Assert.True(result[1].IsDeleted == false);
-        Assert.Null(result.Find(x => x.FirstName == "Madara"));
-        Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
-        context.Database.EnsureDeleted();
-    }
-
-    [Fact]
     public void UpdateCleaner_WhenCleanerUpdated_ThenCleanerDoesNotHaveOldProperty()
     {
         // given
