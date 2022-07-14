@@ -39,5 +39,5 @@ public class ClientsRepository : IClientsRepository
     }
 
     public List<Comment> GetAllCommentsByClient(int clientId) => 
-        _context.Comments.AsNoTracking().Where(c => c.Client != null && c.Client.Id == clientId).ToList();
+        _context.Comments.Where(c => c.Client != null && c.Client.Id == clientId).ToList();
 }
