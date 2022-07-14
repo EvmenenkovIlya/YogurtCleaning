@@ -10,7 +10,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
     {
         return new ClientUpdateRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Phone = "85559997264",
             BirthDate = DateTime.Today
@@ -20,7 +20,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
     public IEnumerator GetEnumerator()
     {
         ClientUpdateRequest model = GetClientUpdateRequestModel();
-        model.Name = null;
+        model.FirstName = null;
         yield return new object[]
         {
             model,
@@ -52,7 +52,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
         };
 
         model = GetClientUpdateRequestModel();
-        model.Name = "This String has more than fifty chars. i promise123451";
+        model.FirstName = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
             model,

@@ -6,7 +6,7 @@ public class ClientRegisterRequest
 {
     [Required(ErrorMessage = ApiErrorMessages.NameIsRequired)]
     [MaxLength(50, ErrorMessage = ApiErrorMessages.NameMaxLength)]
-    public string Name { get; set; }
+    public string FirstName { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.LastNameIsRequired)]
     [MaxLength(50, ErrorMessage = ApiErrorMessages.LastNameMaxLength)]
     public string LastName { get; set; }
