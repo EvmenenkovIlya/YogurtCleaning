@@ -17,16 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YogutrCleaning\YogurtCleaning.csproj" />
-  </ItemGroup>
-	
-<ItemGroup>
-    <Folder Include="ControllerSources\" />
-    <Folder Include="ControllerSource\" />
-</ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ControllerSource\" />
+    <ProjectReference Include="..\YogutrCleaning\YogurtCleaning.API.csproj" />
   </ItemGroup>
 
 </Project>
