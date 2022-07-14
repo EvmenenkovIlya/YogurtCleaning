@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.Business", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer", "YogurtCleaning.DataLayer\YogurtCleaning.DataLayer.csproj", "{8DEC3D58-A3E0-4803-AC79-D54698547038}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer.Tests", "YogurtCleaningDataLayerTests\YogurtCleaning.DataLayer.Tests.csproj", "{8B74B0C1-C01D-424A-A6CD-AFE7FA8A92FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer.Tests", "YogurtCleaningDataLayerTests\YogurtCleaning.DataLayer.Tests.csproj", "{AD1995D2-6131-4B7D-AFB4-49443FD3063F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YogurtCleaning.Business.Tests", "YogurtCleaning.Business.Tests\YogurtCleaning.Business.Tests.csproj", "{57F54D12-AB68-4391-8164-25935B0207D9}"
 	ProjectSection(ProjectDependencies) = postProject
-		{8DEC3D58-A3E0-4803-AC79-D54698547038} = {8DEC3D58-A3E0-4803-AC79-D54698547038}
+		{6B7B336C-43B6-4F67-999F-E95F439E4670} = {6B7B336C-43B6-4F67-999F-E95F439E4670}
 	EndProjectSection
 EndProject
 Global
@@ -38,10 +40,14 @@ Global
 		{8DEC3D58-A3E0-4803-AC79-D54698547038}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DEC3D58-A3E0-4803-AC79-D54698547038}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DEC3D58-A3E0-4803-AC79-D54698547038}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B74B0C1-C01D-424A-A6CD-AFE7FA8A92FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B74B0C1-C01D-424A-A6CD-AFE7FA8A92FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B74B0C1-C01D-424A-A6CD-AFE7FA8A92FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B74B0C1-C01D-424A-A6CD-AFE7FA8A92FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
