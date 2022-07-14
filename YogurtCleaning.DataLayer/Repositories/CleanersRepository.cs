@@ -28,8 +28,7 @@ public class CleanersRepository : ICleanersRepository
 
     public void UpdateCleaner(Cleaner modelToUdate)
     {
-        
-
+        _context.Update(modelToUdate);
         _context.SaveChanges();
     }
 
@@ -46,17 +45,5 @@ public class CleanersRepository : ICleanersRepository
         return comments;
     }
 
-    public List<Cleaner> GetAllCleanersByListIds(List<int> cleanersIds)
-    {
-        List<Cleaner> result = new List<Cleaner>();
-        foreach (var cleanerId in cleanersIds)
-        {
-            Cleaner cleaner = GetCleaner(cleanerId);
-            if (cleaner != null)
-            {
-                result.Add(cleaner);
-            }
-        }
-        return result;
-    }
+    public List<Cleaner> GetAllCleanersByListIds(List<int> cleanersIds) => GetAllCleaners().Where(o => cleanersIds.Contains(o.Id)).ToList();           
 }
