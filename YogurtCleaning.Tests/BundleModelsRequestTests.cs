@@ -29,7 +29,8 @@ public class BundleModelsRequestTests
         //given
         BundleRequest bundle = new BundleRequest();
         List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.NameIsRequired, 
+            ApiErrorMessages.NameIsRequired,
+            ApiErrorMessages.TypeIsRequired,
             ApiErrorMessages.PriceIsRequired,
             ApiErrorMessages.MeasureIsRequired,
             ApiErrorMessages.ServicesIsRequired
@@ -55,6 +56,7 @@ public class BundleModelsRequestTests
         BundleRequest bundle = new BundleRequest()
         {
             Name = "Kitchen regular cleaning",
+            Type = TypeEnum.Regular,
             Price = 1000,
             Measure = Measure.Room,
             Services = new List<ServiceResponse>()

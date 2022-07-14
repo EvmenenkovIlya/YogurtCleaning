@@ -31,7 +31,7 @@ public class BundlesControllerTests
         _sut = new BundlesController(_logger.Object, _bundlesRepository.Object, _bundlesService.Object, _mapper.Object);
     }
 
-    [Test]
+    //[Test]
     //public void AddBundle_WhenValidRequestPassed_ThenCreatedResultRecived()
     //{
     //    // given
