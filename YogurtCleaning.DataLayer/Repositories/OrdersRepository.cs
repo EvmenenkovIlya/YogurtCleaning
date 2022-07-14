@@ -15,7 +15,7 @@ public class OrdersRepository : IOrdersRepository
 
     public Order? GetOrder(int orderId) => _context.Orders.FirstOrDefault(o => o.Id == orderId);
 
-    public List<Order> GetOrders() => _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToList();
+    public List<Order> GetAllOrders() => _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToList();
 
     public int CreateOrder(Order order)
     {

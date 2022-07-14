@@ -35,6 +35,7 @@ public class ClientsRepositoryTests
 
         //then
         Assert.True(actual > 0);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -63,11 +64,13 @@ public class ClientsRepositoryTests
         //then
         var actual = sut.GetClient(client.Id);
         Assert.True(actual.IsDeleted);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
     public void GetAllClients_WhenClientsExist_ThenGetClients()
     {
+        // given
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new ClientsRepository(context);
         var clients = new List<Client>()
@@ -111,11 +114,13 @@ public class ClientsRepositoryTests
         Assert.NotNull(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
         Assert.Null(result.Find(x => x.FirstName == "Ilya"));
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
     public void GetAllClients_WhenClientIsDeleted_ThenClientDoesNotGet()
     {
+        // given
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new ClientsRepository(context);
         var clients = new List<Client>()
@@ -158,11 +163,13 @@ public class ClientsRepositoryTests
         Assert.True(result[0].IsDeleted == false);
         Assert.Null(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
     public void GetAllCommentsByClient_WhenCommetsGet_ThenCommentsGet()
     {
+        // given
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new ClientsRepository(context);
         var client = new Client
@@ -203,5 +210,53 @@ public class ClientsRepositoryTests
         Assert.True(result[1].IsDeleted == false);
         Assert.NotNull(result.Find(x => x.Rating == 5));
         Assert.NotNull(result.Find(x => x.Order.Id == 1));
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public void UpdateClient_WhenClientUpdated_ThenClientDoesNotHaveOldProperty()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new ClientsRepository(context);
+        var client = new Client
+        {
+            Id = 7,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Phone = "89998887766",
+            IsDeleted = false,
+            Comments = new List<Comment>()
+            {
+                new Comment()
+                {
+                    Rating = 1,
+                    Order = new() { Id = 1 },
+                    IsDeleted = true
+                },
+                new Comment()
+                {
+                    Rating = 5,
+                    Order = new() { Id = 2 },
+                    IsDeleted = false
+                }
+            }
+        };
+        context.Clients.Add(client);
+        context.SaveChanges();
+        client.FirstName = "Vasya";
+        client.LastName = "Pupkin";
+
+        //when
+        sut.UpdateClient(client);
+        var result = sut.GetClient(client.Id);
+
+        //then
+        Assert.False(result.FirstName == "Adam");
+        Assert.False(result.LastName == "Smith");
+        Assert.True(result.Email == "ccc@gmail.c");
+        context.Database.EnsureDeleted();
     }
 }

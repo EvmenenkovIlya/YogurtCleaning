@@ -30,7 +30,7 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
         _context.CleaningObjects.FirstOrDefault(o => o.Id == cleaningObjectId);
 
     public List<CleaningObject> GetAllCleaningObjects() => 
-        _context.CleaningObjects.AsNoTracking().Where(o => o.IsDeleted == false).ToList();
+        _context.CleaningObjects.Where(o => o.IsDeleted == false).AsNoTracking().ToList();
 
     public void UpdateCleaningObject(CleaningObject modelToUpdate)
     {       

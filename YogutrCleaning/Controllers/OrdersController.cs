@@ -50,7 +50,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<OrderResponse>> GetAllOrders()
     {
-        var result = _ordersRepository.GetOrders();
+        var result = _ordersRepository.GetAllOrders();
         return Ok(result);
     }
 

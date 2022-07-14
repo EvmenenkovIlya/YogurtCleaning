@@ -46,6 +46,7 @@ public class CleaningObjectsRepositoryTests
 
         //then
         Assert.True(actual > 0);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -85,6 +86,7 @@ public class CleaningObjectsRepositoryTests
         //then
         var actual = sut.GetCleaningObject(cleaningObject.Id);
         Assert.True(actual.IsDeleted);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -148,39 +150,54 @@ public class CleaningObjectsRepositoryTests
         Assert.NotNull(result);
         Assert.True(result.GetType() == typeof(List<CleaningObject>));
         Assert.True(result[0].IsDeleted == false);
-        Assert.Null(result.Find(x => x.NumberOfBalconies == 0));
-        Assert.NotNull(result.Find(x => x.NumberOfRooms == 1000));
+        Assert.NotNull(result.Find(x => x.NumberOfBalconies == 0));
+        Assert.NotNull(result.Find(x => x.NumberOfRooms == 10));
+        Assert.Null(result.Find(x => x.NumberOfBalconies == 12));
+        Assert.Null(result.Find(x => x.NumberOfRooms == 1000));
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public void UpdateCleaningObject_WhenCleaningObjectUpdated_ThenCleaningObjectDoesNotHaveOldProperty()
+    {
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new CleaningObjectsRepository(context);
+        var oldCleaningObject = new CleaningObject()
+        {
+            Id = 5,
+            Client = new Client()
+            {
+                Id = 5,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Email = "ccc@gmail.c",
+                Password = "1234qwerty",
+                Phone = "89998887766",
+                IsDeleted = false
+            },
+            NumberOfRooms = 1000,
+            NumberOfBathrooms = 1,
+            Square = 1,
+            NumberOfWindows = 1,
+            NumberOfBalconies = 12,
+            Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+            IsDeleted = false
+        };        
+        context.CleaningObjects.Add(oldCleaningObject);
+        context.SaveChanges();
+        oldCleaningObject.Address = "г. Москва, ул. Льва Толстого, д. 19, кв. 8";
+        oldCleaningObject.NumberOfRooms = 10;
+        oldCleaningObject.NumberOfBathrooms = 10;
+
+        // when
+        sut.UpdateCleaningObject(oldCleaningObject);
+        var result = sut.GetCleaningObject(oldCleaningObject.Id);
+
+        //then
+        Assert.False(result.NumberOfBathrooms == 1);
+        Assert.False(result.NumberOfRooms == 1000);
+        Assert.True(result.Square == 1);
+        Assert.False(result.Address == "г. Санкт - Петербург, ул. Льва Толстого, д. 16, кв. 10");
+        context.Database.EnsureDeleted();
     }
 }
-
-//    [Fact]
-//    public void GetAllCleaningObjects_WhenCleaningObjectIsDeleted_ThenCleaningObjectDoesNotGet()
-//    {
-//        var context = new YogurtCleaningContext(_dbContextOptions);
-//        var sut = new CleaningObjectsRepository(context);
-//        var cleaningObject = new CleaningObject
-//        {
-//            Rating = 1,
-//            Client = new()
-//            {
-//                Id = 4,
-//                Email = "b@b.c",
-//                FirstName = "q",
-//                LastName = "w",
-//                Password = "qweqweqweqwe43",
-//                Phone = "19998887766"
-//            },
-//            Order = new() { Id = 4 },
-//            IsDeleted = true
-//        };
-
-//        context.CleaningObjects.Add(cleaningObject);
-//        context.SaveChanges();
-
-//        // when
-//        var result = sut.GetAllCleaningObjects();
-
-//        //then
-//        Assert.DoesNotContain(cleaningObject, result);
-//    }
-//}
