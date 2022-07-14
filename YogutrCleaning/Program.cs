@@ -6,7 +6,6 @@ using YogurtCleaning;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.DataLayer.Repositories.Interfaces;
 using YogurtCleaning.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +60,8 @@ builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<IBundlesService, BundlesService>();
+
 
 builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
 

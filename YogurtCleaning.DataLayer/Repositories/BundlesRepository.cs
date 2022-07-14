@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories.Interfaces;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -34,7 +33,7 @@ public class BundlesRepository : IBundlesRepository
 
     public Bundle GetBundle(int id) => _context.Bundles.FirstOrDefault(b => b.Id == id && !b.IsDeleted);
 
-    public void UpdateBundle(Bundle bundle, int id)
+    public void UpdateBundle(Bundle bundle)
     {
         _context.Bundles.Update(bundle);
         _context.SaveChanges();

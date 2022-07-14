@@ -10,6 +10,9 @@ public class MapperConfigStorage : Profile
 	{
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
+		CreateMap<BundleRequest, Bundle>();
+		CreateMap<Bundle, BundleResponse>();
+
 	}
 
 }
