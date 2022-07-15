@@ -83,6 +83,6 @@ public class BundlesController : ControllerBase
     public ActionResult DeleteBundle(int id)
     {
         _bundlesRepository.DeleteBundle(id);
-        return Ok();
+        return NoContent();
     }
 }
