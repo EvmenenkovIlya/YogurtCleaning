@@ -105,7 +105,7 @@ public class CleanerModelsRequestTests
             Passport = "0000123456",
             Schedule = Schedule.FullTime,
             BirthDate = DateTime.Today,
-            Services = new List<ServiceRequest>() { new ServiceRequest() { Name = "Clean window" } },
+            ServicesIds = new List<int>() { 1, 2 },
             Districts = new List<DistrictEnum>() { DistrictEnum.Vasileostrovskiy, DistrictEnum.Primorsky }
         };
         var validationResults = new List<ValidationResult>();
@@ -124,11 +124,11 @@ public class CleanerModelsRequestTests
         //given
         CleanerUpdateRequest cleaner = new CleanerUpdateRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Phone = "85559997264",
             BirthDate = DateTime.Today,
-            Services = new List<ServiceRequest>() { new ServiceRequest() { Name = "Clean window" } },
+            ServicesIds = new List<int>() { 1, 2 },
             Districts = new List<DistrictEnum>() { DistrictEnum.Vasileostrovskiy, DistrictEnum.Primorsky }
         };
         var validationResults = new List<ValidationResult>();
