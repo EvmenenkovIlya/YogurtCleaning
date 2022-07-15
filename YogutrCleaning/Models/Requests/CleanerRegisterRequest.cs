@@ -36,9 +36,6 @@ public class CleanerRegisterRequest
     [MaxLength(15, ErrorMessage = ApiErrorMessages.PhoneMaxLength)]
     public string Phone { get; set; }
 
-    public List<ServiceRequest> Services { get; set; }
-
-    public List<DistrictEnum> Districts { get; set; }
 
     [Required(ErrorMessage = ApiErrorMessages.PassportIsRequired)]
     [MinLength(10, ErrorMessage = ApiErrorMessages.PassportLength)]
@@ -47,4 +44,6 @@ public class CleanerRegisterRequest
 
     [Required(ErrorMessage = ApiErrorMessages.ScheduleIsRequired)]
     public Schedule Schedule { get; set; }
+        public List<int> ServicesIds { get; set; }
+        public List<DistrictEnum> Districts { get; set; }
 }
