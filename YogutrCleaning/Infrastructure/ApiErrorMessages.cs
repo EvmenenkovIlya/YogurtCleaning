@@ -26,12 +26,10 @@ public static class ApiErrorMessages
     public const string BundleNameMaxLenght = "Bundel's name max lenght is 100";
     public const string PriceIsRequired = "Price was not entered";
     public const string MeasureIsRequired = "Measure was not entered";
-    public const string ServicesIsRequired = "Services was not entered";
-    //public const string
-    //public const string
-    //public const string
-    //public const string
-    //public const string
+    public const string ScheduleIsRequired = "Shedule was not choosen";
+    public const string PassportIsRequired = "Passport was not enteres";
+    public const string PassportLength = "Passport length is 10";
+    public const string ServicesIsRequired = "Services were not chosen";
     //public const string
     //public const string
 }

@@ -1,5 +1,4 @@
-﻿
-using YogurtCleaning.DataLayer.Enums;
+﻿using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.DataLayer.Entities;
 
@@ -11,4 +10,5 @@ public class Bundle
     public Measure Measure { get; set; }
     public List<Service> Services { get; set; }
     public bool IsDeleted { get; set; }
+    public List<Order> Orders { get; set; }
 }
