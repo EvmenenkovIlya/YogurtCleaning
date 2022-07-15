@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
@@ -17,11 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YogutrCleaning\YogurtCleaning.csproj" />
+    <ProjectReference Include="..\YogutrCleaning\YogurtCleaning.API.csproj" />
   </ItemGroup>
-	
-<ItemGroup>
-    <Folder Include="ControllerSource\" />
-</ItemGroup>
 
 </Project>

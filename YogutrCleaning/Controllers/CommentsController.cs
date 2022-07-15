@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -14,10 +16,12 @@ namespace YogurtCleaning.Controllers;
 public class CommentsController : Controller
 {
     private readonly ILogger<CommentsController> _logger;
+    private readonly ICommentsRepository _commentsRepository;
 
-    public CommentsController(ILogger<CommentsController> logger)
+    public CommentsController(ILogger<CommentsController> logger, ICommentsRepository commentsRepository)
     {
         _logger = logger;
+        _commentsRepository = commentsRepository;
     }
 
     [AuthorizeRoles]
@@ -27,7 +31,8 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CommentResponse>> GetAllComments()
     {
-        return Ok(new List<CommentResponse>());
+        var result = _commentsRepository.GetAllComments();
+        return Ok(result);
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -39,6 +44,7 @@ public class CommentsController : Controller
     public ActionResult<int> AddCommentByClient([FromBody] CommentRequest comment)
     {
         int commentId = new CommentResponse().Id;
+        //var result = _commentsRepository.AddComment(comment);
         return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
     }
 
@@ -51,6 +57,7 @@ public class CommentsController : Controller
     public ActionResult<int> AddCommentByCleaner([FromBody] CommentRequest comment)
     {
         int commentId = new CommentResponse().Id;
+        //var result = _commentsRepository.AddComment(comment);
         return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
     }
 
@@ -62,6 +69,7 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult DeleteComment(int id)
     {
-        return Ok();
+        _commentsRepository.DeleteComment(id);
+        return NoContent();
     }
 }

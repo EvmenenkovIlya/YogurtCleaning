@@ -36,7 +36,8 @@ public class YogurtCleaningContext : DbContext
             entity.ToTable(nameof(Order));
             entity.HasKey(e => e.Id);
             entity.HasOne(e => e.CleaningObject).WithMany(c => c.Orders);
-            entity.HasMany(e => e.Services);
+            entity.HasMany(e => e.Services).WithMany(s => s.Orders);
+            entity.HasMany(e => e.Bundles).WithMany(b => b.Orders);
             entity.HasMany<Cleaner>(e => e.CleanersBand);
             entity.HasMany(e => e.Comments).WithOne(com => com.Order);
         });

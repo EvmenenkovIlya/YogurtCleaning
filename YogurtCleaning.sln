@@ -3,13 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning", "YogutrCleaning\YogurtCleaning.csproj", "{F4AE619B-F3E4-435F-93B0-2562590155B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.API", "YogutrCleaning\YogurtCleaning.API.csproj", "{F4AE619B-F3E4-435F-93B0-2562590155B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.Tests", "YogurtCleaning.Tests\YogurtCleaning.Tests.csproj", "{4B11DF4D-781C-4EFE-82FC-1E7E2A2B47E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.API.Tests", "YogurtCleaning.Tests\YogurtCleaning.API.Tests.csproj", "{4B11DF4D-781C-4EFE-82FC-1E7E2A2B47E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YogurtCleaning.Business", "YogurtCleaning.Business\YogurtCleaning.Business.csproj", "{6B7B336C-43B6-4F67-999F-E95F439E4670}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.Business", "YogurtCleaning.Business\YogurtCleaning.Business.csproj", "{6B7B336C-43B6-4F67-999F-E95F439E4670}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YogurtCleaning.DataLayer", "YogurtCleaning.DataLayer\YogurtCleaning.DataLayer.csproj", "{8DEC3D58-A3E0-4803-AC79-D54698547038}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer", "YogurtCleaning.DataLayer\YogurtCleaning.DataLayer.csproj", "{8DEC3D58-A3E0-4803-AC79-D54698547038}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YogurtCleaning.DataLayer.Tests", "YogurtCleaningDataLayerTests\YogurtCleaning.DataLayer.Tests.csproj", "{AD1995D2-6131-4B7D-AFB4-49443FD3063F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YogurtCleaning.Business.Tests", "YogurtCleaning.Business.Tests\YogurtCleaning.Business.Tests.csproj", "{57F54D12-AB68-4391-8164-25935B0207D9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B7B336C-43B6-4F67-999F-E95F439E4670} = {6B7B336C-43B6-4F67-999F-E95F439E4670}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +40,14 @@ Global
 		{8DEC3D58-A3E0-4803-AC79-D54698547038}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DEC3D58-A3E0-4803-AC79-D54698547038}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DEC3D58-A3E0-4803-AC79-D54698547038}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD1995D2-6131-4B7D-AFB4-49443FD3063F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57F54D12-AB68-4391-8164-25935B0207D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
