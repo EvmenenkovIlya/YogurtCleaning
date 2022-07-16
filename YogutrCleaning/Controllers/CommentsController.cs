@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
@@ -17,11 +21,15 @@ public class CommentsController : Controller
 {
     private readonly ILogger<CommentsController> _logger;
     private readonly ICommentsRepository _commentsRepository;
+    private readonly ICommentsService _commentsService;
+    private readonly IMapper _mapper;
 
-    public CommentsController(ILogger<CommentsController> logger, ICommentsRepository commentsRepository)
+    public CommentsController(ILogger<CommentsController> logger, ICommentsRepository commentsRepository, ICommentsService commentsService, IMapper mapper)
     {
         _logger = logger;
         _commentsRepository = commentsRepository;
+        _commentsService = commentsService;
+        _mapper = mapper;
     }
 
     [AuthorizeRoles]
@@ -43,9 +51,11 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddCommentByClient([FromBody] CommentRequest comment)
     {
-        int commentId = new CommentResponse().Id;
-        //var result = _commentsRepository.AddComment(comment);
-        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = int.TryParse(userIdClaim, out var id) ? id : 0;
+
+        var result = _commentsService.AddCommentByClient(_mapper.Map<Comment>(comment), id);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [AuthorizeRoles(Role.Cleaner)]
@@ -56,9 +66,11 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddCommentByCleaner([FromBody] CommentRequest comment)
     {
-        int commentId = new CommentResponse().Id;
-        //var result = _commentsRepository.AddComment(comment);
-        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = int.TryParse(userIdClaim, out var id) ? id : 0;
+
+        var result = _commentsService.AddCommentByCleaner(_mapper.Map<Comment>(comment), id);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [AuthorizeRoles]

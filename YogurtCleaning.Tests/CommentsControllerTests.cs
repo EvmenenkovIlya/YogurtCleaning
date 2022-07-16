@@ -31,7 +31,6 @@ public class CommentsControllerTests
         //given
         CommentRequest comment = new CommentRequest();
         List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.AuthorIdIsRequred,
             ApiErrorMessages.OrderIdIsRequred,
             ApiErrorMessages.RatingIsRequred
         };
@@ -56,7 +55,6 @@ public class CommentsControllerTests
         CommentRequest comment = new CommentRequest()
         {
             Summary = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempus suscipit tempus.",
-            AuthorId = 1,
             OrderId = 1,
             Rating = 5
         };

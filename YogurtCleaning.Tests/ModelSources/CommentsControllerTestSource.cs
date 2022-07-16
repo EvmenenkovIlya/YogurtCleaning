@@ -17,7 +17,6 @@ public class CommentsControllerTestSource : IEnumerable
         return new CommentRequest()
         {
             Summary = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempus suscipit tempus.",
-            AuthorId = 1,
             OrderId = 1,
             Rating = 5
         };
@@ -42,15 +41,7 @@ public class CommentsControllerTestSource : IEnumerable
         };
 
         model = GetCommentRequestModel();
-        model.AuthorId = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.AuthorIdIsRequred
-        };
-
-        model = GetCommentRequestModel();
-        model.OrderId = null;
+        model.OrderId = 0;
         yield return new object[]
         {
             model,

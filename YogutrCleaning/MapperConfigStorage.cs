@@ -38,6 +38,10 @@ public class MapperConfigStorage : Profile
 
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
+
+		CreateMap<CommentRequest, Comment>()
+			.ForMember(c => c.Order, opt => opt.MapFrom(src => GetOrderModelById(src.OrderId)));
+		CreateMap<Comment, CommentResponse>();
 	}
 	
 	private List<Cleaner> GetCleanersByListIds(List<int> servicesIds)
@@ -69,4 +73,10 @@ public class MapperConfigStorage : Profile
 		}
 		return services;
 	}
+
+	private Order GetOrderModelById(int id)
+    {
+		Order order = new Order();
+		return order;
+    }
 }
