@@ -9,6 +9,7 @@ public class Bundle
     public decimal Price { get; set; }
     public Measure Measure { get; set; }
     public List<Service> Services { get; set; }
+    public decimal Duration { get; set; } //in hours
     public bool IsDeleted { get; set; }
     public List<Order> Orders { get; set; }
 }

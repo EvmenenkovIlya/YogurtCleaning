@@ -23,6 +23,23 @@ public class ServicesService : IServicesService
         oldService.Name = service.Name;
         oldService.Price = service.Price;
         oldService.Unit = service.Unit;
+        oldService.Duration = service.Duration;
         _servicesRepository.UpdateService(oldService);
+    }
+
+    public List<Service> GetAdditionalServicesForBundle(Bundle bundle)
+    {
+        var result = new List<Service>();
+        var allServices = _servicesRepository.GetAllServices();
+        var bundleServices = bundle.Services;
+        foreach(var s in allServices)
+        {
+            foreach(var bs in bundleServices)
+            {
+                if (s.Id != bs.Id)
+                    result.Add(s);
+            }
+        }
+        return result;
     }
 }
