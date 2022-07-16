@@ -7,10 +7,9 @@ namespace YogurtCleaning.API;
 
 public class MapperConfigStorage : Profile
 {
-
-    public MapperConfigStorage()
+	private IOrdersRepository _ordersRepository;
+	public MapperConfigStorage()
 	{
-
 		CreateMap<ClientRegisterRequest, Client>();
 		CreateMap<ClientUpdateRequest, Client>();
 		CreateMap<Client, ClientResponse>();
@@ -76,7 +75,7 @@ public class MapperConfigStorage : Profile
 
 	private Order GetOrderModelById(int id)
     {
-		Order order = new Order();
+		Order order = _ordersRepository.GetOrder(id);
 		return order;
     }
 }
