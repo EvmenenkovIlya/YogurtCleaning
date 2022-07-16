@@ -54,7 +54,7 @@ public class ClientsControllerTests
         ClientResponse expectedClient = new ClientResponse
         {
             Id = 5,
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Phone = "+79994524757",
             BirthDate = DateTime.Now,

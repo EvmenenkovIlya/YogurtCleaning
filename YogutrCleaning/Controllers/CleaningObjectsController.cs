@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -89,4 +89,3 @@ public class CleaningObjectsController : ControllerBase
         return NoContent();
     }
 }
-

@@ -1,10 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -16,12 +17,12 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class ClientsController : ControllerBase
 {
-    private readonly IClientsRepository _clientsRepository;
     private readonly IMapper _mapper;
     private readonly IClientsService _clientsService;
-    public ClientsController(IClientsRepository clientsRepository, IMapper mapper, IClientsService clientsService)
+    public List<string>? Identities;
+
+    public ClientsController(IMapper mapper, IClientsService clientsService)
     {
-        _clientsRepository = clientsRepository;
         _mapper = mapper;
         _clientsService = clientsService;
     }   
@@ -34,15 +35,9 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<ClientResponse> GetClient(int id)
     {
-        var client = _clientsRepository.GetClient(id);
-        if (client == null)
-        {
-            return NotFound();
-        }
-        else
-        {
-            return Ok(_mapper.Map<ClientResponse>(client));
-        }
+        Identities = this.GetClaimsValue();              
+        var client = _clientsService.GetClient(id, Identities);
+        return Ok(_mapper.Map<ClientResponse>(client));
     }
 
     [AuthorizeRoles]
@@ -52,7 +47,9 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<ClientResponse>> GetAllClients()
     {
-        return Ok(_clientsRepository.GetAllClients());
+        Identities = this.GetClaimsValue();
+        var clients = _clientsService.GetAllClients(Identities);
+        return Ok(_mapper.Map<List<ClientResponse>>(clients));
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -72,7 +69,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
     {
-        var id = _clientsRepository.CreateClient(_mapper.Map<Client>(client));
+        int id = _clientsService.CreateClient(_mapper.Map<Client>(client));
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
@@ -83,7 +80,8 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteClient(int id)
     {
-        _clientsRepository.DeleteClient(id);
+        Identities = this.GetClaimsValue();
+        _clientsService.DeleteClient(id, Identities);
         return NoContent();
     }
 
@@ -95,6 +93,21 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<List<CommentResponse>> GetAllCommentsByClient(int id)
     {
-        return Ok(_clientsRepository.GetAllCommentsByClient(id));
+        Identities = this.GetClaimsValue();
+        var comments = _clientsService.GetCommentsByClient(id, Identities);
+        return Ok(_mapper.Map<List<OrderResponse>>(comments));
+    }
+
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}/orders")]
+    [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    public ActionResult<List<CommentResponse>> GetAllOrdersByClient(int id)
+    {
+        Identities = this.GetClaimsValue();
+        var orders = _clientsService.GetOrdersByClient(id, Identities);
+        return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
 }

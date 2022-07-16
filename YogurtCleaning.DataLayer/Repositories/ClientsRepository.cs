@@ -40,4 +40,9 @@ public class ClientsRepository : IClientsRepository
 
     public List<Comment> GetAllCommentsByClient(int clientId) => 
         _context.Comments.Where(c => c.Client != null && c.Client.Id == clientId).ToList();
+
+    public List<Order> GetAllOrdersByClient(int id)
+    {
+        throw new NotImplementedException();
+    }
 }

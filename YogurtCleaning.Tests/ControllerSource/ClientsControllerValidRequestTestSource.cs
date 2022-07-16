@@ -13,7 +13,7 @@ namespace YogurtCleaning.Tests.ControllerSource
 
             return new ClientRegisterRequest()
             {
-                Name = "Adam",
+                FirstName = "Adam",
                 LastName = "Smith",
                 Password = "12345678",
                 ConfirmPassword = "12345678",
@@ -29,7 +29,7 @@ namespace YogurtCleaning.Tests.ControllerSource
             {
             new ClientRegisterRequest()
             {
-                Name = "Adam",
+                FirstName = "Adam",
                 LastName = "Smith",
                 Password = "12345678",
                 ConfirmPassword = "12345678",
