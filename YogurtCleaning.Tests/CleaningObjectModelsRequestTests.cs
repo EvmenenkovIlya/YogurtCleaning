@@ -29,13 +29,10 @@ namespace YogurtCleaning.Tests
             //given
             CleaningObjectRequest cleaningObject = new CleaningObjectRequest();
             List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.ClientIdIsRequred,
-            ApiErrorMessages.NumberOfRoomsIsRequred,
-            ApiErrorMessages.NumberOfBathroomsIsRequred,
-            ApiErrorMessages.SquareIsRequred,
-            ApiErrorMessages.NumberOfWindowsIsRequred,
-            ApiErrorMessages.NumberOfBalconiesIsRequred,
+
+            ApiErrorMessages.ClientIdIsPositiveNumber,
             ApiErrorMessages.AddressIsRequired
+            
 
         };
             var validationResults = new List<ValidationResult>();
