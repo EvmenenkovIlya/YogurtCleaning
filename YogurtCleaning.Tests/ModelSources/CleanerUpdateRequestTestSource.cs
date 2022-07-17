@@ -1,25 +1,28 @@
 ﻿using System.Collections;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.Tests.ModelSources;
 
-public class ClientUpdateRequestTestSource : IEnumerable
+public class CleanerUpdateRequestTestSource : IEnumerable
 {
-    public ClientUpdateRequest GetClientUpdateRequestModel()
-    {
-        return new ClientUpdateRequest()
+    public CleanerUpdateRequest GetCleanerUpdateRequestModel()
+    {       
+        return new CleanerUpdateRequest()
         {
             FirstName = "Adam",
             LastName = "Smith",
             Phone = "85559997264",
-            BirthDate = DateTime.Today
+            BirthDate = DateTime.Today,
+            ServicesIds = new List<int>() { 1, 2 },
+            Districts = new List<DistrictEnum>() {DistrictEnum.Vasileostrovskiy, DistrictEnum.Primorsky}
         };
     }
-    
+
     public IEnumerator GetEnumerator()
     {
-        ClientUpdateRequest model = GetClientUpdateRequestModel();
+        CleanerUpdateRequest model = GetCleanerUpdateRequestModel();
         model.FirstName = null;
         yield return new object[]
         {
@@ -27,7 +30,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
             ApiErrorMessages.NameIsRequired
         };
 
-        model = GetClientUpdateRequestModel();
+        model = GetCleanerUpdateRequestModel();
         model.LastName = null;
         yield return new object[]
         {
@@ -35,7 +38,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
             ApiErrorMessages.LastNameIsRequired
         };
 
-        model = GetClientUpdateRequestModel();
+        model = GetCleanerUpdateRequestModel();
         model.Phone = null;
         yield return new object[]
         {
@@ -43,7 +46,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
             ApiErrorMessages.PhoneIsRequired
         };
 
-        model = GetClientUpdateRequestModel();
+        model = GetCleanerUpdateRequestModel();
         model.FirstName = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
@@ -51,7 +54,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
             ApiErrorMessages.NameMaxLength
         };
 
-        model = GetClientUpdateRequestModel();
+        model = GetCleanerUpdateRequestModel();
         model.LastName = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
@@ -59,7 +62,7 @@ public class ClientUpdateRequestTestSource : IEnumerable
             ApiErrorMessages.LastNameMaxLength
         };
 
-        model = GetClientUpdateRequestModel();
+        model = GetCleanerUpdateRequestModel();
         model.Phone = "+123456789012345";
         yield return new object[]
         {

@@ -30,9 +30,9 @@ public static class ApiErrorMessages
     public const string AddressMaxLength = "Address max Length is 256";
     public const string AddressIsRequired = "Address was not entered";
     public const string ClientIdIsPositiveNumber = "Client's Id is positive number";
-    //public const string
-    //public const string
-    //public const string
+    public const string ScheduleIsRequired = "Shedule was not choosen";
+    public const string PassportIsRequired = "Passport was not enteres";
+    public const string PassportLength = "Passport length is 10";
     //public const string
     //public const string
 }

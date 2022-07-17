@@ -6,6 +6,6 @@ public class OrderRequest
 {
     public int CleaningObjectId { get; set; }
     public DateTime StartTime { get; set; }
-    public List<BundleResponse> Bundles { get; set; }
-    public List<ServiceResponse> Services { get; set; }
+    public List<int> BundlesIds { get; set; }
+    public List<int> ServicesIds { get; set; }
 }
