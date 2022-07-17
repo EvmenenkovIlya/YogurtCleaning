@@ -23,7 +23,7 @@ public class ClientsService : IClientsService
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (identities[0]== (string)client.Email || identities[1] == Role.Admin.ToString())
+        if (identities[0] == (string)client.Email || identities[1] == Role.Admin.ToString())
             return client;
         else
         {
@@ -61,19 +61,32 @@ public class ClientsService : IClientsService
             _clientsRepository.DeleteClient(id);
     }
 
-    public void UpdateClient(Client modelToUpdate, int id)
+    public void UpdateClient(Client modelToUpdate, int id, List<string> identities)
     {
         Client client = _clientsRepository.GetClient(id);
+        if (client == null || client.Id == 0)
+        {
+            throw new EntityNotFoundException($"Client {id} not found");
+        }
+        if (!(identities[0] == (string)client.Email || identities[1] == Role.Admin.ToString()))
+        {
 
-        client.FirstName = modelToUpdate.FirstName;
-        client.LastName = modelToUpdate.LastName;
-        client.Phone = modelToUpdate.Phone;
-        client.BirthDate = modelToUpdate.BirthDate;
-        _clientsRepository.UpdateClient(client);
+            throw new AccessException($"Access denied");
+
+        }
+        else
+        {
+            client.FirstName = modelToUpdate.FirstName;
+            client.LastName = modelToUpdate.LastName;
+            client.Phone = modelToUpdate.Phone;
+            client.BirthDate = modelToUpdate.BirthDate;
+            _clientsRepository.UpdateClient(client);
+        }
     }
 
     public int CreateClient(Client client)
     {
+        // add check password and confirm password
         var isChecked = CheckingEmailForUniqueness(client.Email);
 
         if (isChecked)

@@ -5,7 +5,7 @@ namespace YogurtCleaning.Business.Services
 {
     public interface IClientsService
     {
-        void UpdateClient(Client newClient, int id);
+        void UpdateClient(Client newClient, int id, List<string> identities);
         Client? GetClient(int id, List<string> identities);
         List<Client> GetAllClients(List<string> identities);
         void DeleteClient(int id, List<string> identities);

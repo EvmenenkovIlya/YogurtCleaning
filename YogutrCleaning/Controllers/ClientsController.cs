@@ -18,8 +18,8 @@ namespace YogurtCleaning.Controllers;
 public class ClientsController : ControllerBase
 {
     private readonly IMapper _mapper;
-    private readonly IClientsService _clientsService;
     public List<string>? Identities;
+    private readonly IClientsService _clientsService;
 
     public ClientsController(IMapper mapper, IClientsService clientsService)
     {
@@ -59,7 +59,8 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
     {
-        _clientsService.UpdateClient(_mapper.Map<Client>(client), id);
+        Identities = this.GetClaimsValue();
+        _clientsService.UpdateClient(_mapper.Map<Client>(client), id, Identities);
         return NoContent();
     }
 
