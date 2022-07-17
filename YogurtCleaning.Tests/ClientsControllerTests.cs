@@ -5,9 +5,7 @@ using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.Models;
-
 using YogurtCleaning.DataLayer.Entities;
-using NUnit.Framework;
 
 namespace YogurtCleaning.Tests;
 public class ClientsControllerTests
@@ -291,7 +289,7 @@ public class ClientsControllerTests
             },
             new Client()
             {
-                 FirstName = "Adam2",
+                FirstName = "Adam2",
                 LastName = "Smith2",
                 Password = "123456782",
                 Email = "AdamSmith@gmail.com2",

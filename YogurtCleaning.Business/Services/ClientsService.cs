@@ -86,7 +86,7 @@ public class ClientsService : IClientsService
 
     public int CreateClient(Client client)
     {
-        // add check password and confirm password
+        // add checking password and confirm password
         var isChecked = CheckingEmailForUniqueness(client.Email);
 
         if (isChecked)
