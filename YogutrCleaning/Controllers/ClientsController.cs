@@ -1,5 +1,9 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -12,14 +16,15 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class ClientsController : ControllerBase
 {
-    private readonly ILogger<ClientsController> _logger;
-
-    public ClientsController(ILogger<ClientsController> logger)
+    private readonly IClientsRepository _clientsRepository;
+    private readonly IMapper _mapper;
+    private readonly IClientsService _clientsService;
+    public ClientsController(IClientsRepository clientsRepository, IMapper mapper, IClientsService clientsService)
     {
-        _logger = logger;
-    }
-
-    //public ClientsController() { }
+        _clientsRepository = clientsRepository;
+        _mapper = mapper;
+        _clientsService = clientsService;
+    }   
 
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}")]
@@ -29,7 +34,15 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<ClientResponse> GetClient(int id)
     {
-        return Ok(new ClientResponse() { Id = id });
+        var client = _clientsRepository.GetClient(id);
+        if (client == null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return Ok(_mapper.Map<ClientResponse>(client));
+        }
     }
 
     [AuthorizeRoles]
@@ -39,7 +52,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<ClientResponse>> GetAllClients()
     {
-        return Ok(new List<ClientResponse>());
+        return Ok(_clientsRepository.GetAllClients());
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -49,6 +62,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
     {
+        _clientsService.UpdateClient(_mapper.Map<Client>(client), id);
         return NoContent();
     }
 
@@ -57,9 +71,9 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
-    {       
-        var clientCreated = new ClientResponse() { Id = 5 };
-        return Created($"{this.GetRequestFullPath()}/{clientCreated.Id}", clientCreated.Id);
+    {
+        var id = _clientsRepository.CreateClient(_mapper.Map<Client>(client));
+        return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
     [AuthorizeRoles]
@@ -69,6 +83,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteClient(int id)
     {
+        _clientsRepository.DeleteClient(id);
         return NoContent();
     }
 
@@ -80,19 +95,6 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<List<CommentResponse>> GetAllCommentsByClient(int id)
     {
-        return Ok(new List<CommentResponse>()); ;
+        return Ok(_clientsRepository.GetAllCommentsByClient(id));
     }
-
-    [AuthorizeRoles(Role.Client)]
-    [HttpGet("{id}/comments/{commentId}")]
-    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CommentResponse> GetComment(int id, int commentId)
-    {
-        return Ok(new CommentResponse());
-    }
-
-    // get all cleaning obj
 }

@@ -15,6 +15,5 @@ public class BundleRequest
     public decimal? Price { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.MeasureIsRequired)]
     public Measure? Measure { get; set; }
-    [Required(ErrorMessage = ApiErrorMessages.ServicesIsRequired)]
     public List<ServiceResponse> Services { get; set; }
 }

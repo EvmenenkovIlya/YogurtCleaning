@@ -48,17 +48,17 @@ public class CommentsRepositoryTests
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CommentsRepository(context);
-        var comment = new Comment 
-        { 
+        var comment = new Comment
+        {
             Rating = 1,
-            Client = new() 
-            { 
-                Id = 2, 
-                Email = "a@b.c", 
-                FirstName = "q", 
-                LastName = "w", 
-                Password = "123qweqweqweqwe", 
-                Phone = "99998887766" 
+            Client = new()
+            {
+                Id = 2,
+                Email = "a@b.c",
+                FirstName = "q",
+                LastName = "w",
+                Password = "123qweqweqweqwe",
+                Phone = "99998887766"
             },
             Order = new() { Id = 2 },
             IsDeleted = false

@@ -33,7 +33,6 @@ public class BundleModelsRequestTests
             ApiErrorMessages.TypeIsRequired,
             ApiErrorMessages.PriceIsRequired,
             ApiErrorMessages.MeasureIsRequired,
-            ApiErrorMessages.ServicesIsRequired
         };
         var validationResults = new List<ValidationResult>();
 

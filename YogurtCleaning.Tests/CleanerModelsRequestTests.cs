@@ -1,20 +1,21 @@
 using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 using YogurtCleaning.Tests.ModelSources;
 
 namespace YogurtCleaning.Tests;
 
-public class ClientModelsRequestTests
+public class CleanerModelsRequestTests
 {
-    [TestCaseSource(typeof(ClientRegisterRequestTestSource))]
-    public async Task ClientRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(ClientRegisterRequest client, string errorMessage)
+    [TestCaseSource(typeof(CleanerRegisterRequestTestSource))]
+    public async Task CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerRegisterRequest cleaner, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();  
         
         //when
-        var isValid = Validator.TryValidateObject(client, new ValidationContext(client), validationResults, true);
+        var isValid = Validator.TryValidateObject(cleaner, new ValidationContext(cleaner), validationResults, true);
 
         //then
         Assert.IsFalse(isValid);
@@ -22,14 +23,14 @@ public class ClientModelsRequestTests
         Assert.AreEqual(errorMessage, actualMessage);
     }
 
-    [TestCaseSource(typeof(ClientUpdateRequestTestSource))]
-    public async Task ClientUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(ClientUpdateRequest client, string errorMessage)
+    [TestCaseSource(typeof(CleanerUpdateRequestTestSource))]
+    public async Task CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerUpdateRequest cleaner, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();
 
         //when
-        var isValid = Validator.TryValidateObject(client, new ValidationContext(client), validationResults, true);
+        var isValid = Validator.TryValidateObject(cleaner, new ValidationContext(cleaner), validationResults, true);
 
         //then
         Assert.IsFalse(isValid);
@@ -37,23 +38,24 @@ public class ClientModelsRequestTests
         Assert.AreEqual(errorMessage, actualMessage);
     }
 
-    [TestCase]
-    public async Task ClientRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    [Test]
+    public async Task CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
-        //given
-        ClientRegisterRequest client = new ClientRegisterRequest();
+        //given eaner
+        CleanerRegisterRequest cleaner = new CleanerRegisterRequest();
         List<string> expectedMessages = new List<string>() {
             ApiErrorMessages.NameIsRequired, 
             ApiErrorMessages.LastNameIsRequired,
             ApiErrorMessages.PasswordIsRequired,
             ApiErrorMessages.ConfirmPasswordIsRequired,
             ApiErrorMessages.EmailIsRequired,
-            ApiErrorMessages.PhoneIsRequired
+            ApiErrorMessages.PhoneIsRequired,
+            ApiErrorMessages.PassportIsRequired,
         };
         var validationResults = new List<ValidationResult>();
 
         //when
-        var isValid = Validator.TryValidateObject(client, new ValidationContext(client), validationResults, true);
+        var isValid = Validator.TryValidateObject(cleaner, new ValidationContext(cleaner), validationResults, true);
 
         //then
         Assert.IsFalse(isValid);
@@ -64,20 +66,20 @@ public class ClientModelsRequestTests
         }
     }
 
-    [TestCase]
-    public async Task ClientUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    [Test]
+    public async Task CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
-        ClientUpdateRequest client = new ClientUpdateRequest();
+        CleanerUpdateRequest cleaner = new CleanerUpdateRequest();
         List<string> expectedMessages = new List<string>() {
             ApiErrorMessages.NameIsRequired,
-            ApiErrorMessages.LastNameIsRequired,        
+            ApiErrorMessages.LastNameIsRequired,    
             ApiErrorMessages.PhoneIsRequired
         };
         var validationResults = new List<ValidationResult>();
 
         //when
-        var isValid = Validator.TryValidateObject(client, new ValidationContext(client), validationResults, true);
+        var isValid = Validator.TryValidateObject(cleaner, new ValidationContext(cleaner), validationResults, true);
 
         //then
         Assert.IsFalse(isValid);
@@ -89,44 +91,50 @@ public class ClientModelsRequestTests
     }
 
     [TestCase]
-    public async Task ClientRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public async Task CleanerRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
-        ClientRegisterRequest client = new ClientRegisterRequest()
+        CleanerRegisterRequest cleaner = new CleanerRegisterRequest()
         {
-            FirstName = "Adam",
+            Name = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",
             Email = "AdamSmith@gmail.com",
             Phone = "85559997264",
-            BirthDate = DateTime.Today
+            Passport = "0000123456",
+            Schedule = Schedule.FullTime,
+            BirthDate = DateTime.Today,
+            ServicesIds = new List<int>() { 1, 2 },
+            Districts = new List<DistrictEnum>() { DistrictEnum.Vasileostrovskiy, DistrictEnum.Primorsky }
         };
         var validationResults = new List<ValidationResult>();
 
         //when
-        var isValid = Validator.TryValidateObject(client, new ValidationContext(client), validationResults, true);
+        var isValid = Validator.TryValidateObject(cleaner, new ValidationContext(cleaner), validationResults, true);
 
         //then
         Assert.IsTrue(isValid);
         Assert.AreEqual(0, validationResults.Count());
     }
 
-    [TestCase]
-    public async Task ClientUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    [Test]
+    public async Task CleanerUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
-        ClientUpdateRequest client = new ClientUpdateRequest()
+        CleanerUpdateRequest cleaner = new CleanerUpdateRequest()
         {
             FirstName = "Adam",
             LastName = "Smith",
             Phone = "85559997264",
-            BirthDate = DateTime.Today
+            BirthDate = DateTime.Today,
+            ServicesIds = new List<int>() { 1, 2 },
+            Districts = new List<DistrictEnum>() { DistrictEnum.Vasileostrovskiy, DistrictEnum.Primorsky }
         };
         var validationResults = new List<ValidationResult>();
 
         //when
-        var isValid = Validator.TryValidateObject(client, new ValidationContext(client), validationResults, true);
+        var isValid = Validator.TryValidateObject(cleaner, new ValidationContext(cleaner), validationResults, true);
 
         //then
         Assert.IsTrue(isValid);

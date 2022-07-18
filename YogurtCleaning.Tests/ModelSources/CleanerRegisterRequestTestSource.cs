@@ -1,37 +1,42 @@
 ﻿using System.Collections;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.Tests.ModelSources;
 
-public class ClientRegisterRequestTestSource : IEnumerable
+public class CleanerRegisterRequestTestSource : IEnumerable
 {
-    public ClientRegisterRequest GetClientRegisterRequestModel()
+    public CleanerRegisterRequest GetCleanerRegisterRequestModel()
     {
-        
-        return new ClientRegisterRequest()
+
+        return new CleanerRegisterRequest()
         {
-            FirstName = "Adam",
+            Name = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",
             Email = "AdamSmith@gmail.com",
             Phone = "85559997264",
-            BirthDate = DateTime.Today
+            Passport =  "0000123456",
+            Schedule = Schedule.FullTime,
+            BirthDate = DateTime.Today,
+            ServicesIds = new List<int>() { 1, 2 },
+            Districts = new List<DistrictEnum>() { DistrictEnum.Vasileostrovskiy, DistrictEnum.Primorsky }
         };
     }
 
     public IEnumerator GetEnumerator()
     {
-        ClientRegisterRequest model = GetClientRegisterRequestModel();
-        model.FirstName = null;
+        CleanerRegisterRequest model = GetCleanerRegisterRequestModel();
+        model.Name = null;
         yield return new object[]
         {
             model,
             ApiErrorMessages.NameIsRequired
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.LastName = null;
         yield return new object[]
         {
@@ -39,7 +44,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.LastNameIsRequired
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.Password = null;
         yield return new object[]
         {
@@ -47,7 +52,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.PasswordIsRequired
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.ConfirmPassword = null;
         yield return new object[]
         {
@@ -55,7 +60,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.ConfirmPasswordIsRequired
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.Email = null;
         yield return new object[]
         {
@@ -63,7 +68,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.EmailIsRequired
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.Phone = null;
         yield return new object[]
         {
@@ -71,15 +76,15 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.PhoneIsRequired
         };
 
-        model = GetClientRegisterRequestModel();
-        model.FirstName = "This String has more than fifty chars. i promise123451";
+        model = GetCleanerRegisterRequestModel();
+        model.Name = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
             model,
             ApiErrorMessages.NameMaxLength
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.LastName = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
@@ -87,7 +92,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.LastNameMaxLength
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.Password = "1234567";
         yield return new object[]
         {
@@ -95,7 +100,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.PasswordMinLength
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.Password = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
@@ -103,7 +108,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.PasswordMaxLength
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.ConfirmPassword = "1234567";
         yield return new object[]
         {
@@ -111,7 +116,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.ConfirmPasswordMinLength
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.ConfirmPassword = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
@@ -119,7 +124,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.ConfirmPasswordMaxLength
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.Email = "NotEmail";
         yield return new object[]
         {
@@ -127,20 +132,45 @@ public class ClientRegisterRequestTestSource : IEnumerable
             ApiErrorMessages.EmailNotValid
         };
 
-        model = GetClientRegisterRequestModel();
+        model = GetCleanerRegisterRequestModel();
         model.Email = $"This string is more than 255 chars. qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq@qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq.qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq.";
         yield return new object[]
         {
             model,
             ApiErrorMessages.EmailMaxLength
         };
-        
-        model = GetClientRegisterRequestModel();
+
+        model = GetCleanerRegisterRequestModel();
         model.Phone = "+123456789012345";
         yield return new object[]
         {
             model,
             ApiErrorMessages.PhoneMaxLength
         };
+
+        model = GetCleanerRegisterRequestModel();
+        model.Passport = null;
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.PassportIsRequired
+        };
+
+        model = GetCleanerRegisterRequestModel();
+        model.Passport = "123456789";
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.PassportLength
+        };
+
+        model = GetCleanerRegisterRequestModel();
+        model.Passport = "12345678901";
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.PassportLength
+        };
     }
+
 }
