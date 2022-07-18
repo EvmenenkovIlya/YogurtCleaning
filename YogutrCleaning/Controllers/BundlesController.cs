@@ -46,7 +46,7 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<BundleResponse>> GetAllBundles()
     {
-        var result = _mapper.Map<List<BundleResponse>>(_bundlesRepository.GetAllBundles);
+        var result = _mapper.Map<List<BundleResponse>>(_bundlesRepository.GetAllBundles());
         return Ok(result);
     }
 
