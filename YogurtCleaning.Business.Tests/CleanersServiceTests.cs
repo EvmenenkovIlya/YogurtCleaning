@@ -20,7 +20,7 @@ public class CleanersServiceFacts
     }
 
     [Fact]
-    public void CreateCleaner_WhenValidRequestPassed_CreatedResultReceived()
+    public void CreateCleaner_WhenValidRequestPassed_CleanerAdded()
     {
         //given
         Setup();
