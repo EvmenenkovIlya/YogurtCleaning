@@ -43,5 +43,10 @@ public class CleanersRepository : ICleanersRepository
     {
         var comments = _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == cleanerId).ToList();
         return comments;
-    }  
+    }
+    public List<Order> GetAllOrdersByCleaner(int id)
+    {
+        var orders = _context.Orders.Where(c => c.CleanersBand.Any(c => c.Id == id)).ToList();
+        return orders;
+    }
 }

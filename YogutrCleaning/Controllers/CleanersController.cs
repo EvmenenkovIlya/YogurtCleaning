@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -16,12 +16,12 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class CleanersController : ControllerBase
 {
-    private readonly ICleanersRepository _cleanersRepository;
     private readonly IMapper _mapper;
+    public List<string>? Identities;
     private readonly ICleanersService _cleanersService;
-    public CleanersController(ICleanersRepository cleanersRepository, IMapper mapper, ICleanersService cleanersService)
+
+    public CleanersController(IMapper mapper, ICleanersService cleanersService)
     {
-        _cleanersRepository = cleanersRepository;
         _mapper = mapper;
         _cleanersService = cleanersService;
     }
@@ -34,15 +34,9 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<CleanerResponse> GetCleaner(int id)
     {
-        var cleaner = _cleanersRepository.GetCleaner(id);
-        if (cleaner == null)
-        {
-            return NotFound();
-        }
-        else
-        {
-            return Ok(cleaner);
-        }
+        Identities = this.GetClaimsValue();
+        var cleaner = _cleanersService.GetCleaner(id, Identities);
+        return Ok(_mapper.Map<CleanerResponse>(cleaner));
     }
 
     [AuthorizeRoles]
@@ -52,7 +46,9 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CleanerResponse>> GetAllCleaners()
     {
-        return Ok(_cleanersRepository.GetAllCleaners());
+        Identities = this.GetClaimsValue();
+        var cleaners = _cleanersService.GetAllCleaners(Identities);
+        return Ok(_mapper.Map<List<CleanerResponse>>(cleaners));
     }
 
     [AuthorizeRoles(Role.Cleaner)]
@@ -60,9 +56,10 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateCleaner(int id, [FromBody] CleanerUpdateRequest model)
+    public ActionResult UpdateCleaner(int id, [FromBody] CleanerUpdateRequest cleaner)
     {
-        _cleanersService.UpdateCleaner(_mapper.Map<Cleaner>(model), id);
+        Identities = this.GetClaimsValue();
+        _cleanersService.UpdateCleaner(_mapper.Map<Cleaner>(cleaner), id, Identities);
         return NoContent();
     }
 
@@ -70,9 +67,9 @@ public class CleanersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCleaner([FromBody] CleanerRegisterRequest model)
+    public ActionResult<int> AddCleaner([FromBody] CleanerRegisterRequest cleaner)
     {
-        int id = _cleanersRepository.CreateCleaner(_mapper.Map<Cleaner>(model));
+        int id = _cleanersService.CreateCleaner(_mapper.Map<Cleaner>(cleaner));
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
@@ -83,7 +80,8 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteCleaner(int id)
     {
-        _cleanersRepository.DeleteCleaner(id);
+        Identities = this.GetClaimsValue();
+        _cleanersService.DeleteCleaner(id, Identities);
         return NoContent();
     }
 
@@ -94,7 +92,21 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CommentResponse>> GetAllCommentsByCleaner (int id)
     {
-        return Ok(_cleanersRepository.GetAllCommentsByCleaner(id)); ;
+        Identities = this.GetClaimsValue();
+        var comments = _cleanersService.GetCommentsByCleaner(id, Identities);
+        return Ok(_mapper.Map<List<OrderResponse>>(comments));
+    }
+
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}/orders")]
+    [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public ActionResult<List<CommentResponse>> GetAllOrdersByCleaner(int id)
+    {
+        Identities = this.GetClaimsValue();
+        var orders = _cleanersService.GetOrdersByCleaner(id, Identities);
+        return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
 }
 

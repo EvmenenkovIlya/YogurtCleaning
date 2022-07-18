@@ -10,4 +10,5 @@ public interface ICleanersRepository
     List<Comment> GetAllCommentsByCleaner(int cleanerId);
     Cleaner? GetCleaner(int clientId);
     void UpdateCleaner(Cleaner cleaner);
+    List<Order> GetAllOrdersByCleaner(int id);
 }
