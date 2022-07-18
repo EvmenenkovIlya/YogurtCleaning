@@ -6,6 +6,7 @@ using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.Models;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.Business;
 
 namespace YogurtCleaning.Tests;
 public class ClientsControllerTests
@@ -14,7 +15,7 @@ public class ClientsControllerTests
     private Mock<IClientsService> _clientsServiceMock;
     private Mock<IMapper> _mapper;
 
-    private List<string> _identities;
+    private UserValues _userValues;
 
     [SetUp]
     public void Setup()
@@ -53,12 +54,6 @@ public class ClientsControllerTests
         Assert.True((int)actualResult.Value == 1);
 
         _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Once);
-        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
     }
 
     [Test]
@@ -75,7 +70,7 @@ public class ClientsControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today
         };
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _identities)).Returns(expectedClient);
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).Returns(expectedClient);
 
         //when
         var actual = _sut.GetClient(expectedClient.Id);
@@ -85,13 +80,7 @@ public class ClientsControllerTests
 
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -119,7 +108,7 @@ public class ClientsControllerTests
             BirthDate = DateTime.Today
         };
 
-        _clientsServiceMock.Setup(o => o.UpdateClient(client, client.Id, _identities));
+        _clientsServiceMock.Setup(o => o.UpdateClient(client, client.Id, _userValues));
 
         //when
         var actual = _sut.UpdateClient(newClientModel, client.Id);
@@ -128,13 +117,7 @@ public class ClientsControllerTests
         var actualResult = actual as NoContentResult;
 
         Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -163,7 +146,7 @@ public class ClientsControllerTests
             },
 
         };
-        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, _identities)).Returns(expectedClient.Comments);
+        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, _userValues)).Returns(expectedClient.Comments);
 
         //when
         var actual = _sut.GetAllCommentsByClient(expectedClient.Id);
@@ -172,13 +155,7 @@ public class ClientsControllerTests
         var actualResult = actual.Result as ObjectResult;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
+        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -209,7 +186,7 @@ public class ClientsControllerTests
 
         };
 
-        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, _identities)).Returns(expectedClient.Orders);
+        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, _userValues)).Returns(expectedClient.Orders);
 
         //when
         var actual = _sut.GetAllOrdersByClient(expectedClient.Id);
@@ -218,13 +195,7 @@ public class ClientsControllerTests
         var actualResult = actual.Result as ObjectResult;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -244,7 +215,7 @@ public class ClientsControllerTests
 
         };
 
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _identities)).Returns(expectedClient);
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).Returns(expectedClient);
 
         //when
         var actual = _sut.DeleteClient(expectedClient.Id);
@@ -253,13 +224,7 @@ public class ClientsControllerTests
         var actualResult = actual as NoContentResult;
 
         Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -298,7 +263,7 @@ public class ClientsControllerTests
             }
         };
 
-        _clientsServiceMock.Setup(o => o.GetAllClients(_identities)).Returns(clients).Verifiable();
+        _clientsServiceMock.Setup(o => o.GetAllClients(_userValues)).Returns(clients).Verifiable();
 
         //when
         var actual = _sut.GetAllClients();
@@ -307,12 +272,6 @@ public class ClientsControllerTests
         var actualResult = actual.Result as ObjectResult;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<List<string>>()), Times.Once);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<UserValues>()), Times.Once);
     }
 }

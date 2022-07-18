@@ -41,8 +41,9 @@ public class ClientsRepository : IClientsRepository
     public List<Comment> GetAllCommentsByClient(int clientId) => 
         _context.Comments.Where(c => c.Client != null && c.Client.Id == clientId).ToList();
 
-    public List<Order> GetAllOrdersByClient(int id)
-    {
-        throw new NotImplementedException();
-    }
+    public List<Order> GetAllOrdersByClient(int id) => _context.Orders.Where(o => o.Client.Id == id).ToList();
+
+    public Client? GetClientByEmail(string email) => _context.Clients.FirstOrDefault(o => o.Email == email, null);
+
+    public Client? GetClientByLogin(LoginData login) => _context.Clients.FirstOrDefault(o => o.Email == login.Email && o.Password == login.Password);
 }

@@ -99,6 +99,7 @@ builder.Services.AddScoped<ICleanersService, CleanersService>();
 builder.Services.AddScoped<ICleaningObjectsService, CleaningObjectsService>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 
 var app = builder.Build();
 

@@ -38,6 +38,7 @@ public class MapperConfigStorage : Profile
 
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
+		CreateMap<UserLoginRequest, LoginData>().ReverseMap();
 	}
 	
 	private List<Cleaner> GetCleanersByListIds(List<int> servicesIds)

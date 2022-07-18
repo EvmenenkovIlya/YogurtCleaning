@@ -10,5 +10,4 @@ public class UserLoginRequest
     [Required(ErrorMessage = ApiErrorMessages.EmailIsRequired)]
     [EmailAddress(ErrorMessage = ApiErrorMessages.EmailNotValid)]
     public string Email { get; set; }
-    public bool IsCleaner { get; set; } // for auth
 }

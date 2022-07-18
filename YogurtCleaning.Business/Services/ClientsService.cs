@@ -15,7 +15,7 @@ public class ClientsService : IClientsService
         _clientsRepository = clientsRepository;
     }
 
-    public Client? GetClient(int id, List<string>? identities)
+    public Client? GetClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
 
@@ -23,7 +23,7 @@ public class ClientsService : IClientsService
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (identities[0] == (string)client.Email || identities[1] == Role.Admin.ToString())
+        if (userValues.Email == (string)client.Email || userValues.Role == Role.Admin.ToString())
             return client;
         else
         {
@@ -31,9 +31,9 @@ public class ClientsService : IClientsService
         }
     }
 
-    public List<Client> GetAllClients(List<string>? identities)
+    public List<Client> GetAllClients(UserValues userValues)
     {
-        if (identities[1] == Role.Admin.ToString())
+        if (userValues.Role == Role.Admin.ToString())
         {
             var clients = _clientsRepository.GetAllClients();
             return clients;
@@ -44,35 +44,31 @@ public class ClientsService : IClientsService
         }
     }
 
-    public void DeleteClient(int id, List<string> identities)
+    public void DeleteClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
         if (client == null || client.Id == 0)
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (!(identities[0] == (string)client.Email || identities[1] == Role.Admin.ToString()))
+        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString()))
         {
-
             throw new AccessException($"Access denied");
-
         }
         else
             _clientsRepository.DeleteClient(id);
     }
 
-    public void UpdateClient(Client modelToUpdate, int id, List<string> identities)
+    public void UpdateClient(Client modelToUpdate, int id, UserValues userValues)
     {
         Client client = _clientsRepository.GetClient(id);
         if (client == null || client.Id == 0)
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (!(identities[0] == (string)client.Email || identities[1] == Role.Admin.ToString()))
+        if (!(userValues.Email == (string)client.Email))
         {
-
             throw new AccessException($"Access denied");
-
         }
         else
         {
@@ -87,28 +83,17 @@ public class ClientsService : IClientsService
     public int CreateClient(Client client)
     {
         // add checking password and confirm password
-        var isChecked = CheckingEmailForUniqueness(client.Email);
+        var isChecked = CheckEmailForUniqueness(client.Email);
 
-        if (isChecked)
+        if (!isChecked)
         {
             throw new UniquenessException($"That email is registred");
-        }
-        if (client.Phone is not null)
-        {
-            if (!(client.Phone.StartsWith("+7") || client.Phone.StartsWith("8") && client.Phone.Length <= 11))
-            {
-                throw new DataException($"Invalid phone number");
-            }
-        }
-        if (client.BirthDate > DateTime.Now)
-        {
-            throw new DataException($"Invalid birthday");
         }
         else
             return _clientsRepository.CreateClient(client);
 
     }
-    public List<Comment> GetCommentsByClient(int id, List<string> identities)
+    public List<Comment> GetCommentsByClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
         var comments = _clientsRepository.GetAllCommentsByClient(id);
@@ -118,14 +103,14 @@ public class ClientsService : IClientsService
             throw new EntityNotFoundException($"Client {id} not found");
         }
 
-        if (!(identities[0] == (string)client.Email || identities[1] == Role.Admin.ToString()))
+        if (!(userValues.Email == (string)client.Email || userValues.Role == Role.Admin.ToString()))
         {
             throw new AccessException($"Access denied");
         }
         return comments;
     }
 
-    public List<Order> GetOrdersByClient(int id, List<string> identities)
+    public List<Order> GetOrdersByClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
         var orders = _clientsRepository.GetAllOrdersByClient(id);
@@ -135,7 +120,7 @@ public class ClientsService : IClientsService
         {
             throw new EntityNotFoundException($"Orders by client {id} not found");
         }
-        if (!(identities[0] == (string)client.Email || identities[1] == Role.Admin.ToString()))
+        if (!(userValues.Email == (string)client.Email || userValues.Role == Role.Admin.ToString()))
         {
             throw new AccessException($"Access denied");
         }
@@ -143,15 +128,5 @@ public class ClientsService : IClientsService
             return orders;
     }
 
-    private bool CheckingEmailForUniqueness(string email)
-    {
-        var clients = _clientsRepository.GetAllClients();
-
-        if (clients is not null)
-        {
-            var uniqueEmail = clients.Any(c => c.Email == email);
-            return uniqueEmail;
-        }
-        else return false;
-    }
+    private bool CheckEmailForUniqueness(string email) => _clientsRepository.GetClientByEmail(email) == null;
 }

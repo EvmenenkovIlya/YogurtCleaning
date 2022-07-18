@@ -36,6 +36,11 @@ public class CustomExeptionHandlerMiddleware
         {
             await HandleExceptionAsync(context, exception);
         }
+        catch (Exception exception)
+        {
+            await HandleExceptionAsync(context, exception);
+        }
+
     }
 
     private Task HandleExceptionAsync(HttpContext context, Exception exception)

@@ -11,4 +11,6 @@ public interface IClientsRepository
     List<Order> GetAllOrdersByClient(int clientId);
     Client? GetClient(int clientId);
     void UpdateClient(Client client);
+    Client? GetClientByEmail(string email);
+    Client? GetClientByLogin(LoginData login);
 }

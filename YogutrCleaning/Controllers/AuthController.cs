@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -12,27 +15,45 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class AuthController : Controller
 {
+    private readonly IMapper _mapper;
+    private readonly ILoginService _loginService;
+
+    public AuthController(IMapper mapper, ILoginService loginService)
+    {
+        _mapper = mapper;
+        _loginService = loginService;
+    }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public string Login([FromBody] UserLoginRequest request)
     {
         if (request == default || request.Email == default) return string.Empty;
-        dynamic roleClaim;
-        switch (request.Email)
+
+        var client = _loginService.GetClientByLoginData(_mapper.Map<LoginData>(request));
+        var cleaner = _loginService.GetCleanerByLoginData(_mapper.Map<LoginData>(request));
+        Claim roleClaim;
+        Claim idClaim;
+        if (cleaner != null)
         {
-            case "Admin@gmail.com":
-                roleClaim = new Claim(ClaimTypes.Role, Role.Admin.ToString());
-                break;
-            case "Cleaner@gmail.com":
-                roleClaim = new Claim(ClaimTypes.Role, Role.Cleaner.ToString());
-                break;
-            case "Client@gmail.com":
-                roleClaim = new Claim(ClaimTypes.Role, Role.Client.ToString());
-                break;
-            default:
-                return string.Empty;
+            roleClaim = new Claim(ClaimTypes.Role, Role.Cleaner.ToString());
+            idClaim = new Claim(ClaimTypes.NameIdentifier, cleaner.Id.ToString());
         }
-        var claims = new List<Claim> { new Claim(ClaimTypes.Name, request.Email), roleClaim };
+        else if (client != null)
+        {
+            roleClaim = new Claim(ClaimTypes.Role, Role.Client.ToString());
+            idClaim = new Claim(ClaimTypes.NameIdentifier, client.Id.ToString());
+        }
+        else if (request.Email == "Admin@gmail.com" && request.Password == "QWERTY123")
+        {
+            roleClaim = new Claim(ClaimTypes.Role, Role.Admin.ToString());
+            idClaim = new Claim(ClaimTypes.NameIdentifier, 1.ToString());
+        }
+        else
+        {
+            return string.Empty;
+        }
+        var claims = new List<Claim> { new Claim(ClaimTypes.Name, request.Email), roleClaim, idClaim};
         var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
                 audience: AuthOptions.AUDIENCE,
