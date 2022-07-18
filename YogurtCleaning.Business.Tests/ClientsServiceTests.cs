@@ -20,7 +20,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void CreateClient_WhenValidRequestPassed_CreatedResultReceived()
+    public void CreateClient_WhenValidRequestPassed_ClientAdded()
     {
         //given
         Setup();
