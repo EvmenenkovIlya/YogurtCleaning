@@ -39,35 +39,11 @@ public class BundleRequestTestSource : IEnumerable
         };
 
         model = GetBundleRequestModel();
-        model.Price = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.PriceIsRequired
-        };
-
-        model = GetBundleRequestModel();
-        model.Measure = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.MeasureIsRequired
-        };
-
-        model = GetBundleRequestModel();
         model.Services = null;
         yield return new object[]
         {
             model,
             ApiErrorMessages.ServicesIsRequired
-        };
-
-        model = GetBundleRequestModel();
-        model.Type = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.TypeIsRequired
         };
     }
 }

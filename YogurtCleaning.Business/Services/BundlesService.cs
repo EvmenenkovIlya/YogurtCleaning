@@ -19,22 +19,25 @@ public class BundlesService : IBundlesService
 
     public int AddBundle(Bundle bundle)
     {
-        throw new NotImplementedException();
+        var result = _bundlesRepository.AddBundle(bundle);
+        return result;
     }
 
     public void DeleteBundle(int id)
     {
-        throw new NotImplementedException();
+        _bundlesRepository.DeleteBundle(id);
     }
 
     public List<Bundle> GetAllBundles()
     {
-        throw new NotImplementedException();
+        var result = _bundlesRepository.GetAllBundles();
+        return result;
     }
 
     public Bundle GetBundle(int id)
     {
-        throw new NotImplementedException();
+        var result = _bundlesRepository.GetBundle(id);
+        return result;
     }
 
     public void UpdateBundle(Bundle bundle, int id)

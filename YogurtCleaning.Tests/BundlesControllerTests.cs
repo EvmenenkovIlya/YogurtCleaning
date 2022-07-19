@@ -16,7 +16,6 @@ public class BundlesControllerTests
 {
     private BundlesController _sut;
     private Mock<ILogger<BundlesController>> _mockLogger;
-    private Mock<IBundlesRepository> _mockBundlesRepository;
     private Mock<IBundlesService> _mockBundlesService;
     private Mock<IMapper> _mockMapper;
 
@@ -24,17 +23,16 @@ public class BundlesControllerTests
     public void Setup()
     {
         _mockLogger = new Mock<ILogger<BundlesController>>();
-        _mockBundlesRepository = new Mock<IBundlesRepository>();
         _mockBundlesService = new Mock<IBundlesService>();
         _mockMapper = new Mock<IMapper>();
-        _sut = new BundlesController(_mockLogger.Object, _mockBundlesRepository.Object, _mockBundlesService.Object, _mockMapper.Object);
+        _sut = new BundlesController(_mockLogger.Object, _mockBundlesService.Object, _mockMapper.Object);
     }
 
     [Test]
     public void AddBundle_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
-        _mockBundlesRepository.Setup(o => o.AddBundle(It.IsAny<Bundle>())).Returns(1);
+        _mockBundlesService.Setup(o => o.AddBundle(It.IsAny<Bundle>())).Returns(1);
         var bundle = new BundleRequest()
         {
             Name = "Super Bundle",
@@ -52,6 +50,7 @@ public class BundlesControllerTests
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
         Assert.True((int)actualResult.Value == 1);
+        _mockBundlesService.Verify(o => o.AddBundle(It.IsAny<Bundle>()), Times.Once);
     }
 
     [Test]
@@ -67,7 +66,7 @@ public class BundlesControllerTests
             Measure = Measure.Room,
             Services = new List<Service>()
         };
-        _mockBundlesRepository.Setup(o => o.GetBundle(expectedBundle.Id)).Returns(expectedBundle);
+        _mockBundlesService.Setup(o => o.GetBundle(expectedBundle.Id)).Returns(expectedBundle);
 
         // when
         var actual = _sut.GetBundle(expectedBundle.Id);
@@ -76,6 +75,7 @@ public class BundlesControllerTests
         var actualResult = actual.Result as ObjectResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        _mockBundlesService.Verify(o => o.GetBundle(expectedBundle.Id), Times.Once);
 
     }
 
@@ -115,7 +115,7 @@ public class BundlesControllerTests
             Price = 999999
         };
 
-        _mockBundlesRepository.Setup(o => o.UpdateBundle(bundle));
+        _mockBundlesService.Setup(o => o.UpdateBundle(bundle, bundle.Id));
 
         // when
         var actual = _sut.UpdateBundle(newProperty, bundle.Id);
@@ -139,7 +139,7 @@ public class BundlesControllerTests
             Services = new List<Service>()
         };
 
-        _mockBundlesRepository.Setup(o => o.GetBundle(bundle.Id)).Returns(bundle);
+        _mockBundlesService.Setup(o => o.GetBundle(bundle.Id)).Returns(bundle);
 
         // when
         var actual = _sut.DeleteBundle(bundle.Id);
