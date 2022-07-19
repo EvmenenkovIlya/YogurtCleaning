@@ -34,7 +34,12 @@ public class AuthController : Controller
         var cleaner = _loginService.GetCleanerByLoginData(_mapper.Map<LoginData>(request));
         Claim roleClaim;
         Claim idClaim;
-        if (cleaner != null)
+        if (request.Email == "Admin@gmail.com" && request.Password == "QWERTY123")
+        {
+            roleClaim = new Claim(ClaimTypes.Role, Role.Admin.ToString());
+            idClaim = new Claim(ClaimTypes.NameIdentifier, 1.ToString());
+        }
+        else if (cleaner != null)
         {
             roleClaim = new Claim(ClaimTypes.Role, Role.Cleaner.ToString());
             idClaim = new Claim(ClaimTypes.NameIdentifier, cleaner.Id.ToString());
@@ -43,11 +48,6 @@ public class AuthController : Controller
         {
             roleClaim = new Claim(ClaimTypes.Role, Role.Client.ToString());
             idClaim = new Claim(ClaimTypes.NameIdentifier, client.Id.ToString());
-        }
-        else if (request.Email == "Admin@gmail.com" && request.Password == "QWERTY123")
-        {
-            roleClaim = new Claim(ClaimTypes.Role, Role.Admin.ToString());
-            idClaim = new Claim(ClaimTypes.NameIdentifier, 1.ToString());
         }
         else
         {

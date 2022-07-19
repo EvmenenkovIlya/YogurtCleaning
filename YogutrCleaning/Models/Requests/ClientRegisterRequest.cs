@@ -12,6 +12,7 @@ public class ClientRegisterRequest
     public string LastName { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.BirthDateIsRequired)]
     public DateTime BirthDate { get; set; }
+    public DateTime RegistrationDate { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PasswordIsRequired)]
     [MinLength(8, ErrorMessage = ApiErrorMessages.PasswordMinLength)]
     [MaxLength(50, ErrorMessage = ApiErrorMessages.PasswordMaxLength)]
