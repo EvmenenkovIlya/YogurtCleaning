@@ -35,7 +35,6 @@ public class CleanerRegisterRequest
     [Required(ErrorMessage = ApiErrorMessages.PhoneIsRequired)]
     [MaxLength(15, ErrorMessage = ApiErrorMessages.PhoneMaxLength)]
     public string Phone { get; set; }
-    public DateTime RegistrationDate { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PassportIsRequired)]
     [MinLength(10, ErrorMessage = ApiErrorMessages.PassportLength)]
     [MaxLength(10, ErrorMessage = ApiErrorMessages.PassportLength)]
