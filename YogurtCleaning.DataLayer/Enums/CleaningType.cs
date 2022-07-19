@@ -1,6 +1,6 @@
 ﻿namespace YogurtCleaning.DataLayer.Enums;
 
-public enum TypeEnum
+public enum CleaningType
 {
     Regular = 1,
     General,

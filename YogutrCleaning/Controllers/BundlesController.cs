@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -17,14 +16,12 @@ namespace YogurtCleaning.Controllers;
 public class BundlesController : ControllerBase
 {
     private readonly ILogger<BundlesController> _logger;
-    private readonly IBundlesRepository _bundlesRepository;
     private readonly IBundlesService _bundlesService;
     private readonly IMapper _mapper;
 
-    public BundlesController(ILogger<BundlesController> logger, IBundlesRepository bundlesRepository, IBundlesService bundlesService, IMapper mapper)
+    public BundlesController(ILogger<BundlesController> logger, IBundlesService bundlesService, IMapper mapper)
     {
         _logger = logger;
-        _bundlesRepository = bundlesRepository;
         _bundlesService = bundlesService;
         _mapper = mapper;
     }
@@ -35,7 +32,7 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<BundleResponse> GetBundle(int id)
     {
-        var result = _mapper.Map<BundleResponse>(_bundlesRepository.GetBundle(id));
+        var result = _mapper.Map<BundleResponse>(_bundlesService.GetBundle(id));
         return Ok(result);
     }
 
@@ -46,7 +43,7 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<BundleResponse>> GetAllBundles()
     {
-        var result = _mapper.Map<List<BundleResponse>>(_bundlesRepository.GetAllBundles());
+        var result = _mapper.Map<List<BundleResponse>>(_bundlesService.GetAllBundles());
         return Ok(result);
     }
 
@@ -70,7 +67,7 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddBundle([FromBody] BundleRequest bundle)
     {
-        var result = _bundlesRepository.AddBundle(_mapper.Map<Bundle>(bundle));
+        var result = _bundlesService.AddBundle(_mapper.Map<Bundle>(bundle));
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
@@ -82,7 +79,7 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult DeleteBundle(int id)
     {
-        _bundlesRepository.DeleteBundle(id);
+        _bundlesService.DeleteBundle(id);
         return NoContent();
     }
 }

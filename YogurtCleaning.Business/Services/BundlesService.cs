@@ -17,6 +17,26 @@ public class BundlesService : IBundlesService
         _bundlesRepository = bundlesRepository;
     }
 
+    public int AddBundle(Bundle bundle)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeleteBundle(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<Bundle> GetAllBundles()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Bundle GetBundle(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     public void UpdateBundle(Bundle bundle, int id)
     {
         var oldBundle = _bundlesRepository.GetBundle(id);

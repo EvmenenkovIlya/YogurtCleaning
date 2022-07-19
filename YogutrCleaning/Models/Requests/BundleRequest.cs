@@ -10,7 +10,7 @@ public class BundleRequest
     [MaxLength(100, ErrorMessage = ApiErrorMessages.BundleNameMaxLenght)]
     public string Name { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.TypeIsRequired)]
-    public TypeEnum? Type { get; set; }
+    public CleaningType? Type { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PriceIsRequired)]
     public decimal? Price { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.MeasureIsRequired)]

@@ -38,7 +38,7 @@ public class BundlesControllerTests
         var bundle = new BundleRequest()
         {
             Name = "Super Bundle",
-            Type = TypeEnum.Regular,
+            Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
             Services = new List<ServiceResponse>()
@@ -62,7 +62,7 @@ public class BundlesControllerTests
         {
             Id = 2,
             Name = "Super Bundle",
-            Type = TypeEnum.Regular,
+            Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
             Services = new List<Service>()
@@ -103,7 +103,7 @@ public class BundlesControllerTests
         {
             Id = 3,
             Name = "Super Bundle",
-            Type = TypeEnum.Regular,
+            Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
             Services = new List<Service>()
@@ -133,7 +133,7 @@ public class BundlesControllerTests
         {
             Id = 4,
             Name = "Super Bundle",
-            Type = TypeEnum.Regular,
+            Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
             Services = new List<Service>()

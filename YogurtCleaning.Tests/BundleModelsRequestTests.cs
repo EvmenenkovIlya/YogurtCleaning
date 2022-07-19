@@ -55,7 +55,7 @@ public class BundleModelsRequestTests
         BundleRequest bundle = new BundleRequest()
         {
             Name = "Kitchen regular cleaning",
-            Type = TypeEnum.Regular,
+            Type = CleaningType.Regular,
             Price = 1000,
             Measure = Measure.Room,
             Services = new List<ServiceResponse>()
