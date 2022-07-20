@@ -23,13 +23,22 @@ public static class ApiErrorMessages
     public const string EmailNotValid = "Email is not valid";
     public const string EmailMaxLength = "Email max Length is 256";
     public const string PhoneMaxLength = "Phone max length is 15";
-    public const string BundleNameMaxLenght = "Bundel's name max lenght is 100";
+    public const string BundleNameMaxLenght = "Bundle's name max lenght is 100";
+    public const string TypeIsRequired = "Type was not entered";
     public const string PriceIsRequired = "Price was not entered";
     public const string MeasureIsRequired = "Measure was not entered";
+    public const string ServicesIsRequired = "Services was not entered";
+    public const string AddressMaxLength = "Address max Length is 256";
+    public const string AddressIsRequired = "Address was not entered";
+    public const string ClientIdIsPositiveNumber = "Client's Id must be a positive number";
     public const string ScheduleIsRequired = "Shedule was not choosen";
     public const string PassportIsRequired = "Passport was not enteres";
     public const string PassportLength = "Passport length is 10";
-    public const string ServicesIsRequired = "Services were not chosen";
+    public const string NumberOfRoomsIsPositiveNumber = "Number of rooms must be a positive number";
+    public const string NumberOfBathroomsIsPositiveNumber = "Number of bathrooms must be a positive number";
+    public const string SquareIdIsPositiveNumber = "Square must be a positive number";
+    public const string NumberOfWindowsIdIsPositiveNumber = "Number of windows must be a positive number";
+    public const string NumberOfBalconiesIdIsPositiveNumber = "Number of balconies must be a positive number";
     //public const string
     //public const string
 }
