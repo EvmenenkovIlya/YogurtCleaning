@@ -7,6 +7,7 @@ using YogurtCleaning.Controllers;
 using YogurtCleaning.Models;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.Business;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Tests;
 public class ClientsControllerTests
@@ -23,6 +24,7 @@ public class ClientsControllerTests
         _mapper = new Mock<IMapper>();
         _clientsServiceMock = new Mock<IClientsService>();
         _sut = new ClientsController(_mapper.Object, _clientsServiceMock.Object);
+        _userValues = new UserValues();
     }
 
     [Test]
@@ -42,7 +44,6 @@ public class ClientsControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today
         };
-
         //when
         var actual = _sut.AddClient(client);
         var a = actual.Result;
@@ -52,7 +53,6 @@ public class ClientsControllerTests
 
         Assert.AreEqual(StatusCodes.Status201Created, actualResult.StatusCode);
         Assert.True((int)actualResult.Value == 1);
-
         _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Once);
     }
 
@@ -70,7 +70,7 @@ public class ClientsControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today
         };
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).Returns(expectedClient);
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, new UserValues())).Returns(expectedClient);
 
         //when
         var actual = _sut.GetClient(expectedClient.Id);
@@ -78,9 +78,8 @@ public class ClientsControllerTests
         //then
         var actualResult = actual.Result as ObjectResult;
 
-
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.GetClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
+        Assert.True(expectedClient.Id == actual.Value.Id);
     }
 
     [Test]
@@ -99,7 +98,6 @@ public class ClientsControllerTests
             BirthDate = DateTime.Today
         };
 
-
         var newClientModel = new ClientUpdateRequest()
         {
             FirstName = "Valid",
@@ -108,7 +106,7 @@ public class ClientsControllerTests
             BirthDate = DateTime.Today
         };
 
-        _clientsServiceMock.Setup(o => o.UpdateClient(client, client.Id, _userValues));
+        _clientsServiceMock.Setup(o => o.UpdateClient(client, client.Id, _userValues));       
 
         //when
         var actual = _sut.UpdateClient(newClientModel, client.Id);
@@ -117,7 +115,7 @@ public class ClientsControllerTests
         var actualResult = actual as NoContentResult;
 
         Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.IsAny<Client>(), It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
+        _clientsServiceMock.Verify(c => c.UpdateClient(client, client.Id, _userValues), Times.Once);
     }
 
     [Test]
@@ -263,7 +261,7 @@ public class ClientsControllerTests
             }
         };
 
-        _clientsServiceMock.Setup(o => o.GetAllClients(_userValues)).Returns(clients).Verifiable();
+        _clientsServiceMock.Setup(o => o.GetAllClients()).Returns(clients).Verifiable();
 
         //when
         var actual = _sut.GetAllClients();
@@ -272,6 +270,6 @@ public class ClientsControllerTests
         var actualResult = actual.Result as ObjectResult;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.GetAllClients(It.IsAny<UserValues>()), Times.Once);
+        _clientsServiceMock.Verify(c => c.GetAllClients(), Times.Once);
     }
 }

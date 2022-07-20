@@ -6,7 +6,7 @@ namespace YogurtCleaning.Business.Services
     {
         void UpdateClient(Client newClient, int id, UserValues userValues);
         Client? GetClient(int id, UserValues userValues);
-        List<Client> GetAllClients(UserValues userValues);
+        List<Client> GetAllClients();
         void DeleteClient(int id, UserValues userValues);
         int CreateClient(Client client);
         List<Comment> GetCommentsByClient(int id, UserValues userValues);

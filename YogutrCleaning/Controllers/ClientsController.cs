@@ -46,8 +46,7 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<ClientResponse>> GetAllClients()
     {
-        userValues = this.GetClaimsValue();
-        var clients = _clientsService.GetAllClients(userValues);
+        var clients = _clientsService.GetAllClients();
         return Ok(_mapper.Map<List<ClientResponse>>(clients));
     }
 

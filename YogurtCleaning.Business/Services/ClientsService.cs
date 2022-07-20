@@ -19,39 +19,32 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
 
-        if (client == null || client.Id == 0)
+        if (client == null)
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (userValues.Email == (string)client.Email || userValues.Role == Role.Admin.ToString())
-            return client;
-        else
+        if (CheckPossibilityOfAccess(userValues, client))
         {
             throw new AccessException($"Access denied");
         }
+        else
+            return client;
     }
 
-    public List<Client> GetAllClients(UserValues userValues)
+    public List<Client> GetAllClients()
     {
-        if (userValues.Role == Role.Admin.ToString())
-        {
             var clients = _clientsRepository.GetAllClients();
             return clients;
-        }
-        else
-        {
-            throw new AccessException($"Access denied");
-        }
     }
 
     public void DeleteClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
-        if (client == null || client.Id == 0)
+        if (client == null)
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString()))
+        if (CheckPossibilityOfAccess(userValues, client))
         {
             throw new AccessException($"Access denied");
         }
@@ -62,11 +55,11 @@ public class ClientsService : IClientsService
     public void UpdateClient(Client modelToUpdate, int id, UserValues userValues)
     {
         Client client = _clientsRepository.GetClient(id);
-        if (client == null || client.Id == 0)
+        if (client == null)
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (!(userValues.Email == (string)client.Email))
+        if (CheckPossibilityOfAccess(userValues, client))
         {
             throw new AccessException($"Access denied");
         }
@@ -96,37 +89,36 @@ public class ClientsService : IClientsService
     public List<Comment> GetCommentsByClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
-        var comments = _clientsRepository.GetAllCommentsByClient(id);
 
-        if (client == null || client.Id == 0)
+        if (client == null)
         {
-            throw new EntityNotFoundException($"Client {id} not found");
+            throw new BadRequestException($"Comments for client {id} not found, because client doesn't exists");
         }
-
-        if (!(userValues.Email == (string)client.Email || userValues.Role == Role.Admin.ToString()))
+        if (CheckPossibilityOfAccess(userValues, client))
         {
             throw new AccessException($"Access denied");
         }
-        return comments;
+        return _clientsRepository.GetAllCommentsByClient(id);
     }
 
     public List<Order> GetOrdersByClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
-        var orders = _clientsRepository.GetAllOrdersByClient(id);
 
-
-        if (client == null || client.Id == 0)
+        if (client == null)
         {
-            throw new EntityNotFoundException($"Orders by client {id} not found");
+            throw new BadRequestException($"Orders for client {id} not found, because client doesn't exists");
         }
-        if (!(userValues.Email == (string)client.Email || userValues.Role == Role.Admin.ToString()))
+        if (CheckPossibilityOfAccess(userValues, client))
         {
             throw new AccessException($"Access denied");
         }
         else
-            return orders;
+            return _clientsRepository.GetAllOrdersByClient(id);
+            
     }
 
     private bool CheckEmailForUniqueness(string email) => _clientsRepository.GetClientByEmail(email) == null;
+
+    private bool CheckPossibilityOfAccess(UserValues userValues, Client client) => !(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString());
 }
