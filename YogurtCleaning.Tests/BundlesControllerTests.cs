@@ -15,22 +15,20 @@ using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API.Tests;
 
-public class ServicesControllerTests
+public class BundlesControllerTests
 {
-    private ServicesController _sut;
-    private Mock<ILogger<ServicesController>> _mockLogger;
-    private Mock<IServicesRepository> _mockServicesRepository;
-    private Mock<IServicesService> _mockServicesService;
+    private BundlesController _sut;
+    private Mock<ILogger<BundlesController>> _mockLogger;
+    private Mock<IBundlesService> _mockBundlesService;
     private Mock<IMapper> _mockMapper;
 
     [SetUp]
     public void Setup()
     {
-        _mockLogger = new Mock<ILogger<ServicesController>>();
-        _mockServicesRepository = new Mock<IServicesRepository>();
-        _mockServicesService = new Mock<IServicesService>();
+        _mockLogger = new Mock<ILogger<BundlesController>>();
+        _mockBundlesService = new Mock<IBundlesService>();
         _mockMapper = new Mock<IMapper>();
-        _sut = new ServicesController(_mockLogger.Object, _mockServicesRepository.Object, _mockServicesService.Object, _mockMapper.Object);
+        _sut = new BundlesController(_mockLogger.Object, _mockBundlesService.Object, _mockMapper.Object);
     }
 
     [Test]
@@ -41,7 +39,7 @@ public class ServicesControllerTests
         var bundle = new BundleResponse();
 
         // when 
-        var actual = _sut.GetAdditionalServicesForBundle(bundle);
+        var actual = _sut.GetAdditionalServices(bundle.Id);
 
 
         // then 

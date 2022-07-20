@@ -69,6 +69,7 @@ builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<IBundlesService, BundlesService>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
 

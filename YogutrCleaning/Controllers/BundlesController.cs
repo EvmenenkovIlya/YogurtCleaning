@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Services;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -10,14 +12,19 @@ namespace YogurtCleaning.Controllers;
 [ApiController]
 [Authorize]
 [Route("[controller]")]
-public class BundleController : ControllerBase
+public class BundlesController : ControllerBase
 {
-    private readonly ILogger<BundleController> _logger;
+    private readonly ILogger<BundlesController> _logger;
+    private readonly IBundlesService _bundlesService;
+    private readonly IMapper _mapper;
 
-    public BundleController(ILogger<BundleController> logger)
+    public BundlesController(ILogger<BundlesController> logger, IBundlesService bundlesService, IMapper mapper)
     {
         _logger = logger;
+        _bundlesService = bundlesService;
+        _mapper = mapper;
     }
+
     [AllowAnonymous]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(BundleResponse), StatusCodes.Status200OK)]
@@ -69,5 +76,14 @@ public class BundleController : ControllerBase
     public ActionResult DeleteBundle(int id)
     {
         return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}/additional-services")]
+    [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+    public ActionResult<List<ServiceResponse>> GetAdditionalServices(int id)
+    {
+        var result = _mapper.Map<List<ServiceResponse>>(_bundlesService.GetAdditionalServices(id));
+        return Ok(result);
     }
 }
