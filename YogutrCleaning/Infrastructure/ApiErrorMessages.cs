@@ -29,10 +29,15 @@ public static class ApiErrorMessages
     public const string ServicesIsRequired = "Services was not entered";
     public const string AddressMaxLength = "Address max Length is 256";
     public const string AddressIsRequired = "Address was not entered";
-    public const string ClientIdIsPositiveNumber = "Client's Id is positive number";
+    public const string ClientIdIsPositiveNumber = "Client's Id must be a positive number";
     public const string ScheduleIsRequired = "Shedule was not choosen";
     public const string PassportIsRequired = "Passport was not enteres";
     public const string PassportLength = "Passport length is 10";
+    public const string NumberOfRoomsIsPositiveNumber = "Number of rooms must be a positive number";
+    public const string NumberOfBathroomsIsPositiveNumber = "Number of bathrooms must be a positive number";
+    public const string SquareIdIsPositiveNumber = "Square must be a positive number";
+    public const string NumberOfWindowsIdIsPositiveNumber = "Number of windows must be a positive number";
+    public const string NumberOfBalconiesIdIsPositiveNumber = "Number of balconies must be a positive number";
     //public const string
     //public const string
 }

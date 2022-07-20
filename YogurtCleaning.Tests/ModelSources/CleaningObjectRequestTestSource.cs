@@ -38,6 +38,45 @@ namespace YogurtCleaning.Tests.ModelSources;
             ApiErrorMessages.ClientIdIsPositiveNumber
         };
 
+        model = GetCleaningObjectRequestModel();
+        model.NumberOfRooms = -1;
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.NumberOfRoomsIsPositiveNumber
+        };
+
+        model = GetCleaningObjectRequestModel();
+        model.NumberOfBathrooms = -1;
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.NumberOfBathroomsIsPositiveNumber
+        };
+
+        model = GetCleaningObjectRequestModel();
+        model.Square = -1;
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.SquareIdIsPositiveNumber
+        };
+
+        model = GetCleaningObjectRequestModel();
+        model.NumberOfWindows = -1;
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.NumberOfWindowsIdIsPositiveNumber
+        };
+
+        model = GetCleaningObjectRequestModel();
+        model.NumberOfBalconies = -1;
+        yield return new object[]
+        {
+            model,
+            ApiErrorMessages.NumberOfBalconiesIdIsPositiveNumber
+        };
 
         model = GetCleaningObjectRequestModel();
         model.Address = null;
