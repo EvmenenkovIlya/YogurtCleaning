@@ -23,7 +23,8 @@ public static class ApiErrorMessages
     public const string EmailNotValid = "Email is not valid";
     public const string EmailMaxLength = "Email max Length is 256";
     public const string PhoneMaxLength = "Phone max length is 15";
-    public const string BundleNameMaxLenght = "Bundel's name max lenght is 100";
+    public const string BundleNameMaxLenght = "Bundle's name max lenght is 100";
+    public const string TypeIsRequired = "Type was not entered";
     public const string PriceIsRequired = "Price was not entered";
     public const string MeasureIsRequired = "Measure was not entered";
     public const string ServicesIsRequired = "Services was not entered";
