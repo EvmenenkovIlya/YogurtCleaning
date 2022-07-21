@@ -73,7 +73,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddOrder(OrderRequest order)
     {
-        int id = _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
+        int id = _ordersService.AddOrder(_mapper.Map<Order>(order));
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 

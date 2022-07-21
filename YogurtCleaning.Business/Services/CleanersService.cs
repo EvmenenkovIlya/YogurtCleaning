@@ -23,4 +23,10 @@ public class CleanersService : ICleanersService
         cleaner.Phone = modelToUpdate.Phone;
         _cleanersRepository.UpdateCleaner(cleaner);
     }
+
+    public List<Cleaner> GetFreeCleanersForOrder(Order order)
+    {
+        return new List<Cleaner>(); // получаем список тех, кто работает в этот день. проверяем их заказы на этот день и пересечения по времени + 1 час на дорогу
+                                    // проверяем список сервисов?? район?
+    }
 }
