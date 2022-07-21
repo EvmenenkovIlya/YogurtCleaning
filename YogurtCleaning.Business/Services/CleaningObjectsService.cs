@@ -12,6 +12,12 @@ public class CleaningObjectsService : ICleaningObjectsService
         _cleaningObjectsRepository = cleaningObjectsRepository;
     }
 
+    public int CreateCleaningObject(CleaningObject cleaningObject, UserValues userValues)
+    {
+        cleaningObject.Client = new Client() { Id = userValues.Id };
+        return _cleaningObjectsRepository.CreateCleaningObject(cleaningObject);
+    }
+
     public void UpdateCleaningObject(CleaningObject modelToUpdate, int id)
     {
         var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
