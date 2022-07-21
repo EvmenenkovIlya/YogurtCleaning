@@ -48,7 +48,7 @@ public class OrdersService : IOrdersService
     //цена бандла * параметры клининг обджекта + цены допсервисов
     private decimal GetOrderPrice(Order order)
     {
-        var bundlesPrice = order.Bundles.Select(b => GetBundlePriceByParametrs(b, order.CleaningObject)).Sum();
+        var bundlesPrice = order.Bundles.Select(b => GetBundlePricePerParameters(b, order.CleaningObject)).Sum();
         var servicesPrice = order.Services.Select(s => s.Price).Sum();
         var orderPrice = bundlesPrice + servicesPrice;
         return orderPrice; // добавить скидку на поддерживающую после генеральной
@@ -125,16 +125,43 @@ public class OrdersService : IOrdersService
 
     }
 
+    // тут как-то надо сопоставить measure бандла с количеством чего-то всякого в ClObj
+    // коэффициент?
     private decimal GetBundlePricePerParameters(Bundle bundle, CleaningObject cleaningObject)
     {
-        return 1;
-        // тут как-то надо сопоставить measure бандла с количеством чего-то в ClObj
-        // коэффициент? 
+        var price = bundle.Price;
+        switch (bundle.Measure)
+        {
+            case Measure.Room:
+                price += price / 2 * (cleaningObject.NumberOfRooms-1);
+                return price;
+            case Measure.Apartment:
+                return price;
+            case Measure.SquareMeter:
+                price = price * cleaningObject.Square;
+                return price;
+            case Measure.Unit:
+                return price;
+        }
+        return price;
     }
 
     private decimal GetBundleDurationPerParameters(Bundle bundle, CleaningObject cleaningObject)
     {
-        return 1;
-        // и тут то же
+        var duration = bundle.Duration;
+        switch (bundle.Measure)
+        {
+            case Measure.Room:
+                duration += duration / 2 * (cleaningObject.NumberOfRooms - 1);
+                return duration;
+            case Measure.Apartment:
+                return duration;
+            case Measure.SquareMeter:
+                duration = duration * cleaningObject.Square;
+                return duration;
+            case Measure.Unit:
+                return duration;
+        }
+        return duration;
     }
 }
