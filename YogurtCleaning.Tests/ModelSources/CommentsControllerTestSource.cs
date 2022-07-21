@@ -33,14 +33,6 @@ public class CommentsControllerTestSource : IEnumerable
         };
 
         model = GetCommentRequestModel();
-        model.Rating = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.RatingIsRequred
-        };
-
-        model = GetCommentRequestModel();
         model.OrderId = 0;
         yield return new object[]
         {

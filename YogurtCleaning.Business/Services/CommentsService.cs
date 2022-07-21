@@ -37,4 +37,15 @@ public class CommentsService : ICommentsService
 
         return result;
     }
+
+    public List<Comment> GetComments()
+    {
+        var result = _commentsRepository.GetAllComments();
+        return result;
+    }
+
+    public void DeleteComment(int id)
+    {
+        _commentsRepository.DeleteComment(id);
+    }
 }

@@ -11,4 +11,6 @@ public interface ICommentsService
 {
     int AddCommentByClient(Comment comment, int clientId);
     int AddCommentByCleaner(Comment comment, int cleanerId);
+    List<Comment> GetComments();
+    void DeleteComment(int id);
 }

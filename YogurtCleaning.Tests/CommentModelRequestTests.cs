@@ -31,8 +31,7 @@ public class CommentModelRequestTests
         //given
         CommentRequest comment = new CommentRequest();
         List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.OrderIdIsRequred,
-            ApiErrorMessages.RatingIsRequred
+            ApiErrorMessages.OrderIdIsRequred
         };
         var validationResults = new List<ValidationResult>();
         

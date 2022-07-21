@@ -11,5 +11,5 @@ public class CommentRequest
     public int OrderId { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.RatingIsRequred)]
     [Range(1, 5, ErrorMessage = ApiErrorMessages.RatingIsOutOfRange)]
-    public int? Rating { get; set; }
+    public int Rating { get; set; }
 }
