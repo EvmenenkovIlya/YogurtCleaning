@@ -149,4 +149,23 @@ public class BundlesControllerTests
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
     }
+
+    [Test]
+    public void GetAdditionalServicesForBundle_WhenValidRequestPassed_ThenOkResultRecived()
+    {
+        // given 
+        var expectedServices = new List<ServiceResponse>();
+        var bundle = new BundleResponse();
+
+        // when 
+        var actual = _sut.GetAdditionalServices(bundle.Id);
+
+
+        // then 
+        var actualResult = actual.Result as ObjectResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+    }
 }
+
+    

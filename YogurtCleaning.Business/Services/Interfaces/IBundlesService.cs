@@ -9,4 +9,5 @@ public interface IBundlesService
     List<Bundle> GetAllBundles();
     int AddBundle(Bundle bundle);
     void DeleteBundle(int id);
+    List<Service> GetAdditionalServices(int id);
 }
