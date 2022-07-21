@@ -33,8 +33,6 @@ public static class ApiErrorMessages
     public const string ScheduleIsRequired = "Shedule was not choosen";
     public const string PassportIsRequired = "Passport was not entered";
     public const string PassportLength = "Passport length is 10";
-    public const string ServicesIsRequired = "Services were not chosen";
-    //public const string AuthorIdIsRequred = "Author's Id was not entered";
     public const string DurationIsRequired = "Duration was not entered";
     public const string NumberOfRoomsIsPositiveNumber = "Number of rooms must be a positive number";
     public const string NumberOfBathroomsIsPositiveNumber = "Number of bathrooms must be a positive number";

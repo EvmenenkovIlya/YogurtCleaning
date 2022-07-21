@@ -38,43 +38,7 @@ public class MapperConfigStorage : Profile
 		CreateMap<Service, ServiceResponse>();
 
 		CreateMap<CommentRequest, Comment>()
-			.ForMember(c => c.Order, opt => opt.MapFrom(src => GetOrderModelById(src.OrderId)));
+			.ForMember(c => c.Order, opt => opt.MapFrom(src => new Order() { Id = src.OrderId}));
 		CreateMap<Comment, CommentResponse>();
 	}
-	
-	private List<Cleaner> GetCleanersByListIds(List<int> servicesIds)
-    {
-		List<Cleaner> services = new List<Cleaner>();
-		foreach (int serviceId in servicesIds)
-        {
-			services.Add(new Cleaner() { Id = serviceId });
-        }
-		return services;
-    }
-
-	private List<Bundle> GetBundlesByListIds(List<int> bundlesIds)
-	{
-		List<Bundle> bundles = new List<Bundle>();
-		foreach (int bundleId in bundlesIds)
-		{
-			bundles.Add(new Bundle() { Id = bundleId });
-		}
-		return bundles;
-	}
-
-	private List<Service> GetServicesByListIds(List<int> servicesIds)
-	{
-		List<Service> services = new List<Service>();
-		foreach (int serviceId in servicesIds)
-		{
-			services.Add(new Service() { Id = serviceId });
-		}
-		return services;
-	}
-
-	private Order GetOrderModelById(int id)
-    {
-		Order order = new Order() { Id = id };
-		return order;
-    }
 }
