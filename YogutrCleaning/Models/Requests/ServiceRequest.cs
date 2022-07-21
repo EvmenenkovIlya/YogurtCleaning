@@ -13,4 +13,6 @@ public class ServiceRequest
     public decimal? Price { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.MeasureIsRequired)]
     public string? Unit { get; set; }
+    [Required(ErrorMessage = ApiErrorMessages.DurationIsRequired)]
+    public decimal Duration { get; set; } //in hours
 }
