@@ -82,4 +82,13 @@ public class BundlesController : ControllerBase
         _bundlesService.DeleteBundle(id);
         return NoContent();
     }
+
+    [AllowAnonymous]
+    [HttpGet("{id}/additional-services")]
+    [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+    public ActionResult<List<ServiceResponse>> GetAdditionalServices(int id)
+    {
+        var result = _mapper.Map<List<ServiceResponse>>(_bundlesService.GetAdditionalServices(id));
+        return Ok(result);
+    }
 }

@@ -10,4 +10,5 @@ public class BundleResponse
     public decimal Price { get; set; }
     public Measure Measure { get; set; }
     public List<ServiceResponse> Services { get; set; }
+    public decimal Duration { get; set; } //in hours
 }

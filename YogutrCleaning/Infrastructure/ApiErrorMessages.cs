@@ -32,13 +32,13 @@ public static class ApiErrorMessages
     public const string AddressIsRequired = "Address was not entered";
     public const string ClientIdIsPositiveNumber = "Client's Id must be a positive number";
     public const string ScheduleIsRequired = "Shedule was not choosen";
-    public const string PassportIsRequired = "Passport was not enteres";
+    public const string PassportIsRequired = "Passport was not entered";
     public const string PassportLength = "Passport length is 10";
+    public const string DurationIsRequired = "Duration was not entered";
     public const string NumberOfRoomsIsPositiveNumber = "Number of rooms must be a positive number";
     public const string NumberOfBathroomsIsPositiveNumber = "Number of bathrooms must be a positive number";
     public const string SquareIdIsPositiveNumber = "Square must be a positive number";
     public const string NumberOfWindowsIdIsPositiveNumber = "Number of windows must be a positive number";
     public const string NumberOfBalconiesIdIsPositiveNumber = "Number of balconies must be a positive number";
-    //public const string
     //public const string
 }

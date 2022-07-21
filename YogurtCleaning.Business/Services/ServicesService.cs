@@ -23,6 +23,7 @@ public class ServicesService : IServicesService
         oldService.Name = service.Name;
         oldService.Price = service.Price;
         oldService.Unit = service.Unit;
+        oldService.Duration = service.Duration;
         _servicesRepository.UpdateService(oldService);
     }
 }

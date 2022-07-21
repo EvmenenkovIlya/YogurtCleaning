@@ -17,4 +17,6 @@ public class BundleRequest
     public Measure Measure { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.ServicesIsRequired)]
     public List<ServiceResponse> Services { get; set; }
+    [Required(ErrorMessage = ApiErrorMessages.DurationIsRequired)]
+    public decimal Duration { get; set; } //in hours
 }
