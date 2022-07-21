@@ -9,9 +9,14 @@ public class BundleRequest
     [Required(ErrorMessage = ApiErrorMessages.NameIsRequired)]
     [MaxLength(100, ErrorMessage = ApiErrorMessages.BundleNameMaxLenght)]
     public string Name { get; set; }
+    [Required(ErrorMessage = ApiErrorMessages.TypeIsRequired)]
+    public CleaningType Type { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.PriceIsRequired)]
-    public decimal? Price { get; set; }
+    public decimal Price { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.MeasureIsRequired)]
-    public Measure? Measure { get; set; }
+    public Measure Measure { get; set; }
+    [Required(ErrorMessage = ApiErrorMessages.ServicesIsRequired)]
     public List<ServiceResponse> Services { get; set; }
+    [Required(ErrorMessage = ApiErrorMessages.DurationIsRequired)]
+    public decimal Duration { get; set; } //in hours
 }
