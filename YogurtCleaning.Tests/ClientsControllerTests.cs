@@ -8,22 +8,22 @@ using YogurtCleaning.Models;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.Business;
 using YogurtCleaning.DataLayer.Enums;
+using YogurtCleaning.API;
 
 namespace YogurtCleaning.Tests;
 public class ClientsControllerTests
 {
     private ClientsController _sut;
     private Mock<IClientsService> _clientsServiceMock;
-    private Mock<IMapper> _mapper;
-
+    private IMapper _mapper;
     private UserValues _userValues;
 
     [SetUp]
     public void Setup()
     {
-        _mapper = new Mock<IMapper>();
+        _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
         _clientsServiceMock = new Mock<IClientsService>();
-        _sut = new ClientsController(_mapper.Object, _clientsServiceMock.Object);
+        _sut = new ClientsController(_mapper, _clientsServiceMock.Object);
         _userValues = new UserValues();
     }
 
@@ -46,14 +46,16 @@ public class ClientsControllerTests
         };
         //when
         var actual = _sut.AddClient(client);
-        var a = actual.Result;
 
         //then
         var actualResult = actual.Result as CreatedResult;
 
-        Assert.AreEqual(StatusCodes.Status201Created, actualResult.StatusCode);
-        Assert.True((int)actualResult.Value == 1);
-        _clientsServiceMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Once);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+        Assert.That((int)actualResult.Value, Is.EqualTo(1));
+        _clientsServiceMock.Verify(x => x.CreateClient(It.Is<Client>(c => c.FirstName == client.FirstName &&
+        c.LastName == client.LastName && c.Password == client.Password && c.Email == client.Email &&
+        c.Phone == client.Phone && c.BirthDate == client.BirthDate
+        )), Times.Once);
     }
 
     [Test]
@@ -70,16 +72,23 @@ public class ClientsControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today
         };
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, new UserValues())).Returns(expectedClient);
+        
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient);
 
         //when
         var actual = _sut.GetClient(expectedClient.Id);
 
         //then
+        
         var actualResult = actual.Result as ObjectResult;
-
+        var clientResponce = actualResult.Value as ClientResponse;
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        Assert.True(expectedClient.Id == actual.Value.Id);
+        Assert.True(clientResponce.FirstName == expectedClient.FirstName);
+        Assert.True(clientResponce.LastName == expectedClient.LastName);
+        Assert.True(clientResponce.Email == expectedClient.Email);
+        Assert.True(clientResponce.Phone == expectedClient.Phone);
+        Assert.True(clientResponce.BirthDate == expectedClient.BirthDate);
+        _clientsServiceMock.Verify(x => x.GetClient(expectedClient.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -115,7 +124,9 @@ public class ClientsControllerTests
         var actualResult = actual as NoContentResult;
 
         Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.UpdateClient(client, client.Id, _userValues), Times.Once);
+        _clientsServiceMock.Verify(c => c.UpdateClient(It.Is<Client>(c => c.FirstName == newClientModel.FirstName &&
+        c.LastName == newClientModel.LastName && c.Email == null &&
+        c.BirthDate == newClientModel.BirthDate && c.Phone == newClientModel.Phone), It.Is<int>(i => i == client.Id), It.IsAny<UserValues>()), Times.Once);        
     }
 
     [Test]
@@ -144,23 +155,27 @@ public class ClientsControllerTests
             },
 
         };
-        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, _userValues)).Returns(expectedClient.Comments);
+        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient.Comments);
 
         //when
         var actual = _sut.GetAllCommentsByClient(expectedClient.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
+        var commentsResponse = actualResult.Value as List<CommentResponse>;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.GetCommentsByClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
+        Assert.True(expectedClient.Comments.Count == commentsResponse.Count);
+        Assert.True(expectedClient.Comments[0].Id == commentsResponse[0].Id);
+        Assert.True(expectedClient.Comments[1].Summary == commentsResponse[1].Summary);
+        Assert.True(expectedClient.Comments[0].Rating == commentsResponse[0].Rating);
+        _clientsServiceMock.Verify(c => c.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
     public void GetOrdersByClient_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
-
         var expectedClient = new Client()
         {
             Id = 1,
@@ -174,25 +189,29 @@ public class ClientsControllerTests
             {
                 new()
                 {
-                    Id = 1, Price = 124, Status = DataLayer.Enums.Status.Created
+                    Id = 1, Price = 124, Status = Status.Created
                 },
                 new()
                 {
-                    Id = 2, Price = 1245, Status = DataLayer.Enums.Status.Done
+                    Id = 2, Price = 1245, Status = Status.Done
                 }
             },
-
         };
 
-        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, _userValues)).Returns(expectedClient.Orders);
+        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient.Orders);
 
         //when
         var actual = _sut.GetAllOrdersByClient(expectedClient.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
+        var ordersResponse = actualResult.Value as List<OrderResponse>;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
+        Assert.True(expectedClient.Orders.Count == ordersResponse.Count);
+        Assert.True(expectedClient.Orders[0].Id == ordersResponse[0].Id);
+        Assert.True(expectedClient.Orders[1].Price == ordersResponse[1].Price);
+        Assert.True(expectedClient.Orders[0].Status == ordersResponse[0].Status);
         _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -210,7 +229,6 @@ public class ClientsControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today,
             IsDeleted = false
-
         };
 
         _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).Returns(expectedClient);
@@ -248,7 +266,6 @@ public class ClientsControllerTests
                 Email = "AdamSmith@gmail.com1",
                 Phone = "855599972641",
                 BirthDate = DateTime.Today,
-                IsDeleted = true,
             },
             new Client()
             {
@@ -268,8 +285,16 @@ public class ClientsControllerTests
 
         //then
         var actualResult = actual.Result as ObjectResult;
+        var clientsResponse = actualResult.Value as List<ClientResponse>;
+
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.GetAllClients(), Times.Once);
+        Assert.True(clientsResponse.Count == clients.Count);
+        Assert.True(clientsResponse[0].FirstName == clients[0].FirstName);
+        Assert.True(clientsResponse[1].LastName == clients[1].LastName);
+        Assert.True(clientsResponse[2].Email == clients[2].Email);
+        Assert.True(clientsResponse[1].Phone == clients[1].Phone);
+        Assert.True(clientsResponse[0].BirthDate == clients[0].BirthDate);
+        _clientsServiceMock.Verify(x => x.GetAllClients(), Times.Once);
     }
 }

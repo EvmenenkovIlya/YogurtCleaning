@@ -9,7 +9,6 @@ public class MapperConfigStorage : Profile
 
     public MapperConfigStorage()
 	{
-
 		CreateMap<ClientRegisterRequest, Client>();
 		CreateMap<ClientUpdateRequest, Client>();
 		CreateMap<Client, ClientResponse>();
@@ -34,6 +33,9 @@ public class MapperConfigStorage : Profile
 		CreateMap<CleanerUpdateRequest, Cleaner>()
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
 		CreateMap<Cleaner, CleanerResponse>();
+
+		CreateMap<CommentRequest, Comment>();
+		CreateMap<Comment, CommentResponse>();
 
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();

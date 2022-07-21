@@ -23,12 +23,8 @@ public class ClientsService : IClientsService
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        if (CheckPossibilityOfAccess(userValues, client))
-        {
-            throw new AccessException($"Access denied");
-        }
-        else
-            return client;
+        CheckPossibilityOfAccess(userValues, client);
+        return client;
     }
 
     public List<Client> GetAllClients()
@@ -42,14 +38,10 @@ public class ClientsService : IClientsService
         var client = _clientsRepository.GetClient(id);
         if (client == null)
         {
-            throw new EntityNotFoundException($"Client {id} not found");
+            throw new BadRequestException($"Client {id} not found");
         }
-        if (CheckPossibilityOfAccess(userValues, client))
-        {
-            throw new AccessException($"Access denied");
-        }
-        else
-            _clientsRepository.DeleteClient(id);
+        CheckPossibilityOfAccess(userValues, client);
+        _clientsRepository.DeleteClient(id);
     }
 
     public void UpdateClient(Client modelToUpdate, int id, UserValues userValues)
@@ -57,20 +49,16 @@ public class ClientsService : IClientsService
         Client client = _clientsRepository.GetClient(id);
         if (client == null)
         {
-            throw new EntityNotFoundException($"Client {id} not found");
+            throw new BadRequestException($"Client {id} not found");
         }
-        if (CheckPossibilityOfAccess(userValues, client))
-        {
-            throw new AccessException($"Access denied");
-        }
-        else
-        {
-            client.FirstName = modelToUpdate.FirstName;
-            client.LastName = modelToUpdate.LastName;
-            client.Phone = modelToUpdate.Phone;
-            client.BirthDate = modelToUpdate.BirthDate;
-            _clientsRepository.UpdateClient(client);
-        }
+        CheckPossibilityOfAccess(userValues, client);
+
+        client.FirstName = modelToUpdate.FirstName;
+        client.LastName = modelToUpdate.LastName;
+        client.Phone = modelToUpdate.Phone;
+        client.BirthDate = modelToUpdate.BirthDate;
+        _clientsRepository.UpdateClient(client);
+
     }
 
     public int CreateClient(Client client)
@@ -94,10 +82,7 @@ public class ClientsService : IClientsService
         {
             throw new BadRequestException($"Comments for client {id} not found, because client doesn't exists");
         }
-        if (CheckPossibilityOfAccess(userValues, client))
-        {
-            throw new AccessException($"Access denied");
-        }
+        CheckPossibilityOfAccess(userValues, client);
         return _clientsRepository.GetAllCommentsByClient(id);
     }
 
@@ -109,16 +94,18 @@ public class ClientsService : IClientsService
         {
             throw new BadRequestException($"Orders for client {id} not found, because client doesn't exists");
         }
-        if (CheckPossibilityOfAccess(userValues, client))
-        {
-            throw new AccessException($"Access denied");
-        }
-        else
-            return _clientsRepository.GetAllOrdersByClient(id);
+        CheckPossibilityOfAccess(userValues, client);        
+        return _clientsRepository.GetAllOrdersByClient(id);
             
     }
 
     private bool CheckEmailForUniqueness(string email) => _clientsRepository.GetClientByEmail(email) == null;
 
-    private bool CheckPossibilityOfAccess(UserValues userValues, Client client) => !(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString());
+    private void CheckPossibilityOfAccess(UserValues userValues, Client client)
+    {
+        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString()))
+        {
+            throw new AccessException($"Access denied");
+        }
+    }
 }

@@ -16,7 +16,7 @@ public class ClientsRepository : IClientsRepository
         _context.Clients.FirstOrDefault(o => o.Id == clientId);
 
     public List<Client> GetAllClients() => 
-        _context.Clients.AsNoTracking().Where(o => !o.IsDeleted).ToList();
+        _context.Clients.Where(o => !o.IsDeleted).AsNoTracking().ToList();
 
     public int CreateClient(Client client)
     {

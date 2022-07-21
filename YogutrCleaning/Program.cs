@@ -93,7 +93,6 @@ builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
 builder.Services.AddScoped<IBundlesService, BundlesService>();
 
-
 builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
 
 builder.Services.AddScoped<IClientsService, ClientsService>();

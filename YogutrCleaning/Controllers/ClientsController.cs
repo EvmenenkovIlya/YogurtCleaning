@@ -94,7 +94,7 @@ public class ClientsController : ControllerBase
     {
         userValues = this.GetClaimsValue();
         var comments = _clientsService.GetCommentsByClient(id, userValues);
-        return Ok(_mapper.Map<List<OrderResponse>>(comments));
+        return Ok(_mapper.Map<List<CommentResponse>>(comments));
     }
 
     [AuthorizeRoles(Role.Client)]
