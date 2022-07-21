@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
@@ -31,7 +32,8 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<BundleResponse> GetBundle(int id)
     {
-        return Ok(new BundleResponse());
+        var result = _mapper.Map<BundleResponse>(_bundlesService.GetBundle(id));
+        return Ok(result);
     }
 
     [AuthorizeRoles(Role.Admin)]
@@ -41,7 +43,8 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<BundleResponse>> GetAllBundles()
     {
-        return Ok(new List<BundleResponse>());
+        var result = _mapper.Map<List<BundleResponse>>(_bundlesService.GetAllBundles());
+        return Ok(result);
     }
 
     [AuthorizeRoles(Role.Admin)]
@@ -52,6 +55,7 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult UpdateBundle([FromBody] BundleRequest bundle, int id)
     {
+        _bundlesService.UpdateBundle(_mapper.Map<Bundle>(bundle), id);
         return NoContent();
     }
 
@@ -63,8 +67,8 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddBundle([FromBody] BundleRequest bundle)
     {
-        int bundleId = new BundleResponse().Id;
-        return Created($"{this.GetRequestFullPath()}/{bundleId}", bundleId);
+        var result = _bundlesService.AddBundle(_mapper.Map<Bundle>(bundle));
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [AuthorizeRoles(Role.Admin)]
@@ -75,7 +79,8 @@ public class BundlesController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult DeleteBundle(int id)
     {
-        return Ok();
+        _bundlesService.DeleteBundle(id);
+        return NoContent();
     }
 
     [AllowAnonymous]

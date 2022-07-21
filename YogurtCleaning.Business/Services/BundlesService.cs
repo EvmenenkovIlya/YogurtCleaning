@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using YogurtCleaning.DataLayer.Entities;
+using System.Threading.Tasks;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.Business.Services;
@@ -18,7 +18,39 @@ public class BundlesService : IBundlesService
         _bundlesRepository = bundlesRepository;
         _servicesRepository = servicesRepository;
     }
+    public int AddBundle(Bundle bundle)
+    {
+        var result = _bundlesRepository.AddBundle(bundle);
+        return result;
+    }
 
+    public void DeleteBundle(int id)
+    {
+        _bundlesRepository.DeleteBundle(id);
+    }
+
+    public List<Bundle> GetAllBundles()
+    {
+        var result = _bundlesRepository.GetAllBundles();
+        return result;
+    }
+    public Bundle GetBundle(int id)
+
+    {
+        var result = _bundlesRepository.GetBundle(id);
+        return result;
+    }
+
+    public void UpdateBundle(Bundle bundle, int id)
+    {
+        var oldBundle = _bundlesRepository.GetBundle(id);
+        oldBundle.Name = bundle.Name;
+        oldBundle.Measure = bundle.Measure;
+        oldBundle.Price = bundle.Price;
+        oldBundle.Services = bundle.Services;
+
+        _bundlesRepository.UpdateBundle(oldBundle);
+    }
     public List<Service> GetAdditionalServices(int id)
     {
         var bundle = _bundlesRepository.GetBundle(id);
@@ -27,4 +59,3 @@ public class BundlesService : IBundlesService
         var result = allServices.Where(t => !bundleServiceIds.Contains(t.Id)).ToList();
         return result;
     }
-}

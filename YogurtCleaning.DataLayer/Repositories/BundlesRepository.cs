@@ -33,7 +33,7 @@ public class BundlesRepository : IBundlesRepository
 
     public Bundle GetBundle(int id) => _context.Bundles.FirstOrDefault(b => b.Id == id && !b.IsDeleted);
 
-    public void UpdateBundle(Bundle bundle, int id)
+    public void UpdateBundle(Bundle bundle)
     {
         _context.Bundles.Update(bundle);
         _context.SaveChanges();
