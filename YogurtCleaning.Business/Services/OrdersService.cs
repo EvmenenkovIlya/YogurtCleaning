@@ -77,7 +77,7 @@ public class OrdersService : IOrdersService
 
         if (freeCleaners.Count < cleanersCount)
         {
-            throw new Exception("Manager has to do some magic"); // как передаем запрос менеджеру? и сохраняем ордер без клинеров
+            throw new Exception("Manager has to do some magic"); // как передаем запрос менеджеру?
         }
         else
         {
@@ -100,6 +100,8 @@ public class OrdersService : IOrdersService
             }
         }
     }
+
+    //проверяем их заказы на этот день и пересечения по времени + 1 час на дорогу
 
     //Считаем количество клинеров:
     //чтобы уложиться до конца рабочего дня( 8 или 12-часового)
