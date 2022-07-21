@@ -8,7 +8,7 @@ using YogurtCleaning.Tests.ModelSources;
 
 namespace YogurtCleaning.Tests;
 
-public class CommentsControllerTests
+public class CommentModelRequestTests
 {
     [TestCaseSource(typeof(CommentsControllerTestSource))]
     public async Task CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(CommentRequest comment, string errorMessage)

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
@@ -8,22 +9,20 @@ namespace YogurtCleaning.Business.Tests;
 
 public class ServicesServiceTests
 {
-    private readonly DbContextOptions<YogurtCleaningContext> _dbContextOptions;
-    public ServicesServiceTests()
+    private ServicesService _sut;
+    private Mock<IServicesRepository> _mockServicesRepository;
+
+    private void Setup()
     {
-        _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
+        _mockServicesRepository = new Mock<IServicesRepository>();
+        _sut = new ServicesService(_mockServicesRepository.Object);
     }
 
     [Fact]
     public void UpdateService_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
-        var context = new YogurtCleaningContext(_dbContextOptions);
-        var serviceRepository = new ServicesRepository(context);
-        var sut = new ServicesService(serviceRepository);
-
+        Setup();
         var service = new Service
         {
             Id = 10,
@@ -32,6 +31,7 @@ public class ServicesServiceTests
             Unit = "Unit",
             IsDeleted = false
         };
+        _mockServicesRepository.Setup(s => s.GetService(service.Id)).Returns(service);
 
         var updatedService = new Service
         {
@@ -41,15 +41,13 @@ public class ServicesServiceTests
             IsDeleted = false
         };
 
-        context.Add(service);
-        context.SaveChanges();
-
         // when
-        sut.UpdateService(updatedService, service.Id);
+        _sut.UpdateService(updatedService, service.Id);
 
         // then
         Assert.True(service.Name == updatedService.Name);
         Assert.True(service.Price == updatedService.Price);
         Assert.True(service.Unit == updatedService.Unit);
+        _mockServicesRepository.Verify(s => s.GetService(service.Id), Times.Once);
     }
 }

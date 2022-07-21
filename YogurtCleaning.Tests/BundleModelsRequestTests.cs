@@ -29,9 +29,10 @@ public class BundleModelsRequestTests
         //given
         BundleRequest bundle = new BundleRequest();
         List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.NameIsRequired, 
-            ApiErrorMessages.PriceIsRequired,
-            ApiErrorMessages.MeasureIsRequired,
+            ApiErrorMessages.NameIsRequired,
+            //ApiErrorMessages.TypeIsRequired,
+            //ApiErrorMessages.PriceIsRequired,
+            //ApiErrorMessages.MeasureIsRequired,
         };
         var validationResults = new List<ValidationResult>();
 
@@ -54,6 +55,7 @@ public class BundleModelsRequestTests
         BundleRequest bundle = new BundleRequest()
         {
             Name = "Kitchen regular cleaning",
+            Type = CleaningType.Regular,
             Price = 1000,
             Measure = Measure.Room,
             Services = new List<ServiceResponse>()
