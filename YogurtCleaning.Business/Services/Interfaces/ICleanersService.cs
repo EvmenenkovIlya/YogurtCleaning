@@ -4,12 +4,12 @@ namespace YogurtCleaning.Business.Services
 {
     public interface ICleanersService
     {
-        void UpdateCleaner(Cleaner newCleaner, int id, List<string> identities);
-        Cleaner? GetCleaner(int id, List<string> identities);
-        List<Cleaner> GetAllCleaners(List<string> identities);
-        void DeleteCleaner(int id, List<string> identities);
+        void UpdateCleaner(Cleaner newCleaner, int id, UserValues userValies);
+        Cleaner? GetCleaner(int id, UserValues userValies);
+        List<Cleaner> GetAllCleaners();
+        void DeleteCleaner(int id, UserValues userValies);
         int CreateCleaner(Cleaner cleaner);
-        List<Comment> GetCommentsByCleaner(int id, List<string> identities);
-        List<Order> GetOrdersByCleaner(int id, List<string> identities);
+        List<Comment> GetCommentsByCleaner(int id, UserValues userValies);
+        List<Order> GetOrdersByCleaner(int id, UserValues userValies);
     }
 }

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -17,7 +18,7 @@ namespace YogurtCleaning.Controllers;
 public class CleanersController : ControllerBase
 {
     private readonly IMapper _mapper;
-    public List<string>? Identities;
+    public UserValues userValues;
     private readonly ICleanersService _cleanersService;
 
     public CleanersController(IMapper mapper, ICleanersService cleanersService)
@@ -34,8 +35,8 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult<CleanerResponse> GetCleaner(int id)
     {
-        Identities = this.GetClaimsValue();
-        var cleaner = _cleanersService.GetCleaner(id, Identities);
+        userValues = this.GetClaimsValue();
+        var cleaner = _cleanersService.GetCleaner(id, userValues);
         return Ok(_mapper.Map<CleanerResponse>(cleaner));
     }
 
@@ -46,8 +47,7 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CleanerResponse>> GetAllCleaners()
     {
-        Identities = this.GetClaimsValue();
-        var cleaners = _cleanersService.GetAllCleaners(Identities);
+        var cleaners = _cleanersService.GetAllCleaners();
         return Ok(_mapper.Map<List<CleanerResponse>>(cleaners));
     }
 
@@ -56,10 +56,10 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateCleaner(int id, [FromBody] CleanerUpdateRequest cleaner)
+    public ActionResult UpdateCleaner([FromBody] CleanerUpdateRequest cleaner, int id)
     {
-        Identities = this.GetClaimsValue();
-        _cleanersService.UpdateCleaner(_mapper.Map<Cleaner>(cleaner), id, Identities);
+        userValues = this.GetClaimsValue();
+        _cleanersService.UpdateCleaner(_mapper.Map<Cleaner>(cleaner), id, userValues);
         return NoContent();
     }
 
@@ -80,8 +80,8 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteCleaner(int id)
     {
-        Identities = this.GetClaimsValue();
-        _cleanersService.DeleteCleaner(id, Identities);
+        userValues = this.GetClaimsValue();
+        _cleanersService.DeleteCleaner(id, userValues);
         return NoContent();
     }
 
@@ -92,20 +92,20 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CommentResponse>> GetAllCommentsByCleaner (int id)
     {
-        Identities = this.GetClaimsValue();
-        var comments = _cleanersService.GetCommentsByCleaner(id, Identities);
-        return Ok(_mapper.Map<List<OrderResponse>>(comments));
+        userValues = this.GetClaimsValue();
+        var comments = _cleanersService.GetCommentsByCleaner(id, userValues);
+        return Ok(_mapper.Map<List<CommentResponse>>(comments));
     }
 
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}/orders")]
-    [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<OrderResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<CommentResponse>> GetAllOrdersByCleaner(int id)
+    public ActionResult<List<OrderResponse>> GetAllOrdersByCleaner(int id)
     {
-        Identities = this.GetClaimsValue();
-        var orders = _cleanersService.GetOrdersByCleaner(id, Identities);
+        userValues = this.GetClaimsValue();
+        var orders = _cleanersService.GetOrdersByCleaner(id, userValues);
         return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
 }

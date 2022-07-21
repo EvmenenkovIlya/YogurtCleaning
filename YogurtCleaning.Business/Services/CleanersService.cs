@@ -14,141 +14,91 @@ public class CleanersService : ICleanersService
         _cleanersRepository = cleanersRepository;
     }
 
-    public Cleaner? GetCleaner(int id, List<string>? identities)
+    public Cleaner? GetCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
 
-        if (cleaner == null || cleaner.Id == 0)
+        if (cleaner == null )
         {
             throw new EntityNotFoundException($"Cleaner {id} not found");
         }
-        if (identities[0] == (string)cleaner.Email || identities[1] == Role.Admin.ToString())
-            return cleaner;
-        else
-        {
-            throw new AccessException($"Access denied");
-        }
+        CheckPossibilityOfAccess(cleaner, userValues);
+        return cleaner;
     }
 
-    public List<Cleaner> GetAllCleaners(List<string>? identities)
-    {
-        if (identities[1] == Role.Admin.ToString())
-        {
-            var cleaners = _cleanersRepository.GetAllCleaners();
-            return cleaners;
-        }
-        else
-        {
-            throw new AccessException($"Access denied");
-        }
-    }
+    public List<Cleaner> GetAllCleaners() => _cleanersRepository.GetAllCleaners();
 
-    public void DeleteCleaner(int id, List<string> identities)
+
+    public void DeleteCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
-        if (cleaner == null || cleaner.Id == 0)
+        if (cleaner == null )
         {
-            throw new EntityNotFoundException($"Cleaner {id} not found");
+            throw new BadRequestException($"Cleaner {id} not found");
         }
-        if (!(identities[0] == (string)cleaner.Email || identities[1] == Role.Admin.ToString()))
-        {
-
-            throw new AccessException($"Access denied");
-
-        }
-        else
-            _cleanersRepository.DeleteCleaner(id);
+        CheckPossibilityOfAccess(cleaner, userValues);
+        _cleanersRepository.DeleteCleaner(id);
     }
 
-    public void UpdateCleaner(Cleaner modelToUpdate, int id, List<string> identities)
+    public void UpdateCleaner(Cleaner modelToUpdate, int id, UserValues userValues)
     {
         Cleaner cleaner = _cleanersRepository.GetCleaner(id);
-        if (cleaner == null || cleaner.Id == 0)
+        if (cleaner == null)
         {
-            throw new EntityNotFoundException($"Cleaner {id} not found");
+            throw new BadRequestException($"Cleaner {id} not found");
         }
-        if (!(identities[0] == (string)cleaner.Email || identities[1] == Role.Admin.ToString()))
-        {
-            throw new AccessException($"Access denied");
-        }
-        else
-        {
-            cleaner.FirstName = modelToUpdate.FirstName;
-            cleaner.LastName = modelToUpdate.LastName;
-            cleaner.Services = modelToUpdate.Services;
-            cleaner.BirthDate = modelToUpdate.BirthDate;
-            cleaner.Phone = modelToUpdate.Phone;
-            _cleanersRepository.UpdateCleaner(cleaner);
-        }
+        CheckPossibilityOfAccess(cleaner, userValues);
+        cleaner.FirstName = modelToUpdate.FirstName;
+        cleaner.LastName = modelToUpdate.LastName;
+        cleaner.Services = modelToUpdate.Services;
+        cleaner.BirthDate = modelToUpdate.BirthDate;
+        cleaner.Phone = modelToUpdate.Phone;
+        _cleanersRepository.UpdateCleaner(cleaner);
+
     }
 
     public int CreateCleaner(Cleaner cleaner)
     {
-        // add checking password and confirm password
-        var isChecked = CheckingEmailForUniqueness(cleaner.Email);
-
-        if (isChecked)
+        var isChecked = CheckEmailForUniqueness(cleaner.Email);
+        if (!isChecked)
         {
             throw new UniquenessException($"That email is registred");
         }
-        if (cleaner.Phone is not null)
-        {
-            if (!(cleaner.Phone.StartsWith("+7") || cleaner.Phone.StartsWith("8") && cleaner.Phone.Length <= 11))
-            {
-                throw new DataException($"Invalid phone number");
-            }
-        }
-        if (cleaner.BirthDate > DateTime.Now)
-        {
-            throw new DataException($"Invalid birthday");
-        }
-        else
-            return _cleanersRepository.CreateCleaner(cleaner);
+        return _cleanersRepository.CreateCleaner(cleaner);
 
     }
-    public List<Comment> GetCommentsByCleaner(int id, List<string> identities)
+    public List<Comment> GetCommentsByCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
         var comments = _cleanersRepository.GetAllCommentsByCleaner(id);
 
-        if (cleaner == null || cleaner.Id == 0)
+        if (cleaner == null)
         {
-            throw new EntityNotFoundException($"Cleaner {id} not found");
+            throw new BadRequestException($"Cleaner {id} not found");
         }
-
-        if (!(identities[0] == (string)cleaner.Email || identities[1] == Role.Admin.ToString()))
-        {
-            throw new AccessException($"Access denied");
-        }
+        CheckPossibilityOfAccess(cleaner, userValues);
         return comments;
     }
 
-    public List<Order> GetOrdersByCleaner(int id, List<string> identities)
+    public List<Order> GetOrdersByCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
-        var orders = _cleanersRepository.GetAllOrdersByCleaner(id);
 
-        if (cleaner == null || cleaner.Id == 0)
+        if (cleaner == null )
         {
-            throw new EntityNotFoundException($"Orders by cleaner {id} not found");
+            throw new BadRequestException($"Orders by cleaner {id} not found");
         }
-        if (!(identities[0] == (string)cleaner.Email || identities[1] == Role.Admin.ToString()))
+        CheckPossibilityOfAccess(cleaner, userValues);
+        return _cleanersRepository.GetAllOrdersByCleaner(id);
+    }
+
+    private bool CheckEmailForUniqueness(string email) => _cleanersRepository.GetCleanerByEmail(email) == null;
+
+    private void CheckPossibilityOfAccess(Cleaner cleaner, UserValues userValues)
+    {
+        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin.ToString()))
         {
             throw new AccessException($"Access denied");
         }
-        else
-            return orders;
-    }
-
-    private bool CheckingEmailForUniqueness(string email)
-    {
-        var cleaners = _cleanersRepository.GetAllCleaners();
-
-        if (cleaners is not null)
-        {
-            var uniqueEmail = cleaners.Any(c => c.Email == email);
-            return uniqueEmail;
-        }
-        else return false;
     }
 }

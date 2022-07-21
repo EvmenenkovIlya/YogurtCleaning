@@ -36,6 +36,9 @@ public class MapperConfigStorage : Profile
 		.ForMember(o => o.Services, opt => opt.MapFrom(src => GetServicesByListIds(src.ServicesIds)));
 		CreateMap<Cleaner, CleanerResponse>();
 
+		CreateMap<CommentRequest, Comment>();
+		CreateMap<Comment, CommentResponse>();
+
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
 	}

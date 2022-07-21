@@ -6,29 +6,32 @@ using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.Models;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.Business;
+using YogurtCleaning.DataLayer.Enums;
+using YogurtCleaning.API;
 
 namespace YogurtCleaning.Tests;
 public class CleanersControllerTests
 {
     private CleanersController _sut;
-    private Mock<ICleanersService> _сleanersServiceMock;
-    private Mock<IMapper> _mapper;
-
-    private List<string> _identities;
+    private Mock<ICleanersService> _cleanersServiceMock;
+    private IMapper _mapper;
+    private UserValues _userValues;
 
     [SetUp]
     public void Setup()
     {
-        _mapper = new Mock<IMapper>();
-        _сleanersServiceMock = new Mock<ICleanersService>();
-        _sut = new CleanersController(_mapper.Object, _сleanersServiceMock.Object);
+        _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
+        _cleanersServiceMock = new Mock<ICleanersService>();
+        _sut = new CleanersController(_mapper, _cleanersServiceMock.Object);
+        _userValues = new UserValues();
     }
 
     [Test]
     public async Task CreateCleaner_WhenValidRequestPassed_CreatedResultReceived()
     {
         //given
-        _сleanersServiceMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
+        _cleanersServiceMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
          .Returns(1);
 
         var cleaner = new CleanerRegisterRequest()
@@ -41,24 +44,18 @@ public class CleanersControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today
         };
-
         //when
         var actual = _sut.AddCleaner(cleaner);
-        var a = actual.Result;
 
         //then
         var actualResult = actual.Result as CreatedResult;
 
-        Assert.AreEqual(StatusCodes.Status201Created, actualResult.StatusCode);
-        Assert.True((int)actualResult.Value == 1);
-
-        _сleanersServiceMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Once);
-        _сleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetAllCleaners(It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.UpdateCleaner(It.IsAny<Cleaner>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCommentsByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+        Assert.That((int)actualResult.Value, Is.EqualTo(1));
+        _cleanersServiceMock.Verify(x => x.CreateCleaner(It.Is<Cleaner>(c => c.FirstName == cleaner.FirstName &&
+        c.LastName == cleaner.LastName && c.Password == cleaner.Password && c.Email == cleaner.Email &&
+        c.Phone == cleaner.Phone && c.BirthDate == cleaner.BirthDate
+        )), Times.Once);
     }
 
     [Test]
@@ -75,23 +72,23 @@ public class CleanersControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today
         };
-        _сleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, _identities)).Returns(expectedCleaner);
+
+        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner);
 
         //when
         var actual = _sut.GetCleaner(expectedCleaner.Id);
 
         //then
+
         var actualResult = actual.Result as ObjectResult;
-
-
+        var cleanerResponce = actualResult.Value as CleanerResponse;
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _сleanersServiceMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _сleanersServiceMock.Verify(c => c.GetAllCleaners(It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.UpdateCleaner(It.IsAny<Cleaner>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCommentsByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        Assert.True(cleanerResponce.FirstName == expectedCleaner.FirstName);
+        Assert.True(cleanerResponce.LastName == expectedCleaner.LastName);
+        Assert.True(cleanerResponce.Email == expectedCleaner.Email);
+        Assert.True(cleanerResponce.Phone == expectedCleaner.Phone);
+        Assert.True(cleanerResponce.BirthDate == expectedCleaner.BirthDate);
+        _cleanersServiceMock.Verify(x => x.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -110,7 +107,6 @@ public class CleanersControllerTests
             BirthDate = DateTime.Today
         };
 
-
         var newCleanerModel = new CleanerUpdateRequest()
         {
             FirstName = "Valid",
@@ -119,22 +115,18 @@ public class CleanersControllerTests
             BirthDate = DateTime.Today
         };
 
-        _сleanersServiceMock.Setup(o => o.UpdateCleaner(cleaner, cleaner.Id, _identities));
+        _cleanersServiceMock.Setup(o => o.UpdateCleaner(cleaner, cleaner.Id, _userValues));
 
         //when
-        var actual = _sut.UpdateCleaner(cleaner.Id, newCleanerModel);
+        var actual = _sut.UpdateCleaner(newCleanerModel, cleaner.Id);
 
         //then
         var actualResult = actual as NoContentResult;
 
         Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
-        _сleanersServiceMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetAllCleaners(It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.UpdateCleaner(It.IsAny<Cleaner>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _сleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCommentsByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        _cleanersServiceMock.Verify(c => c.UpdateCleaner(It.Is<Cleaner>(c => c.FirstName == newCleanerModel.FirstName &&
+        c.LastName == newCleanerModel.LastName && c.Email == null &&
+        c.BirthDate == newCleanerModel.BirthDate && c.Phone == newCleanerModel.Phone), It.Is<int>(i => i == cleaner.Id), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -163,29 +155,27 @@ public class CleanersControllerTests
             },
 
         };
-        _сleanersServiceMock.Setup(o => o.GetCommentsByCleaner(expectedCleaner.Id, _identities)).Returns(expectedCleaner.Comments);
+        _cleanersServiceMock.Setup(o => o.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner.Comments);
 
         //when
         var actual = _sut.GetAllCommentsByCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
+        var commentsResponse = actualResult.Value as List<CommentResponse>;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _сleanersServiceMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetAllCleaners(It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.UpdateCleaner(It.IsAny<Cleaner>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCommentsByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
+        Assert.True(expectedCleaner.Comments.Count == commentsResponse.Count);
+        Assert.True(expectedCleaner.Comments[0].Id == commentsResponse[0].Id);
+        Assert.True(expectedCleaner.Comments[1].Summary == commentsResponse[1].Summary);
+        Assert.True(expectedCleaner.Comments[0].Rating == commentsResponse[0].Rating);
+        _cleanersServiceMock.Verify(c => c.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
     public void GetOrdersByCleaner_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
-
         var expectedCleaner = new Cleaner()
         {
             Id = 1,
@@ -199,32 +189,30 @@ public class CleanersControllerTests
             {
                 new()
                 {
-                    Id = 1, Price = 124, Status = DataLayer.Enums.Status.Created
+                    Id = 1, Price = 124, Status = Status.Created
                 },
                 new()
                 {
-                    Id = 2, Price = 1245, Status = DataLayer.Enums.Status.Done
+                    Id = 2, Price = 1245, Status = Status.Done
                 }
             },
-
         };
 
-        _сleanersServiceMock.Setup(o => o.GetOrdersByCleaner(expectedCleaner.Id, _identities)).Returns(expectedCleaner.Orders);
+        _cleanersServiceMock.Setup(o => o.GetOrdersByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner.Orders);
 
         //when
         var actual = _sut.GetAllOrdersByCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
+        var ordersResponse = actualResult.Value as List<OrderResponse>;
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _сleanersServiceMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetAllCleaners(It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.UpdateCleaner(It.IsAny<Cleaner>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _сleanersServiceMock.Verify(c => c.GetCommentsByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        Assert.True(expectedCleaner.Orders.Count == ordersResponse.Count);
+        Assert.True(expectedCleaner.Orders[0].Id == ordersResponse[0].Id);
+        Assert.True(expectedCleaner.Orders[1].Price == ordersResponse[1].Price);
+        Assert.True(expectedCleaner.Orders[0].Status == ordersResponse[0].Status);
+        _cleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -241,10 +229,9 @@ public class CleanersControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today,
             IsDeleted = false
-
         };
 
-        _сleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, _identities)).Returns(expectedCleaner);
+        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, _userValues)).Returns(expectedCleaner);
 
         //when
         var actual = _sut.DeleteCleaner(expectedCleaner.Id);
@@ -253,13 +240,7 @@ public class CleanersControllerTests
         var actualResult = actual as NoContentResult;
 
         Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
-        _сleanersServiceMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Once);
-        _сleanersServiceMock.Verify(c => c.GetCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetAllCleaners(It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.UpdateCleaner(It.IsAny<Cleaner>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCommentsByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        _cleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
@@ -285,7 +266,6 @@ public class CleanersControllerTests
                 Email = "AdamSmith@gmail.com1",
                 Phone = "855599972641",
                 BirthDate = DateTime.Today,
-                IsDeleted = true,
             },
             new Cleaner()
             {
@@ -298,21 +278,23 @@ public class CleanersControllerTests
             }
         };
 
-        _сleanersServiceMock.Setup(o => o.GetAllCleaners(_identities)).Returns(cleaners).Verifiable();
+        _cleanersServiceMock.Setup(o => o.GetAllCleaners()).Returns(cleaners).Verifiable();
 
         //when
         var actual = _sut.GetAllCleaners();
 
         //then
         var actualResult = actual.Result as ObjectResult;
+        var cleanersResponse = actualResult.Value as List<CleanerResponse>;
+
 
         Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        _сleanersServiceMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetAllCleaners(It.IsAny<List<string>>()), Times.Once);
-        _сleanersServiceMock.Verify(c => c.UpdateCleaner(It.IsAny<Cleaner>(), It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
-        _сleanersServiceMock.Verify(c => c.GetCommentsByCleaner(It.IsAny<int>(), It.IsAny<List<string>>()), Times.Never);
+        Assert.True(cleanersResponse.Count == cleaners.Count);
+        Assert.True(cleanersResponse[0].FirstName == cleaners[0].FirstName);
+        Assert.True(cleanersResponse[1].LastName == cleaners[1].LastName);
+        Assert.True(cleanersResponse[2].Email == cleaners[2].Email);
+        Assert.True(cleanersResponse[1].Phone == cleaners[1].Phone);
+        Assert.True(cleanersResponse[0].BirthDate == cleaners[0].BirthDate);
+        _cleanersServiceMock.Verify(x => x.GetAllCleaners(), Times.Once);
     }
 }
