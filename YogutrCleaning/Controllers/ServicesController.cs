@@ -33,7 +33,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
     public ActionResult<ServiceResponse> GetService(int id)
     {
-        var result = _mapper.Map<ServiceResponse>(_servicesRepository.GetService(id));
+        var result = _mapper.Map<ServiceResponse>(_servicesService.GetService(id));
         return Ok(result);
     }
 
