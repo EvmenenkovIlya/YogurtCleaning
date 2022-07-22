@@ -76,6 +76,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
             ValidateIssuerSigningKey = true,
+            SaveSigninToken = true,
         };
     });
 builder.Services.AddDbContext<YogurtCleaningContext>(o =>
@@ -92,6 +93,7 @@ builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
 builder.Services.AddScoped<IBundlesService, BundlesService>();
+builder.Services.AddScoped<ICommentsService, CommentsService>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
 

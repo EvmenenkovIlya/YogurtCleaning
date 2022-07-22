@@ -6,8 +6,7 @@ namespace YogurtCleaning.API;
 
 public class MapperConfigStorage : Profile
 {
-
-    public MapperConfigStorage()
+	public MapperConfigStorage()
 	{
 		CreateMap<ClientRegisterRequest, Client>();
 		CreateMap<ClientUpdateRequest, Client>();
@@ -42,5 +41,9 @@ public class MapperConfigStorage : Profile
 		CreateMap<UserLoginRequest, LoginData>();
 		CreateMap<BundleRequest, Bundle>();
 		CreateMap<Bundle, BundleResponse>();
+
+		CreateMap<CommentRequest, Comment>()
+			.ForMember(c => c.Order, opt => opt.MapFrom(src => new Order() { Id = src.OrderId}));
+		CreateMap<Comment, CommentResponse>();
 	}
 }
