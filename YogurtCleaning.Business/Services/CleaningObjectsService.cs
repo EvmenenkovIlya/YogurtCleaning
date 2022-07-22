@@ -1,7 +1,7 @@
 ﻿using YogurtCleaning.Business.Exceptions;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.Enams;
 
 namespace YogurtCleaning.Business.Services;
 
@@ -21,7 +21,7 @@ public class CleaningObjectsService : ICleaningObjectsService
         {
             throw new BadRequestException($"Cleaninig object {id} not found");
         }
-        CheckPossibilityOfAccess(cleaningObject, userValues);
+        AuthorizeEnitiyAccess(cleaningObject, userValues);
 
         cleaningObject.NumberOfRooms = modelToUpdate.NumberOfRooms;
         cleaningObject.NumberOfBathrooms = modelToUpdate.NumberOfBathrooms;
@@ -33,7 +33,7 @@ public class CleaningObjectsService : ICleaningObjectsService
         _cleaningObjectsRepository.UpdateCleaningObject(cleaningObject);
     }
 
-    private void CheckPossibilityOfAccess(CleaningObject cleaningObject, UserValues userValues)
+    private void AuthorizeEnitiyAccess(CleaningObject cleaningObject, UserValues userValues)
     {
         if (!(userValues.Id == cleaningObject.Client.Id || userValues.Role == Role.Admin.ToString()))
         {

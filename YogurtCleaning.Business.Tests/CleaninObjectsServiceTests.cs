@@ -2,7 +2,7 @@
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.Enams;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Business.Facts;
 
@@ -43,7 +43,7 @@ public class CleaningObjectServiceFacts
             NumberOfBalconies = 8,
             Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
         };
-        _userValues = new UserValues() { Id = 1 };
+        _userValues = new UserValues() { Id = cleaningObject.Client.Id };
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).Returns(cleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
 
@@ -114,7 +114,7 @@ public class CleaningObjectServiceFacts
             NumberOfBathrooms = 100,
             Square = 7,
         };
-        _userValues = new UserValues() { Id = 1 };
+        _userValues = new UserValues() { Id = cleaningObject.Client.Id };
 
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
 
