@@ -1,15 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
+using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.Enams;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
-using YogurtCleaning.Business;
 
 namespace YogurtCleaning.Controllers;
 

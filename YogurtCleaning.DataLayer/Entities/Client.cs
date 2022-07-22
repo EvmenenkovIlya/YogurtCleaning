@@ -9,15 +9,7 @@
         public string Phone { get; set; }
         public string Email { get; set; }
         public DateTime BirthDate { get; set; }
-        public DateTime RegistrationDate
-        {
-            get
-            {
-                return DateTime.Now;
-            }
-            set { }
-
-        }
+        public DateTime RegistrationDate { get; set; }
         public decimal Rating { get; set; }
         public List<CleaningObject> Addresses { get; set; }
         public List<Comment> Comments { get; set; }

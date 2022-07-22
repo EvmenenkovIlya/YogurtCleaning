@@ -1,4 +1,4 @@
-﻿namespace YogurtCleaning.Enams;
+﻿namespace YogurtCleaning.DataLayer.Enums;
 
 public enum Role
 {
