@@ -32,17 +32,10 @@ public class CleanersService : ICleanersService
     public List<Cleaner> GetFreeCleanersForOrder(Order order)
     {
         var freeCleaners = new List<Cleaner>();
-        var workingShiftCleaners = _cleanersRepository.GetAllCleaners()
-            .Where(c => c.Schedule is Schedule.ShiftWork && Convert.ToInt32((order.StartTime - c.DateOfStartWork).TotalDays % 4) <= 2).ToList();
-        var workingFullTimeCleaners = _cleanersRepository.GetAllCleaners()
-            .Where(c => c.Schedule is Schedule.FullTime && order.StartTime.DayOfWeek != DayOfWeek.Sunday && order.StartTime.DayOfWeek != DayOfWeek.Saturday)
+        var workingCleaners = _cleanersRepository.GetAllCleaners()
+            .Where(c => (c.Schedule is Schedule.ShiftWork && Convert.ToInt32((order.StartTime - c.DateOfStartWork).TotalDays % 4) < 2) ||
+            (c.Schedule is Schedule.FullTime && order.StartTime.DayOfWeek != DayOfWeek.Sunday && order.StartTime.DayOfWeek != DayOfWeek.Saturday))
             .ToList();
-        
-        var workingCleaners = workingShiftCleaners;
-        foreach (var c in workingFullTimeCleaners)
-        {
-            workingCleaners.Add(c);
-        }
 
         foreach (var c in workingCleaners)
         {
@@ -50,7 +43,7 @@ public class CleanersService : ICleanersService
 
             foreach (var o in c.Orders)
             {
-                if (o.StartTime.Date != order.StartTime.Date || ((o.StartTime >= order.EndTime || o.EndTime <= order.StartTime)))
+                if (o.StartTime.Date != order.StartTime.Date || ((o.StartTime >= order.EndTime.AddHours(1) || o.EndTime.AddHours(1) <= order.StartTime)))
                 {
                     isMatch = true;
                 }
