@@ -28,8 +28,8 @@ public class AuthService : IAuthService
 
         var admin = _adminsRepository.GetAdminByEmail(email);
 
-        if (admin is not null && email == admin.Email &&
-            PasswordHash.ValidatePassword(password, admin.Password) && !admin.IsDeleted)
+        if (admin is not null && email == admin.Email && !admin.IsDeleted &&
+            PasswordHash.ValidatePassword(password, admin.Password))
         {
             userValues.Email = email;
             userValues.Role = Role.Admin.ToString();

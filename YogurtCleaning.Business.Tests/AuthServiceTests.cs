@@ -189,7 +189,7 @@ public class AuthServicesTests
 
         //then
 
-        Assert.True(actual is not null);
+        Assert.NotNull(actual);
 
     }
 
