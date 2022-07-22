@@ -96,7 +96,7 @@ public class CleanerModelsRequestTests
         //given
         CleanerRegisterRequest cleaner = new CleanerRegisterRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",

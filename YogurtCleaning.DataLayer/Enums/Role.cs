@@ -1,8 +1,8 @@
-﻿namespace YogurtCleaning.Enams;
+﻿namespace YogurtCleaning.DataLayer.Enums;
 
 public enum Role
 {
-    Client,
+    Client = 1,
     Cleaner,
     Admin
 }

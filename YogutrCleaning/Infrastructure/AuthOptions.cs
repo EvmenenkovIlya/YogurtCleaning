@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using YogurtCleaning.Enams;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Infrastructure;
 
