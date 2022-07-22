@@ -86,6 +86,8 @@ public class OrdersService : IOrdersService
                 for (int i = 0; i < cleanersCount; i++)
                 {
                     cleaners.Add(freeCleaners[i]);
+                    freeCleaners[i].Orders.Add(order);
+                    _cleanersService.UpdateCleaner(freeCleaners[i], freeCleaners[i].Id);
                 }
                 return cleaners;
             }
