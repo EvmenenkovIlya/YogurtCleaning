@@ -2,7 +2,7 @@
 
 public enum Role
 {
-    Client,
+    Client = 1,
     Cleaner,
     Admin
 }

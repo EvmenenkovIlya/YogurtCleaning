@@ -19,10 +19,7 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
 
-        if (client == null)
-        {
-            throw new EntityNotFoundException($"Client {id} not found");
-        }
+        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
         CheckPossibilityOfAccess(userValues, client);
         return client;
     }
@@ -36,10 +33,7 @@ public class ClientsService : IClientsService
     public void DeleteClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
-        if (client == null)
-        {
-            throw new BadRequestException($"Client {id} not found");
-        }
+        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
         CheckPossibilityOfAccess(userValues, client);
         _clientsRepository.DeleteClient(id);
     }
@@ -47,10 +41,7 @@ public class ClientsService : IClientsService
     public void UpdateClient(Client modelToUpdate, int id, UserValues userValues)
     {
         Client client = _clientsRepository.GetClient(id);
-        if (client == null)
-        {
-            throw new BadRequestException($"Client {id} not found");
-        }
+        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
         CheckPossibilityOfAccess(userValues, client);
 
         client.FirstName = modelToUpdate.FirstName;
@@ -78,10 +69,7 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
 
-        if (client == null)
-        {
-            throw new BadRequestException($"Comments for client {id} not found, because client doesn't exists");
-        }
+        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
         CheckPossibilityOfAccess(userValues, client);
         return _clientsRepository.GetAllCommentsByClient(id);
     }
@@ -89,11 +77,7 @@ public class ClientsService : IClientsService
     public List<Order> GetOrdersByClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
-
-        if (client == null)
-        {
-            throw new BadRequestException($"Orders for client {id} not found, because client doesn't exists");
-        }
+        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
         CheckPossibilityOfAccess(userValues, client);        
         return _clientsRepository.GetAllOrdersByClient(id);
             
@@ -106,6 +90,14 @@ public class ClientsService : IClientsService
         if (!(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString()))
         {
             throw new AccessException($"Access denied");
+        }
+    }
+
+    private void CheckThatUserNotNull(Client client, string errorMesage)
+    {
+        if (client == null)
+        {
+            throw new BadRequestException(errorMesage);
         }
     }
 }
