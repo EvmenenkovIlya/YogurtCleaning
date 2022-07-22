@@ -43,7 +43,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult<List<ServiceResponse>> GetAllServices()
     {
-        var result = _mapper.Map<List<ServiceResponse>>(_servicesRepository.GetAllServices());
+        var result = _mapper.Map<List<ServiceResponse>>(_servicesService.GetAllServices());
         return Ok(result);
     }
 
