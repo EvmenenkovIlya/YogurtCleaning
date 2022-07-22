@@ -75,7 +75,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteService(int id)
     {
-        _servicesRepository.DeleteService(id);
-        return Ok();
+        _servicesService.DeleteService(id);
+        return NoContent();
     }
 }

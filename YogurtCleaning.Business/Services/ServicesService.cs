@@ -26,4 +26,8 @@ public class ServicesService : IServicesService
         oldService.Duration = service.Duration;
         _servicesRepository.UpdateService(oldService);
     }
+    public void DeleteService(int id)
+    {
+        _servicesRepository.DeleteService(id);
+    }
 }
