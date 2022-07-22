@@ -39,10 +39,12 @@ public class CleanersRepository : ICleanersRepository
         _context.SaveChanges();
     }
 
-    public List<Comment> GetAllCommentsByCleaner(int cleanerId)
-    {
-        var comments = _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == cleanerId).ToList();
-        return comments;
-    }
+    public List<Comment> GetAllCommentsByCleaner(int clientId) =>
+        _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == clientId).ToList();
+
+    public List<Order> GetAllOrdersByCleaner(int id) => _context.Orders.Where(o => o.CleanersBand.Any(c => c.Id == id)).ToList();
+
+    public Cleaner? GetCleanerByEmail(string email) => _context.Cleaners.FirstOrDefault(o => o.Email == email);
+
     public Cleaner? GetCleanerByLogin(LoginData login) => _context.Cleaners.FirstOrDefault(o => o.Email == login.Email && o.Password == login.Password);
 }
