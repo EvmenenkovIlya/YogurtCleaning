@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API;
@@ -10,7 +9,6 @@ public class MapperConfigStorage : Profile
 
     public MapperConfigStorage()
 	{
-
 		CreateMap<ClientRegisterRequest, Client>();
 		CreateMap<ClientUpdateRequest, Client>();
 		CreateMap<Client, ClientResponse>();
@@ -24,7 +22,7 @@ public class MapperConfigStorage : Profile
 		CreateMap<OrderUpdateRequest, Order>()
 			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => src.CleanersBandIds.Select(t => new Cleaner { Id = t }).ToList()))
 			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new Bundle { Id = t }).ToList()))
-			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
+			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
 		CreateMap<OrderRequest, Order>()
 			.ForMember(o => o.CleaningObject, opt => opt.MapFrom(src => new CleaningObject() { Id = src.CleaningObjectId }))
 			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new Bundle { Id = t }).ToList()))
@@ -36,8 +34,12 @@ public class MapperConfigStorage : Profile
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
 		CreateMap<Cleaner, CleanerResponse>();
 
+		CreateMap<CommentRequest, Comment>();
+		CreateMap<Comment, CommentResponse>();
+
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
+		CreateMap<UserLoginRequest, LoginData>();
 		CreateMap<BundleRequest, Bundle>();
 		CreateMap<Bundle, BundleResponse>();
 	}
