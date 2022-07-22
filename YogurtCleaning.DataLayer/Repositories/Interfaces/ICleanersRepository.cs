@@ -10,5 +10,5 @@ public interface ICleanersRepository
     List<Comment> GetAllCommentsByCleaner(int cleanerId);
     Cleaner? GetCleaner(int clientId);
     void UpdateCleaner(Cleaner cleaner);
-    Cleaner? GetCleanerByLogin(LoginData login);
+    Cleaner? GetCleanerByEmail(string email);
 }

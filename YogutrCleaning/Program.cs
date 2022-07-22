@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using YogurtCleaning.API;
+using YogurtCleaning.Business.Infrastrucure;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Repositories;
@@ -13,7 +14,6 @@ using YogurtCleaning.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -32,7 +32,6 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -92,6 +91,7 @@ builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
 builder.Services.AddScoped<IBundlesService, BundlesService>();
+builder.Services.AddScoped<IAdminsRepository, AdminsRepository>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
 
@@ -100,18 +100,14 @@ builder.Services.AddScoped<ICleanersService, CleanersService>();
 builder.Services.AddScoped<ICleaningObjectsService, CleaningObjectsService>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
-builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
 app.UseCustomExceptionHandler();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

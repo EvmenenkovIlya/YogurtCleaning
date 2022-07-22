@@ -39,7 +39,6 @@ public class MapperConfigStorage : Profile
 
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
-		CreateMap<UserLoginRequest, LoginData>();
 		CreateMap<BundleRequest, Bundle>();
 		CreateMap<Bundle, BundleResponse>();
 	}

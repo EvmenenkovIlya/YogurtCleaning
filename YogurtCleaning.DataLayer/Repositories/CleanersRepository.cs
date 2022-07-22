@@ -44,5 +44,6 @@ public class CleanersRepository : ICleanersRepository
         var comments = _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == cleanerId).ToList();
         return comments;
     }
-    public Cleaner? GetCleanerByLogin(LoginData login) => _context.Cleaners.FirstOrDefault(o => o.Email == login.Email && o.Password == login.Password);
+
+    public Cleaner? GetCleanerByEmail(string email) => _context.Cleaners.FirstOrDefault(o => o.Email == email);
 }
