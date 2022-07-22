@@ -32,10 +32,7 @@ public class CleanersService : ICleanersService
     public void DeleteCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
-        if (cleaner == null )
-        {
-            throw new BadRequestException($"Cleaner {id} not found");
-        }
+        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         CheckPossibilityOfAccess(cleaner, userValues);
         _cleanersRepository.DeleteCleaner(id);
     }
@@ -43,10 +40,7 @@ public class CleanersService : ICleanersService
     public void UpdateCleaner(Cleaner modelToUpdate, int id, UserValues userValues)
     {
         Cleaner cleaner = _cleanersRepository.GetCleaner(id);
-        if (cleaner == null)
-        {
-            throw new BadRequestException($"Cleaner {id} not found");
-        }
+        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         CheckPossibilityOfAccess(cleaner, userValues);
         cleaner.FirstName = modelToUpdate.FirstName;
         cleaner.LastName = modelToUpdate.LastName;
@@ -54,7 +48,6 @@ public class CleanersService : ICleanersService
         cleaner.BirthDate = modelToUpdate.BirthDate;
         cleaner.Phone = modelToUpdate.Phone;
         _cleanersRepository.UpdateCleaner(cleaner);
-
     }
 
     public int CreateCleaner(Cleaner cleaner)
@@ -67,27 +60,21 @@ public class CleanersService : ICleanersService
         return _cleanersRepository.CreateCleaner(cleaner);
 
     }
+
     public List<Comment> GetCommentsByCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
-        var comments = _cleanersRepository.GetAllCommentsByCleaner(id);
 
-        if (cleaner == null)
-        {
-            throw new BadRequestException($"Cleaner {id} not found");
-        }
+        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
         CheckPossibilityOfAccess(cleaner, userValues);
-        return comments;
+        return _cleanersRepository.GetAllCommentsByCleaner(id);
     }
 
     public List<Order> GetOrdersByCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
 
-        if (cleaner == null )
-        {
-            throw new BadRequestException($"Orders by cleaner {id} not found");
-        }
+        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
         CheckPossibilityOfAccess(cleaner, userValues);
         return _cleanersRepository.GetAllOrdersByCleaner(id);
     }
@@ -100,5 +87,13 @@ public class CleanersService : ICleanersService
         {
             throw new AccessException($"Access denied");
         }
+    }
+
+    private void CheckThatUserNotNull(Cleaner cleaner, string errorMesage)
+    {
+        if (cleaner == null)
+        {
+            throw new BadRequestException(errorMesage);
+        } 
     }
 }
