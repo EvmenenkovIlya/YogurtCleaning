@@ -41,6 +41,7 @@ public class YogurtCleaningContext : DbContext
             entity.HasMany<Cleaner>(e => e.CleanersBand);
             entity.HasMany(e => e.Comments).WithOne(com => com.Order);
         });
+
         modelBuilder.Entity<Client>(entity =>
         {
             entity.ToTable(nameof(Client));
@@ -48,6 +49,7 @@ public class YogurtCleaningContext : DbContext
             entity.HasMany(e => e.Addresses).WithOne(co => co.Client);
             entity.HasMany(e => e.Comments).WithOne(com => com.Client);
             entity.HasMany(e => e.Orders);
+            entity.Property(b => b.RegistrationDate).ValueGeneratedOnAdd().HasDefaultValueSql("getdate()");           
         });
 
         modelBuilder.Entity<Cleaner>(entity =>

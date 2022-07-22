@@ -17,7 +17,7 @@ public static class ControllerExtensions
             userValues.Email = Claims[0].Value;
             userValues.Role = Claims[1].Value;
             userValues.Id = Convert.ToInt32(Claims[2].Value);
-        }
+        }       
         return userValues;
     }
 }
