@@ -32,9 +32,10 @@ public class CleaningObjectsControllerTests
     public async Task CreateCleaningObject_WhenValidRequestPassed_CreatedResultReceived()
     {
         //given
+        int expectedId = 1;
         _cleaningObjectsServiceMock.Setup(c => c.CreateCleaningObject(It.IsAny<CleaningObject>(), It.IsAny<UserValues>()))
-         .Returns(1);
-
+         .Returns(expectedId);
+        
         var cleaningObject = new CleaningObjectRequest()
         {
             NumberOfRooms = 1000,
@@ -52,7 +53,7 @@ public class CleaningObjectsControllerTests
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.That((int)actualResult.Value, Is.EqualTo(1));
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
         _cleaningObjectsServiceMock.Verify(x => x.CreateCleaningObject(It.Is<CleaningObject>(c => c.NumberOfRooms == cleaningObject.NumberOfRooms &&
         c.NumberOfBathrooms == cleaningObject.NumberOfBathrooms && c.Square == cleaningObject.Square && c.NumberOfWindows == cleaningObject.NumberOfWindows &&
         c.NumberOfBalconies == cleaningObject.NumberOfBalconies && c.Address == cleaningObject.Address

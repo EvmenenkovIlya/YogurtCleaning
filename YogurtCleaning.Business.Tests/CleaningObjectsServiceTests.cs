@@ -20,10 +20,10 @@ public class CleaningObjectServiceFacts
     public void CreateCleaningObject_WhenValidRequestPassed_CleaningObjectAdded()
     {
         //given
-        Setup();
+        Setup();       
+        int expectedId = 1;
         _cleaningObjectRepositoryMock.Setup(c => c.CreateCleaningObject(It.IsAny<CleaningObject>()))
-             .Returns(1);
-        var expectedId = 1;
+             .Returns(expectedId);
 
         var cleaningObject = new CleaningObject()
         {
@@ -35,7 +35,7 @@ public class CleaningObjectServiceFacts
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
             IsDeleted = false
         };
-        UserValues userValues = new UserValues() { Id = 1 };
+        UserValues userValues = new UserValues() { Id = expectedId };
 
         //when
         var actual = _sut.CreateCleaningObject(cleaningObject, userValues);
@@ -43,6 +43,8 @@ public class CleaningObjectServiceFacts
         //then
         Assert.True(actual == expectedId);
         _cleaningObjectRepositoryMock.Verify(c => c.CreateCleaningObject(cleaningObject), Times.Once);
+        _cleaningObjectRepositoryMock.Verify(c => c.CreateCleaningObject(It.Is<CleaningObject>(c => c.Client.Id == userValues.Id)), Times.Once);
+
     }
 
 }
