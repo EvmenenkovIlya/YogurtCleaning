@@ -7,6 +7,7 @@ public static class ControllerExtensions
 {
     public static string GetRequestFullPath(this ControllerBase controller) =>
         $"{controller.Request?.Scheme}://{controller.Request?.Host.Value}{controller.Request?.Path.Value}";
+
     public static UserValues GetClaimsValue(this ControllerBase controller)
     {
         UserValues userValues = new UserValues();
@@ -16,7 +17,7 @@ public static class ControllerExtensions
             userValues.Email = Claims[0].Value;
             userValues.Role = Claims[1].Value;
             userValues.Id = Convert.ToInt32(Claims[2].Value);
-        }
+        }       
         return userValues;
     }
 }

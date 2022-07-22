@@ -5,7 +5,6 @@ using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;

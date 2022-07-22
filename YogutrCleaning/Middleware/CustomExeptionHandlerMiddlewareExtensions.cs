@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace YogurtCleaning.API.Middleware;
+namespace YogurtCleaning.Middleware;
 
 public static class CustomExeptionHandlerMiddlewareExtensions
 {

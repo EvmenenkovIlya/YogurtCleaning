@@ -3,7 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 
-namespace YogurtCleaning.API.Middleware;
+
+
+namespace YogurtCleaning.Middleware;
 
 public class CustomExeptionHandlerMiddleware
 {
@@ -20,47 +22,34 @@ public class CustomExeptionHandlerMiddleware
         }
         catch (EntityNotFoundException exception)
         {
-            await HandleExceptionAsync(context, exception);
+            await HandleExceptionAsync(context, exception, HttpStatusCode.NotFound);
         }
         catch (UniquenessException exception)
         {
-            await HandleExceptionAsync(context, exception);
+            await HandleExceptionAsync(context, exception, HttpStatusCode.UnprocessableEntity);
         }
         catch (DataException exception)
         {
-            await HandleExceptionAsync(context, exception);
+            await HandleExceptionAsync(context, exception, HttpStatusCode.UnprocessableEntity);
         }
         catch (AccessException exception)
         {
-            await HandleExceptionAsync(context, exception);
+            await HandleExceptionAsync(context, exception, HttpStatusCode.Forbidden);
         }
+        catch (BadRequestException exception)
+        {
+            await HandleExceptionAsync(context, exception, HttpStatusCode.BadRequest);
+        }
+        catch (Exception exception)
+        {
+            await HandleExceptionAsync(context, exception, HttpStatusCode.InternalServerError);
+        }
+
     }
 
-    private Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode code)
     {
-        var code = HttpStatusCode.InternalServerError;
-        var result = string.Empty;
-
-        switch (exception)
-        {
-            case ValidationException validationException:
-                code = HttpStatusCode.BadRequest;
-                result = JsonSerializer.Serialize(validationException.Message);
-                break;
-            case EntityNotFoundException:
-                code = HttpStatusCode.NotFound;
-                break;
-            case UniquenessException:
-                code = HttpStatusCode.UnprocessableEntity;
-                break;
-            case DataException:
-                code = HttpStatusCode.UnprocessableEntity;
-                break;
-            case AccessException:
-                code = HttpStatusCode.Forbidden;
-                break;
-        }
-
+        var result = string.Empty;      
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)code;
 
