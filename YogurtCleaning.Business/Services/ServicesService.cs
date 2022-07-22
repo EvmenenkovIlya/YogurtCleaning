@@ -26,4 +26,6 @@ public class ServicesService : IServicesService
         oldService.Duration = service.Duration;
         _servicesRepository.UpdateService(oldService);
     }
+
+    public List<Service> GetAllServices() => _servicesRepository.GetAllServices();
 }
