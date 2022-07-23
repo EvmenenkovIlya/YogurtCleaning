@@ -286,7 +286,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void GetCommentsByClientId_AdminGetsCommentsWhenClientNotInDb_ThrowBadRequestException()
+    public void GetCommentsByClientId_WhenAdminGetsCommentsAndClientIsNotInDb_ThrowBadRequestException()
     {
         //given
         Setup();
@@ -436,9 +436,12 @@ public class ClientsServiceFacts
         //then
         _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
         _clientsRepositoryMock.Verify(c => c.UpdateClient(It.Is<Client>(c =>
-        c.FirstName == newClientModel.FirstName && c.LastName == newClientModel.LastName &&
-        c.BirthDate == newClientModel.BirthDate && c.Phone == newClientModel.Phone &&
-        c.Id == client.Id && c.Email == client.Email
+        c.FirstName == newClientModel.FirstName &&
+        c.LastName == newClientModel.LastName &&
+        c.BirthDate == newClientModel.BirthDate &&
+        c.Phone == newClientModel.Phone &&
+        c.Id == client.Id &&
+        c.Email == client.Email
         )), Times.Once);
     }
 
@@ -528,7 +531,6 @@ public class ClientsServiceFacts
 
         //then
         _clientsRepositoryMock.Verify(c => c.DeleteClient(expectedClient.Id), Times.Once);
-        _clientsRepositoryMock.Verify(c => c.GetClient(It.IsAny<int>()), Times.Once);
     }
 
     [Fact]

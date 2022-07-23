@@ -44,6 +44,4 @@ public class ClientsRepository : IClientsRepository
     public List<Order> GetAllOrdersByClient(int id) => _context.Orders.Where(o => o.Client.Id == id).ToList();
 
     public Client? GetClientByEmail(string email) => _context.Clients.FirstOrDefault(o => o.Email == email);
-
-    public Client? GetClientByLogin(LoginData login) => _context.Clients.FirstOrDefault(o => o.Email == login.Email && o.Password == login.Password);
 }
