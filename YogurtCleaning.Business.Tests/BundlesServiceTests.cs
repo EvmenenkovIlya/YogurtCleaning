@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.Business.Services;
-using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
@@ -57,8 +55,6 @@ public class BundlesServiceTests
         _mockBundlesRepository.Verify(b => b.GetBundle(bundle.Id), Times.Once);
 
     }
-
-
 
     [Fact]
     public void GetAdditionalServices_WhenServiceIsInBundle_ThenResultDoesNotConteinIt()

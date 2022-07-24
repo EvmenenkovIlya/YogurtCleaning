@@ -19,8 +19,11 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
 
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        CheckPossibilityOfAccess(userValues, client);
+        if (client == null)
+        {
+            throw new EntityNotFoundException($"Cleaner {id} not found");
+        }
+        AuthorizeEnitiyAccess(userValues, client);
         return client;
     }
 
@@ -34,7 +37,7 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
         CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        CheckPossibilityOfAccess(userValues, client);
+        AuthorizeEnitiyAccess(userValues, client);
         _clientsRepository.DeleteClient(id);
     }
 
@@ -42,7 +45,7 @@ public class ClientsService : IClientsService
     {
         Client client = _clientsRepository.GetClient(id);
         CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        CheckPossibilityOfAccess(userValues, client);
+        AuthorizeEnitiyAccess(userValues, client);
 
         client.FirstName = modelToUpdate.FirstName;
         client.LastName = modelToUpdate.LastName;
@@ -70,7 +73,7 @@ public class ClientsService : IClientsService
         var client = _clientsRepository.GetClient(id);
 
         CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
-        CheckPossibilityOfAccess(userValues, client);
+        AuthorizeEnitiyAccess(userValues, client);
         return _clientsRepository.GetAllCommentsByClient(id);
     }
 
@@ -78,14 +81,14 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
         CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
-        CheckPossibilityOfAccess(userValues, client);        
+        AuthorizeEnitiyAccess(userValues, client);        
         return _clientsRepository.GetAllOrdersByClient(id);
             
     }
 
     private bool CheckEmailForUniqueness(string email) => _clientsRepository.GetClientByEmail(email) == null;
 
-    private void CheckPossibilityOfAccess(UserValues userValues, Client client)
+    private void AuthorizeEnitiyAccess(UserValues userValues, Client client)
     {
         if (!(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString()))
         {

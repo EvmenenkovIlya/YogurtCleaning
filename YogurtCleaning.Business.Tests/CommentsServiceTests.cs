@@ -1,8 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.Business.Services;
-using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 using Moq;
 
@@ -73,10 +70,10 @@ public class CommentsServiceTests
 
         // when
         var actual = _sut.AddCommentByCleaner(comment, comment.Cleaner.Id);
-
+        
         // then
         Assert.True(actual == expectedId);
         _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
-
+        
     }
 }

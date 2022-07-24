@@ -62,9 +62,10 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult UpdateCleaningObject(int id, [FromBody] CleaningObjectUpdateRequest model)
+    public ActionResult UpdateCleaningObject([FromBody] CleaningObjectUpdateRequest model, int id)
     {
-        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id);
+        _userValues = this.GetClaimsValue();
+        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id, _userValues);
         return NoContent();
     }
 
