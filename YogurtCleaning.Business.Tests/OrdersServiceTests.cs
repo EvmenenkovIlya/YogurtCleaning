@@ -17,13 +17,15 @@ public class OrdersServiceTests
     private Mock<IOrdersRepository> _mockOrdersRepository;
     private Mock<ICleanersService> _mockCleanersService;
     private Mock<IClientsRepository> _mockClientsRepository;
+    private Mock<IEmailSender> _mockEmailSender;
 
     private void Setup()
     {
         _mockClientsRepository = new Mock<IClientsRepository>();
         _mockCleanersService = new Mock<ICleanersService>();
         _mockOrdersRepository = new Mock<IOrdersRepository>();
-        _sut = new OrdersService(_mockOrdersRepository.Object, _mockCleanersService.Object, _mockClientsRepository.Object);
+        _mockEmailSender = new Mock<IEmailSender>();
+        _sut = new OrdersService(_mockOrdersRepository.Object, _mockCleanersService.Object, _mockClientsRepository.Object, _mockEmailSender.Object);
     }
 
     [Fact]
