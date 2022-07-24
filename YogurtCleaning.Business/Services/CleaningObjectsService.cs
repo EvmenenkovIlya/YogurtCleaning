@@ -39,11 +39,27 @@ public class CleaningObjectsService : ICleaningObjectsService
         _cleaningObjectsRepository.UpdateCleaningObject(cleaningObject);
     }
 
+    public void DeleteCleaningObject(int id, UserValues userValues)
+    {
+        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
+        CheckThatCleaningObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
+        AuthorizeEnitiyAccess(cleaningObject, userValues);
+        _cleaningObjectsRepository.DeleteCleaningObject(id);
+    }
+
     private void AuthorizeEnitiyAccess(CleaningObject cleaningObject, UserValues userValues)
     {
         if (!(userValues.Id == cleaningObject.Client.Id || userValues.Role == Role.Admin.ToString()))
         {
             throw new AccessException($"Access denied");
+        }
+    }
+
+    private void CheckThatCleaningObjectNotNull(CleaningObject cleaningObject, string errorMesage)
+    {
+        if (cleaningObject == null)
+        {
+            throw new BadRequestException(errorMesage);
         }
     }
 }

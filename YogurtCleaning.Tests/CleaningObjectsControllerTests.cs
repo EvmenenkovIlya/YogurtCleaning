@@ -101,4 +101,28 @@ public class CleaningObjectControllerTests
         c.NumberOfWindows == newCleaningObjectModel.NumberOfWindows && c.NumberOfBalconies == newCleaningObjectModel.NumberOfBalconies &&
         c.Address == newCleaningObjectModel.Address), It.Is<int>(i => i == cleaningObject.Id), It.IsAny<UserValues>()), Times.Once);
     }
+
+    [Test]
+    public void DeleteCleaningObjectById_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var expectedCleaningObject = new CleaningObject()
+        {
+            Id = 1,
+            NumberOfRooms = 10,
+            NumberOfBathrooms = 100,
+            NumberOfBalconies = 8,
+            Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
+            IsDeleted = false
+        };
+
+        //when
+        var actual = _sut.DeleteCleaningObject(expectedCleaningObject.Id);
+
+        //then
+        var actualResult = actual as NoContentResult;
+
+        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        _cleaningObjectsServiceMock.Verify(c => c.DeleteCleaningObject(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
+    }
 }
