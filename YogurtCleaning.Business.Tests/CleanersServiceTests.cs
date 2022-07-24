@@ -10,13 +10,15 @@ public class CleanersServiceFacts
 {
     private CleanersService _sut;
     private Mock<ICleanersRepository> _cleanersRepositoryMock;
+    private Mock<IOrdersRepository> _ordersRepositoryMock;
 
     private UserValues userValue;
 
     private void Setup()
     {
         _cleanersRepositoryMock = new Mock<ICleanersRepository>();
-        _sut = new CleanersService(_cleanersRepositoryMock.Object);
+        _ordersRepositoryMock = new Mock<IOrdersRepository>();
+        _sut = new CleanersService(_cleanersRepositoryMock.Object, _ordersRepositoryMock.Object);
     }
 
     [Fact]

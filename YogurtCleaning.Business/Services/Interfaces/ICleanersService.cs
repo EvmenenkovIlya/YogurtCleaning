@@ -12,5 +12,6 @@ namespace YogurtCleaning.Business.Services
         List<Comment> GetCommentsByCleaner(int id, UserValues userValies);
         List<Order> GetOrdersByCleaner(int id, UserValues userValies);
         List<Cleaner> GetFreeCleanersForOrder(Order order);
+        void UpdateCleanersOrders(Cleaner cleaner);
     }
 }

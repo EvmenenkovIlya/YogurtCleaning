@@ -99,6 +99,11 @@ public class CleanersService : ICleanersService
         } 
     }
 
+    public void UpdateCleanersOrders(Cleaner cleaner)
+    {
+        _cleanersRepository.UpdateCleaner(cleaner);
+    }
+
     // получаем список тех, кто работает в этот день. проверяем их заказы на этот день и пересечения по времени + 1 час на дорогу
     // проверяем список сервисов?? район?
     public List<Cleaner> GetFreeCleanersForOrder(Order order)
