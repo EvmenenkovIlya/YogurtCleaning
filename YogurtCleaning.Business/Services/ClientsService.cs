@@ -19,7 +19,10 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
 
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
+        if (client == null)
+        {
+            throw new EntityNotFoundException($"Cleaner {id} not found");
+        }
         AuthorizeEnitiyAccess(userValues, client);
         return client;
     }

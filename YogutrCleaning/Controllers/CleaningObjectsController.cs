@@ -64,8 +64,8 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult UpdateCleaningObject([FromBody] CleaningObjectUpdateRequest model, int id)
     {
-        _userValue = this.GetClaimsValue();
-        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id, _userValue);
+        _userValues = this.GetClaimsValue();
+        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id, _userValues);
         return NoContent();
     }
 
