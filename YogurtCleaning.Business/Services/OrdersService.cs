@@ -37,7 +37,7 @@ public class OrdersService : IOrdersService
         order.CleanersBand = GetCleanersForOrder(order); 
         if(order.CleanersBand.Count < GetCleanersCount(order))
         {
-            order.Status = Status.Moderation; // sent mail
+            order.Status = Status.Moderation; // magic rabbit sent mail
         }
         else
         {
