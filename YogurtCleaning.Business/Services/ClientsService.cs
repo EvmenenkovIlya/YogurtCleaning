@@ -54,7 +54,6 @@ public class ClientsService : IClientsService
 
     public int CreateClient(Client client)
     {
-        // add checking password and confirm password
         var isChecked = CheckEmailForUniqueness(client.Email);
 
         if (!isChecked)
@@ -62,7 +61,8 @@ public class ClientsService : IClientsService
             throw new UniquenessException($"That email is registred");
         }
         else
-            return _clientsRepository.CreateClient(client);
+        client.Password = PasswordHash.HashPassword(client.Password);
+        return _clientsRepository.CreateClient(client);
 
     }
     public List<Comment> GetCommentsByClient(int id, UserValues userValues)

@@ -45,6 +45,4 @@ public class CleanersRepository : ICleanersRepository
     public List<Order> GetAllOrdersByCleaner(int id) => _context.Orders.Where(o => o.CleanersBand.Any(c => c.Id == id)).ToList();
 
     public Cleaner? GetCleanerByEmail(string email) => _context.Cleaners.FirstOrDefault(o => o.Email == email);
-
-    public Cleaner? GetCleanerByLogin(LoginData login) => _context.Cleaners.FirstOrDefault(o => o.Email == login.Email && o.Password == login.Password);
 }
