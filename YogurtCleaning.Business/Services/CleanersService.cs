@@ -22,7 +22,7 @@ public class CleanersService : ICleanersService
         {
             throw new EntityNotFoundException($"Cleaner {id} not found");
         }
-        CheckPossibilityOfAccess(cleaner, userValues);
+        AuthorizeEnitiyAccess(cleaner, userValues);
         return cleaner;
     }
 
@@ -33,7 +33,7 @@ public class CleanersService : ICleanersService
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
         CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
-        CheckPossibilityOfAccess(cleaner, userValues);
+        AuthorizeEnitiyAccess(cleaner, userValues);
         _cleanersRepository.DeleteCleaner(id);
     }
 
@@ -41,7 +41,7 @@ public class CleanersService : ICleanersService
     {
         Cleaner cleaner = _cleanersRepository.GetCleaner(id);
         CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
-        CheckPossibilityOfAccess(cleaner, userValues);
+        AuthorizeEnitiyAccess(cleaner, userValues);
         cleaner.FirstName = modelToUpdate.FirstName;
         cleaner.LastName = modelToUpdate.LastName;
         cleaner.Services = modelToUpdate.Services;
@@ -66,7 +66,7 @@ public class CleanersService : ICleanersService
         var cleaner = _cleanersRepository.GetCleaner(id);
 
         CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
-        CheckPossibilityOfAccess(cleaner, userValues);
+        AuthorizeEnitiyAccess(cleaner, userValues);
         return _cleanersRepository.GetAllCommentsByCleaner(id);
     }
 
@@ -75,13 +75,13 @@ public class CleanersService : ICleanersService
         var cleaner = _cleanersRepository.GetCleaner(id);
 
         CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
-        CheckPossibilityOfAccess(cleaner, userValues);
+        AuthorizeEnitiyAccess(cleaner, userValues);
         return _cleanersRepository.GetAllOrdersByCleaner(id);
     }
 
     private bool CheckEmailForUniqueness(string email) => _cleanersRepository.GetCleanerByEmail(email) == null;
 
-    private void CheckPossibilityOfAccess(Cleaner cleaner, UserValues userValues)
+    private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
     {
         if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin.ToString()))
         {
