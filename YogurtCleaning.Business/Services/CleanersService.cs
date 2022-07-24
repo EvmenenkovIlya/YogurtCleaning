@@ -99,8 +99,6 @@ public class CleanersService : ICleanersService
         } 
     }
 
-    // получаем список тех, кто работает в этот день. проверяем их заказы на этот день и пересечения по времени + 1 час на дорогу
-    // проверяем список сервисов?? район?
     public List<Cleaner> GetFreeCleanersForOrder(Order order)
     {
         var freeCleaners = new List<Cleaner>();

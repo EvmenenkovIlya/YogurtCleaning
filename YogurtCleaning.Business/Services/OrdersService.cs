@@ -9,12 +9,14 @@ public class OrdersService : IOrdersService
     private readonly IOrdersRepository _ordersRepository;
     private readonly ICleanersService _cleanersService;
     private readonly IClientsRepository _clientsRepository;
+    private readonly IEmailSender _emailSender;
 
-    public OrdersService(IOrdersRepository ordersRepository, ICleanersService cleanersService, IClientsRepository clientsRepository)
+    public OrdersService(IOrdersRepository ordersRepository, ICleanersService cleanersService, IClientsRepository clientsRepository, IEmailSender emailSender)
     {
         _ordersRepository = ordersRepository;
         _cleanersService = cleanersService;
         _clientsRepository = clientsRepository;
+        _emailSender = emailSender;
     }
 
     public void UpdateOrder(Order modelToUpdate, int id)
@@ -37,7 +39,7 @@ public class OrdersService : IOrdersService
         order.CleanersBand = GetCleanersForOrder(order); 
         if(order.CleanersBand.Count < GetCleanersCount(order))
         {
-            order.Status = Status.Moderation; // magic rabbit sent mail
+            order.Status = Status.Moderation;
         }
         else
         {
@@ -45,6 +47,12 @@ public class OrdersService : IOrdersService
         }
 
         var result = _ordersRepository.CreateOrder(order);
+
+        if (order.Status == Status.Moderation)
+        {
+            var message = new Message(new string[] { "yogurtcleaning@gmail.com" }, "Order needs cleaners!", $"Order {result} doesn't have enought cleaners");
+            _emailSender.SendEmail(message);
+        }
         return result;
     }
 
@@ -57,7 +65,7 @@ public class OrdersService : IOrdersService
         {
             var clientOrders = _clientsRepository.GetAllOrdersByClient(order.Client.Id).Where(o => o.CleaningObject.Id == order.CleaningObject.Id);
             var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
-            if (lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
+            if (lastOrder != null || lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
             {
                 orderPrice = orderPrice * (decimal)0.8;
             }
@@ -136,6 +144,7 @@ public class OrdersService : IOrdersService
                 price = price * cleaningObject.Square;
                 return price;
             case Measure.Unit:
+                price = price * cleaningObject.NumberOfWindows + price * cleaningObject.NumberOfBalconies;
                 return price;
         }
         return price;
@@ -155,6 +164,7 @@ public class OrdersService : IOrdersService
                 duration = duration * cleaningObject.Square;
                 return duration;
             case Measure.Unit:
+                duration = duration * cleaningObject.NumberOfWindows + duration * cleaningObject.NumberOfBalconies;
                 return duration;
         }
         return duration;
