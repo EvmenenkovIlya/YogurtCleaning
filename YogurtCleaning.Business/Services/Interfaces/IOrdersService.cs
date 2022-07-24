@@ -1,9 +1,9 @@
 ﻿using YogurtCleaning.DataLayer.Entities;
 
-namespace YogurtCleaning.Business.Services
+namespace YogurtCleaning.Business.Services;
+
+public interface IOrdersService
 {
-    public interface IOrdersService
-    {
-        void UpdateOrder(Order modelToUpdate, int id);
-    }
+    void UpdateOrder(Order modelToUpdate, int id);
+    int AddOrder(Order order);
 }
