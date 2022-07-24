@@ -8,11 +8,13 @@ public class OrdersService : IOrdersService
 {
     private readonly IOrdersRepository _ordersRepository;
     private readonly ICleanersService _cleanersService;
+    private readonly IClientsRepository _clientsRepository;
 
-    public OrdersService(IOrdersRepository ordersRepository, ICleanersService cleanersService)
+    public OrdersService(IOrdersRepository ordersRepository, ICleanersService cleanersService, IClientsRepository clientsRepository)
     {
         _ordersRepository = ordersRepository;
         _cleanersService = cleanersService;
+        _clientsRepository = clientsRepository;
     }
 
     public void UpdateOrder(Order modelToUpdate, int id)
@@ -27,35 +29,42 @@ public class OrdersService : IOrdersService
         order.CleanersBand = modelToUpdate.CleanersBand;
         _ordersRepository.UpdateOrder(order);
     }
-
-    //    Получаем реквест:
-    //КлинингОбджект
-    //Дата старта (дата старта д.б. в рабочие часы - валидация реквеста)
-    //Лист бандлов
-    //Лист допсервисов
     
     public int AddOrder(Order order)
     {
         order.Price = GetOrderPrice(order);
         order.EndTime = GetOrderEndTime(order);
-        order.CleanersBand = GetCleanersForOrder(order);
-        order.Status = Status.Created;
-        var result = _ordersRepository.CreateOrder(order); // в какой момент добавляем в БД? до назначения клинеров?
+        order.CleanersBand = GetCleanersForOrder(order); 
+        if(order.CleanersBand.Count < GetCleanersCount(order))
+        {
+            order.Status = Status.Moderation; // sent mail
+        }
+        else
+        {
+            order.Status = Status.Created;
+        }
+
+        var result = _ordersRepository.CreateOrder(order);
         return result;
     }
 
-    //Считаем цену:
-    //цена бандла * параметры клининг обджекта + цены допсервисов
     private decimal GetOrderPrice(Order order)
     {
         var bundlesPrice = order.Bundles.Select(b => GetBundlePricePerParameters(b, order.CleaningObject)).Sum();
         var servicesPrice = order.Services.Select(s => s.Price).Sum();
         var orderPrice = bundlesPrice + servicesPrice;
-        return orderPrice; // добавить скидку на поддерживающую после генеральной
+        if (order.Bundles[0].Type == CleaningType.Regular)
+        {
+            var clientOrders = _clientsRepository.GetAllOrdersByClient(order.Client.Id).Where(o => o.CleaningObject.Id == order.CleaningObject.Id);
+            var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
+            if (lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
+            {
+                orderPrice = orderPrice * (decimal)0.8;
+            }
+        }
+        return orderPrice;
     }
 
-    //Считаем длительность заказа:
-    //длительность бандла * параметры + длительность допсервисов
     private decimal GetOrderDuration(Order order)
     {
         var bundlesDuration = order.Bundles.Select(b => GetBundleDurationPerParameters(b, order.CleaningObject)).Sum();
@@ -64,49 +73,34 @@ public class OrdersService : IOrdersService
         return orderDuration;
     }
 
-    //Ищем людей:
-    //в зависимости от времени окончания уборки(и следовательно длительности рабочей смены) - 2/2 или 5/2
-    //Получаем список тех, кто работает в этот день и свободен в это время
-    //Если нашли - назначаем
-    //Если не нашли(или нашли меньше, чем нужно) -> менеджер
     private List<Cleaner> GetCleanersForOrder(Order order)
     {
         var cleaners = new List<Cleaner>();
         var cleanersCount = GetCleanersCount(order);
         var freeCleaners = _cleanersService.GetFreeCleanersForOrder(order);
 
+        if (order.EndTime > order.StartTime.Date.AddHours(18))
+        {
+            freeCleaners = freeCleaners.FindAll(c => c.Schedule == Schedule.ShiftWork).ToList();
+        }
+
         if (freeCleaners.Count < cleanersCount)
         {
-            throw new Exception("Manager has to do some magic"); // как передаем запрос менеджеру?
+            for (int i = 0; i < freeCleaners.Count; i++)
+            {
+                cleaners.Add(freeCleaners[i]);
+            }
         }
         else
         {
-            if (order.EndTime <= order.StartTime.Date.AddHours(18))
+            for (int i = 0; i < cleanersCount; i++)
             {
-                for (int i = 0; i < cleanersCount; i++)
-                {
-                    cleaners.Add(freeCleaners[i]);
-                    freeCleaners[i].Orders.Add(order);
-                    _cleanersService.UpdateCleanersOrders(freeCleaners[i]);
-                }
-                return cleaners;
-            }
-            else
-            {
-                var freeShiftCleaners = freeCleaners.FindAll(c => c.Schedule == Schedule.ShiftWork).ToList();
-                for (int i = 0; i < cleanersCount; i++)
-                {
-                    cleaners.Add(freeShiftCleaners[i]);
-                }
-                return cleaners;
+                cleaners.Add(freeCleaners[i]);
             }
         }
+        return cleaners;
     }
 
-    //проверяем их заказы на этот день и пересечения по времени + 1 час на дорогу
-
-    //Считаем количество клинеров:
-    //чтобы уложиться до конца рабочего дня( 8 или 12-часового)
     private int GetCleanersCount(Order order)
     {
         var orderDurationInHours = (double)GetOrderDuration(order);
@@ -121,7 +115,6 @@ public class OrdersService : IOrdersService
         else return 1;
     }
 
-    //Считаем время выполнения заказа -> устанавливаем дату окончания
     private DateTime GetOrderEndTime(Order order)
     {
         var endTime = order.StartTime.AddHours((double)GetOrderDuration(order) / GetCleanersCount(order));
@@ -129,8 +122,6 @@ public class OrdersService : IOrdersService
 
     }
 
-    // тут как-то надо сопоставить measure бандла с количеством чего-то всякого в ClObj
-    // коэффициент?
     private decimal GetBundlePricePerParameters(Bundle bundle, CleaningObject cleaningObject)
     {
         var price = bundle.Price;
