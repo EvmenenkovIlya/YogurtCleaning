@@ -586,4 +586,206 @@ public class CleanersServiceFacts
         //then
         Assert.Throws<Exceptions.AccessException>(() => _sut.DeleteCleaner(cleanerSecond.Id, userValue));
     }
+
+    [Fact]
+    public void GetFreeCleanersForOrder_WhenAreFreeCleaners_ThenCleanersRecieved()
+    {
+        //given
+        Setup();
+        var order = new Order
+        {
+            Client = new() { Id = 1 },
+            CleaningObject = new() { Id = 56 },
+            Status = Status.Created,
+            StartTime = new DateTime(2022, 8, 1, 10, 00, 00),
+            EndTime = new DateTime(2022, 8, 1, 18, 00, 00),
+            Bundles = new List<Bundle> { new Bundle { Id = 2, Name = "qwe" } }
+        };
+
+        var cleaners = new List<Cleaner>
+        {
+            new Cleaner()
+            {
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com1",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.FullTime,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            },
+            new Cleaner()
+            {
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com2",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.FullTime,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            },
+            new Cleaner()
+            {
+                 FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com3",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.ShiftWork,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            }
+        };
+        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
+
+        //when
+        var actual = _sut.GetFreeCleanersForOrder(order);
+
+        //then
+        Assert.NotNull(actual);
+        Assert.Equal(cleaners.Count, actual.Count);
+        _cleanersRepositoryMock.Verify(c => c.GetAllCleaners(), Times.Once);
+    }
+    [Fact]
+    public void GetFreeCleanersForOrder_WhenCleanerIsNotWorking_ThenDoNotAddToResult()
+    {
+        //given
+        Setup();
+        var order = new Order
+        {
+            Client = new() { Id = 1 },
+            CleaningObject = new() { Id = 56 },
+            Status = Status.Created,
+            StartTime = new DateTime(2022, 8, 6, 10, 00, 00),
+            EndTime = new DateTime(2022, 8, 6, 18, 00, 00),
+            Bundles = new List<Bundle> { new Bundle { Id = 2, Name = "qwe" } }
+        };
+
+        var cleaners = new List<Cleaner>
+        {
+            new Cleaner()
+            {
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com1",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.ShiftWork,
+                DateOfStartWork = new DateTime(2022, 8, 4, 00, 00, 00)
+            },
+            new Cleaner()
+            {
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com2",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.FullTime,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            },
+            new Cleaner()
+            {
+                 FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com3",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.ShiftWork,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 5, 00, 00, 00)
+            }
+        };
+        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
+        var expectedCount = 1;
+
+        //when
+        var actual = _sut.GetFreeCleanersForOrder(order);
+
+        //then
+        Assert.NotNull(actual);
+        Assert.Equal(expectedCount, actual.Count);
+        _cleanersRepositoryMock.Verify(c => c.GetAllCleaners(), Times.Once);
+    }
+
+    public void GetFreeCleanersForOrder_WhenCleanerIsBusy_ThenDoNotAddToResult()
+    {
+        //given
+        Setup();
+        var order = new Order
+        {
+            Client = new() { Id = 1 },
+            CleaningObject = new() { Id = 56 },
+            Status = Status.Created,
+            StartTime = new DateTime(2022, 8, 1, 10, 00, 00),
+            EndTime = new DateTime(2022, 8, 1, 18, 00, 00),
+            Bundles = new List<Bundle> { new Bundle { Id = 2, Name = "qwe" } }
+        };
+
+        var cleaners = new List<Cleaner>
+        {
+            new Cleaner()
+            {
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com1",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.ShiftWork,
+                Orders = new List<Order>()
+                {
+                    new Order()
+                    {
+                        Id = 124,
+                        StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
+                        EndTime = new DateTime(2022, 8, 1, 20, 00, 00),
+                    }
+                },
+                DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00)
+            },
+            new Cleaner()
+            {
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com2",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.FullTime,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00)
+            },
+            new Cleaner()
+            {
+                 FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com3",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.ShiftWork,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00)
+            }
+        };
+        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
+        var expectedCount = 2;
+
+        //when
+        var actual = _sut.GetFreeCleanersForOrder(order);
+
+        //then
+        Assert.NotNull(actual);
+        Assert.Equal(expectedCount, actual.Count);
+        _cleanersRepositoryMock.Verify(c => c.GetAllCleaners(), Times.Once);
+    }
 }
