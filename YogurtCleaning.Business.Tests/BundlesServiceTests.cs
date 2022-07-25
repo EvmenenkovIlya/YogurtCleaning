@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.Business.Services;
-using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
@@ -13,21 +11,19 @@ public class BundlesServiceTests
     private BundlesService _sut;
     private Mock<IBundlesRepository> _mockBundlesRepository;
     private Mock<IServicesRepository> _mockServicesRepository;
-    private readonly DbContextOptions<YogurtCleaningContext> _dbContextOptions;
 
-    public BundlesServiceTests()
+    private void Setup()
     {
-        _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
+        _mockBundlesRepository = new Mock<IBundlesRepository>();
+        _mockServicesRepository = new Mock<IServicesRepository>();
+        _sut = new BundlesService(_mockBundlesRepository.Object, _mockServicesRepository.Object);
     }
 
     [Fact]
     public void UpdateBundle_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
-        var context = new YogurtCleaningContext(_dbContextOptions);
-        var bundlesRepository = new BundlesRepository(context);
+        Setup();
 
         var bundle = new Bundle
         {
@@ -46,8 +42,7 @@ public class BundlesServiceTests
             IsDeleted = false
         };
 
-        context.Add(bundle);
-        context.SaveChanges();
+        _mockBundlesRepository.Setup(b => b.GetBundle(bundle.Id)).Returns(bundle);
 
         // when
         _sut.UpdateBundle(updatedBundle, bundle.Id);
@@ -57,14 +52,8 @@ public class BundlesServiceTests
         Assert.True(bundle.Price == updatedBundle.Price);
         Assert.True(bundle.Measure == updatedBundle.Measure);
         Assert.True(bundle.Services == updatedBundle.Services);
-    }
+        _mockBundlesRepository.Verify(b => b.GetBundle(bundle.Id), Times.Once);
 
-
-    private void Setup()
-    {
-        _mockBundlesRepository = new Mock<IBundlesRepository>();
-        _mockServicesRepository = new Mock<IServicesRepository>();
-        _sut = new BundlesService(_mockBundlesRepository.Object, _mockServicesRepository.Object);
     }
 
     [Fact]

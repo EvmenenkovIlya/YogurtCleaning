@@ -15,6 +15,7 @@ public class YogurtCleaningContext : DbContext
     public DbSet<Bundle> Bundles { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<District> Districts { get; set; }
+    public DbSet<Admin> Admins { get; set; }
     public YogurtCleaningContext(DbContextOptions<YogurtCleaningContext> options)
             : base(options)
     {
@@ -41,6 +42,7 @@ public class YogurtCleaningContext : DbContext
             entity.HasMany<Cleaner>(e => e.CleanersBand);
             entity.HasMany(e => e.Comments).WithOne(com => com.Order);
         });
+
         modelBuilder.Entity<Client>(entity =>
         {
             entity.ToTable(nameof(Client));
@@ -48,6 +50,7 @@ public class YogurtCleaningContext : DbContext
             entity.HasMany(e => e.Addresses).WithOne(co => co.Client);
             entity.HasMany(e => e.Comments).WithOne(com => com.Client);
             entity.HasMany(e => e.Orders);
+            entity.Property(b => b.RegistrationDate).ValueGeneratedOnAdd().HasDefaultValueSql("getdate()");
         });
 
         modelBuilder.Entity<Cleaner>(entity =>
@@ -85,6 +88,11 @@ public class YogurtCleaningContext : DbContext
         modelBuilder.Entity<Service>(entity =>
         {
             entity.ToTable(nameof(Service));
+        });
+
+        modelBuilder.Entity<Admin>(entity =>
+        {
+            entity.ToTable(nameof(Admin));
         });
     }
 }

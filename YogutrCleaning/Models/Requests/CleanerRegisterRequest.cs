@@ -8,7 +8,7 @@ public class CleanerRegisterRequest
 {
     [Required(ErrorMessage = ApiErrorMessages.NameIsRequired)]
     [MaxLength(50, ErrorMessage = ApiErrorMessages.NameMaxLength)]
-    public string Name { get; set; }
+    public string FirstName { get; set; }
 
     [Required(ErrorMessage = ApiErrorMessages.LastNameIsRequired)]
     [MaxLength(50, ErrorMessage = ApiErrorMessages.LastNameMaxLength)]
@@ -35,8 +35,6 @@ public class CleanerRegisterRequest
     [Required(ErrorMessage = ApiErrorMessages.PhoneIsRequired)]
     [MaxLength(15, ErrorMessage = ApiErrorMessages.PhoneMaxLength)]
     public string Phone { get; set; }
-
-
     [Required(ErrorMessage = ApiErrorMessages.PassportIsRequired)]
     [MinLength(10, ErrorMessage = ApiErrorMessages.PassportLength)]
     [MaxLength(10, ErrorMessage = ApiErrorMessages.PassportLength)]
@@ -44,6 +42,6 @@ public class CleanerRegisterRequest
 
     [Required(ErrorMessage = ApiErrorMessages.ScheduleIsRequired)]
     public Schedule Schedule { get; set; }
-        public List<int> ServicesIds { get; set; }
-        public List<DistrictEnum> Districts { get; set; }
+    public List<int> ServicesIds { get; set; }
+    public List<DistrictEnum> Districts { get; set; }
 }
