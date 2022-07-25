@@ -378,7 +378,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void GetCommentsByClientId_AdminGetsOrderssWhenClientNotInDb_ThrowBadRequestException()
+    public void GetOrdersByClientId_AdminGetsOrderssWhenClientNotInDb_ThrowBadRequestException()
     {
         //given
         Setup();
