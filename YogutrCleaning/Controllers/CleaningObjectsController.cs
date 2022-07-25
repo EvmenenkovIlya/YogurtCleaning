@@ -89,7 +89,8 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteCleaningObject(int id)
     {
-        _cleaningObjectsRepository.DeleteCleaningObject(id);
+        _userValues = this.GetClaimsValue();
+        _cleaningObjectsService.DeleteCleaningObject(id, _userValues);
         return NoContent();
     }
 }

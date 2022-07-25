@@ -6,5 +6,6 @@ namespace YogurtCleaning.Business.Services
     {
         int CreateCleaningObject(CleaningObject cleaningObject, UserValues userValues);
         void UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues);
+        void DeleteCleaningObject(int id, UserValues userValues);
     }
 }
