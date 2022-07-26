@@ -63,11 +63,11 @@ public class OrdersService : IOrdersService
         var orderPrice = bundlesPrice + servicesPrice;
         if (order.Bundles[0].Type == CleaningType.Regular)
         {
-            var clientOrders = _clientsRepository.GetAllOrdersByClient(order.Client.Id).Where(o => o.CleaningObject.Id == order.CleaningObject.Id);
-            var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
-            if (lastOrder != null || lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
+            var discount = (decimal)0.2;
+            var lastOrder = _clientsRepository.GetLastOrderForCleaningObject(order.Client.Id, order.CleaningObject.Id);
+            if (lastOrder != null && lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
             {
-                orderPrice = orderPrice * (decimal)0.8;
+                orderPrice -= orderPrice * discount;
             }
         }
         return orderPrice;

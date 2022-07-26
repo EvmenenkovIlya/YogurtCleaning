@@ -44,4 +44,11 @@ public class ClientsRepository : IClientsRepository
     public List<Order> GetAllOrdersByClient(int id) => _context.Orders.Where(o => o.Client.Id == id).ToList();
 
     public Client? GetClientByEmail(string email) => _context.Clients.FirstOrDefault(o => o.Email == email);
+
+    public Order? GetLastOrderForCleaningObject(int clientId, int cleaningObjectId)
+    {
+        var clientOrders = GetAllOrdersByClient(clientId).Where(o => o.CleaningObject.Id == cleaningObjectId);
+        var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
+        return lastOrder;
+    }
 }

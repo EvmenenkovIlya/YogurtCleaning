@@ -12,4 +12,5 @@ public interface ICleanersRepository
     List<Comment> GetAllCommentsByCleaner(int cleanerId);
     List<Order> GetAllOrdersByCleaner(int id);
     Cleaner? GetCleanerByEmail(string email);
+    List<Cleaner> GetWorkingCleanersForDate(DateTime orderDate);
 }

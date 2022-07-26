@@ -102,31 +102,36 @@ public class CleanersService : ICleanersService
     public List<Cleaner> GetFreeCleanersForOrder(Order order)
     {
         var freeCleaners = new List<Cleaner>();
-        var workingCleaners = _cleanersRepository.GetAllCleaners()
-            .Where(c => (c.Schedule is Schedule.ShiftWork && Convert.ToInt32((order.StartTime - c.DateOfStartWork).TotalDays % 4) < 2) ||
-            (c.Schedule is Schedule.FullTime && order.StartTime.DayOfWeek != DayOfWeek.Sunday && order.StartTime.DayOfWeek != DayOfWeek.Saturday))
-            .ToList();
+        var workingCleaners = _cleanersRepository.GetWorkingCleanersForDate(order.StartTime);
 
-        foreach (var c in workingCleaners)
+        foreach (var cleaner in workingCleaners)
         {
             bool isMatch = true;
+            var filteredOrders = cleaner.Orders.Where(o => o.StartTime.Date == order.StartTime.Date).ToList();
 
-            foreach (var o in c.Orders)
+            if(filteredOrders.Count == 0)
             {
-                if (o.StartTime.Date != order.StartTime.Date || ((o.StartTime >= order.EndTime.AddHours(1) || o.EndTime.AddHours(1) <= order.StartTime)))
+                isMatch = true;
+            }
+            else
+            {
+                foreach (var o in cleaner.Orders)
                 {
-                    isMatch = true;
-                }
-                else
-                {
-                    isMatch = false;
-                    break;
+                    if (o.StartTime.Date != order.StartTime.Date || ((o.StartTime >= order.EndTime.AddHours(1) || o.EndTime.AddHours(1) <= order.StartTime)))
+                    {
+                        isMatch = true;
+                    }
+                    else
+                    {
+                        isMatch = false;
+                        break;
+                    }
                 }
             }
 
             if (isMatch is true)
             {
-                freeCleaners.Add(c);
+                freeCleaners.Add(cleaner);
             }
         }
         return freeCleaners;

@@ -11,10 +11,9 @@ public class CleanersServiceFacts
     private CleanersService _sut;
     private Mock<ICleanersRepository> _cleanersRepositoryMock;
     private Mock<IOrdersRepository> _ordersRepositoryMock;
-
     private UserValues userValue;
 
-    private void Setup()
+    public CleanersServiceFacts()
     {
         _cleanersRepositoryMock = new Mock<ICleanersRepository>();
         _ordersRepositoryMock = new Mock<IOrdersRepository>();
@@ -25,7 +24,6 @@ public class CleanersServiceFacts
     public void CreateCleaner_WhenValidRequestPassed_CleanerAdded()
     {
         //given
-        Setup();
         _cleanersRepositoryMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
              .Returns(1);
         var expectedId = 1;
@@ -52,7 +50,6 @@ public class CleanersServiceFacts
     public void CreateCleaner_WhenNotUniqueEmail_ThrowUniquenessException()
     {
         //given
-        Setup();
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -105,7 +102,6 @@ public class CleanersServiceFacts
     public void GetAllCleaners_WhenValidRequestPassed_CleanersReceived()
     {
         //given
-        Setup();
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -153,7 +149,6 @@ public class CleanersServiceFacts
     public void GetCleaner_WhenCurrentUserIsAdmin_CleanerReceived()
     {
         //given
-        Setup();
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -179,7 +174,6 @@ public class CleanersServiceFacts
     public void GetCleaner_WhenIdNotInBase_GetEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 2;
 
         var cleanerInDb = new Cleaner()
@@ -201,7 +195,6 @@ public class CleanersServiceFacts
     public void GetCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -226,7 +219,6 @@ public class CleanersServiceFacts
     public void GetCommentsByCleaner_WhenClentGetOwnComments_CommentsReceived()
     {
         //given
-        Setup();
         var cleanerInDb = new Cleaner()
         {
 
@@ -272,7 +264,6 @@ public class CleanersServiceFacts
     public void GetCommentsByCleaner_WhenCleanerGetSomeoneElsesComments_ThrowBadRequestException()
     {
         //given
-        Setup();
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -290,7 +281,6 @@ public class CleanersServiceFacts
     public void GetCommentsByCleanerId_AdminGetsCommentsWhenCleanerNotInDb_ThrowBadRequestException()
     {
         //given
-        Setup();
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -322,7 +312,6 @@ public class CleanersServiceFacts
     public void GetOrdersByCleanerId_WhenClentGetsOwnOrders_OrdersReceived()
     {
         //given
-        Setup();
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -365,7 +354,6 @@ public class CleanersServiceFacts
     public void GetOrdersByCleanerId_WhenCleanersTryToGetSomeoneElsesOrders_ThrowBadRequestException()
     {
         //given
-        Setup();
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -382,7 +370,6 @@ public class CleanersServiceFacts
     public void GetCommentsByCleanerId_AdminGetsOrderssWhenCleanerNotInDb_ThrowBadRequestException()
     {
         //given
-        Setup();
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -409,7 +396,6 @@ public class CleanersServiceFacts
     public void UpdateCleaner_WhenCleanerUpdatesProperties_ChangesProperties()
     {
         //given
-        Setup();
         var cleaner = new Cleaner()
         {
             Id = 1,
@@ -447,7 +433,6 @@ public class CleanersServiceFacts
     public void UpdateCleaner_WhenEmptyCleanerRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -472,7 +457,6 @@ public class CleanersServiceFacts
     public void UpdateCleaner_CleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var testEmail = "FakeCleaner@gmail.ru";
 
         var cleaner = new Cleaner()
@@ -507,7 +491,6 @@ public class CleanersServiceFacts
     public void DeleteCleaner_WhenValidRequestPassed_DeleteCleaner()
     {
         //given
-        Setup();
         var expectedCleaner = new Cleaner()
         {
             Id = 1,
@@ -536,7 +519,6 @@ public class CleanersServiceFacts
     public void DeleteCleaner_EmptyCleanerRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 1;
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
@@ -553,7 +535,6 @@ public class CleanersServiceFacts
     public void DeleteCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var cleanerFirst = new Cleaner()
         {
             Id = 1,
@@ -591,7 +572,6 @@ public class CleanersServiceFacts
     public void GetFreeCleanersForOrder_WhenAreFreeCleaners_ThenCleanersRecieved()
     {
         //given
-        Setup();
         var order = new Order
         {
             Client = new() { Id = 1 },
@@ -641,7 +621,7 @@ public class CleanersServiceFacts
                 DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
             }
         };
-        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
+        _cleanersRepositoryMock.Setup(o => o.GetWorkingCleanersForDate(order.StartTime)).Returns(cleaners);
 
         //when
         var actual = _sut.GetFreeCleanersForOrder(order);
@@ -649,77 +629,13 @@ public class CleanersServiceFacts
         //then
         Assert.NotNull(actual);
         Assert.Equal(cleaners.Count, actual.Count);
-        _cleanersRepositoryMock.Verify(c => c.GetAllCleaners(), Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.GetWorkingCleanersForDate(order.StartTime), Times.Once);
     }
+
     [Fact]
-    public void GetFreeCleanersForOrder_WhenCleanerIsNotWorking_ThenDoNotAddToResult()
-    {
-        //given
-        Setup();
-        var order = new Order
-        {
-            Client = new() { Id = 1 },
-            CleaningObject = new() { Id = 56 },
-            Status = Status.Created,
-            StartTime = new DateTime(2022, 8, 6, 10, 00, 00),
-            EndTime = new DateTime(2022, 8, 6, 18, 00, 00),
-            Bundles = new List<Bundle> { new Bundle { Id = 2, Name = "qwe" } }
-        };
-
-        var cleaners = new List<Cleaner>
-        {
-            new Cleaner()
-            {
-                FirstName = "Adam",
-                LastName = "Smith",
-                Password = "12345678",
-                Email = "AdamSmith@gmail.com1",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today,
-                Schedule = Schedule.ShiftWork,
-                DateOfStartWork = new DateTime(2022, 8, 4, 00, 00, 00)
-            },
-            new Cleaner()
-            {
-                FirstName = "Adam",
-                LastName = "Smith",
-                Password = "12345678",
-                Email = "AdamSmith@gmail.com2",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today,
-                Schedule = Schedule.FullTime,
-                Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
-            },
-            new Cleaner()
-            {
-                 FirstName = "Adam",
-                LastName = "Smith",
-                Password = "12345678",
-                Email = "AdamSmith@gmail.com3",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today,
-                Schedule = Schedule.ShiftWork,
-                Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 5, 00, 00, 00)
-            }
-        };
-        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
-        var expectedCount = 1;
-
-        //when
-        var actual = _sut.GetFreeCleanersForOrder(order);
-
-        //then
-        Assert.NotNull(actual);
-        Assert.Equal(expectedCount, actual.Count);
-        _cleanersRepositoryMock.Verify(c => c.GetAllCleaners(), Times.Once);
-    }
-
     public void GetFreeCleanersForOrder_WhenCleanerIsBusy_ThenDoNotAddToResult()
     {
         //given
-        Setup();
         var order = new Order
         {
             Client = new() { Id = 1 },
@@ -761,24 +677,20 @@ public class CleanersServiceFacts
                 Phone = "85559997264",
                 BirthDate = DateTime.Today,
                 Schedule = Schedule.FullTime,
-                Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00)
-            },
-            new Cleaner()
-            {
-                 FirstName = "Adam",
-                LastName = "Smith",
-                Password = "12345678",
-                Email = "AdamSmith@gmail.com3",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today,
-                Schedule = Schedule.ShiftWork,
-                Orders = new List<Order>(),
+                Orders = new List<Order>()
+                {
+                    new Order()
+                    {
+                        Id = 124,
+                        StartTime = new DateTime(2022, 8, 1, 9, 00, 00),
+                        EndTime = new DateTime(2022, 8, 1, 11, 00, 00),
+                    }
+                },
                 DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00)
             }
         };
-        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
-        var expectedCount = 2;
+        _cleanersRepositoryMock.Setup(o => o.GetWorkingCleanersForDate(order.StartTime)).Returns(cleaners);
+        var expectedCount = 0;
 
         //when
         var actual = _sut.GetFreeCleanersForOrder(order);
@@ -786,6 +698,6 @@ public class CleanersServiceFacts
         //then
         Assert.NotNull(actual);
         Assert.Equal(expectedCount, actual.Count);
-        _cleanersRepositoryMock.Verify(c => c.GetAllCleaners(), Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.GetWorkingCleanersForDate(order.StartTime), Times.Once);
     }
 }

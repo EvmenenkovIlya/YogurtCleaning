@@ -12,4 +12,5 @@ public interface IClientsRepository
     Client? GetClient(int clientId);
     void UpdateClient(Client client);
     Client? GetClientByEmail(string email);
+    Order? GetLastOrderForCleaningObject(int clientId, int cleaningObjectId);
 }

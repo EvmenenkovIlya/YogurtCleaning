@@ -259,4 +259,107 @@ public class ClientsRepositoryTests
         Assert.True(result.Email == "ccc@gmail.c");
         context.Database.EnsureDeleted();
     }
+
+    [Fact]
+    public void GetLastOrderForCleaningObject_WhenOrderExist_ThenItRecieved()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new ClientsRepository(context);
+        var client = new Client
+        {
+            Id = 7,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Phone = "89998887766",
+            IsDeleted = false,
+            Comments = new List<Comment>(),
+            Orders = new List<Order>()
+            {
+                new Order(){ Id = 1, StartTime = DateTime.Now, CleaningObject = new(){ Id = 1, Address = ""} },
+            }
+        };
+        context.Clients.Add(client);
+        context.SaveChanges();
+        var expectedId = 1;
+
+        // when
+        var result = sut.GetLastOrderForCleaningObject(client.Id, 1);
+
+        //then
+        Assert.NotNull(result);
+        Assert.Equal(expectedId, result.Id);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public void GetLastOrderForCleaningObject_WhenFewOrdersExist_ThenLastOneRecieved()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new ClientsRepository(context);
+        var cleaningObject = new CleaningObject() { Id = 1, Address = "" };
+        var client = new Client
+        {
+            Id = 7,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Phone = "89998887766",
+            IsDeleted = false,
+            Comments = new List<Comment>(),
+            Orders = new List<Order>()
+            {
+                new Order(){ Id = 1, StartTime = DateTime.Now, CleaningObject = cleaningObject },
+                new Order(){ Id = 2, StartTime = DateTime.Now.AddDays(1), CleaningObject = cleaningObject },
+            }
+        };
+        context.Clients.Add(client);
+        context.SaveChanges();
+        var expectedId = 2;
+
+        // when
+        var result = sut.GetLastOrderForCleaningObject(client.Id, 1);
+
+        //then
+        Assert.NotNull(result);
+        Assert.Equal(expectedId, result.Id);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public void GetLastOrderForCleaningObject_WhenOrdersNotExist_ThenNullRecieved()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new ClientsRepository(context);
+        var client = new Client
+        {
+            Id = 7,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Phone = "89998887766",
+            IsDeleted = false,
+            Comments = new List<Comment>(),
+            Orders = new List<Order>()
+            {
+                new Order(){ Id = 1, StartTime = DateTime.Now, CleaningObject = new CleaningObject() { Id = 2, Address = "" } },
+                new Order(){ Id = 2, StartTime = DateTime.Now.AddDays(1), CleaningObject = new CleaningObject() { Id = 3, Address = "" } },
+            }
+        };
+        context.Clients.Add(client);
+        context.SaveChanges();
+
+        // when
+        var result = sut.GetLastOrderForCleaningObject(client.Id, 1);
+
+        //then
+        Assert.Null(result);
+        context.Database.EnsureDeleted();
+    }
 }

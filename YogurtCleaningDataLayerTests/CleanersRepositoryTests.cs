@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.DataLayer.Tests;
@@ -15,7 +16,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void AddCleaner_WhenCleanerAdded_ThenCommentIdMoreThenZero()
+    public void AddCleaner_WhenCleanerAdded_ThenCleanerIdMoreThenZero()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CleanersRepository(context);
@@ -247,6 +248,120 @@ public class CleanersRepositoryTests
         Assert.False(result.FirstName == "Adam");
         Assert.False(result.LastName == "Smith");
         Assert.True(result.Email == "ccc@gmail.c");
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public void GetWorkingCleanersForDate_WhenCleanerIsWorking_ThenItAddedToList()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new CleanersRepository(context);
+        var orderDate = new DateTime(2022, 8, 1, 10, 00, 00);
+        var cleaner1 = new Cleaner()
+        {
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com1",
+            Phone = "85559997264",
+            BirthDate = DateTime.Today,
+            Schedule = Schedule.ShiftWork,
+            Orders = new List<Order>(),
+            DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00),
+            Passport = "0000654321"
+        };
+
+        var cleaner2 = new Cleaner()
+        {
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com2",
+            Phone = "85559997264",
+            BirthDate = DateTime.Today,
+            Schedule = Schedule.FullTime,
+            Orders = new List<Order>(),
+            DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00),
+            Passport = "0000654321"
+        };
+
+        var cleaner3 = new Cleaner()
+        {
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com3",
+            Phone = "85559997264",
+            BirthDate = DateTime.Today,
+            Schedule = Schedule.ShiftWork,
+            Orders = new List<Order>(),
+            DateOfStartWork = new DateTime(2022, 7, 20, 10, 00, 00),
+            Passport = "0000654321"
+        };
+        context.Cleaners.Add(cleaner1);
+        context.SaveChanges();
+        context.Cleaners.Add(cleaner2);
+        context.SaveChanges();
+        context.Cleaners.Add(cleaner3);
+        context.SaveChanges();
+
+        var expectedCount = 3;
+
+        //when
+        var actual = sut.GetWorkingCleanersForDate(orderDate);
+
+        //then
+        Assert.Equal(expectedCount, actual.Count);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public void GetWorkingCleanersForDate_WhenCleanerIsNotWorking_ThenItDidNotAddToList()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new CleanersRepository(context);
+        var orderDate = new DateTime(2022, 8, 7, 10, 00, 00);
+        var cleaner1 = new Cleaner()
+        {
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com1",
+            Phone = "85559997264",
+            BirthDate = DateTime.Today,
+            Schedule = Schedule.ShiftWork,
+            Orders = new List<Order>(),
+            DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00),
+            Passport = "0000654321"
+        };
+
+        var cleaner2 = new Cleaner()
+        {
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com2",
+            Phone = "85559997264",
+            BirthDate = DateTime.Today,
+            Schedule = Schedule.FullTime,
+            Orders = new List<Order>(),
+            DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00),
+            Passport = "0000654321"
+        };
+        context.Cleaners.Add(cleaner1);
+        context.SaveChanges();
+        context.Cleaners.Add(cleaner2);
+        context.SaveChanges();
+
+        var expectedCount = 0;
+
+        //when
+        var actual = sut.GetWorkingCleanersForDate(orderDate);
+
+        //then
+        Assert.Equal(expectedCount, actual.Count);
         context.Database.EnsureDeleted();
     }
 }
