@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
@@ -19,6 +20,7 @@ public class CleaningObjectsController : ControllerBase
     private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
     private readonly IMapper _mapper;
     private readonly ICleaningObjectsService _cleaningObjectsService;
+    private UserValues _userValues;
 
     public CleaningObjectsController(ICleaningObjectsRepository cleaningObjectsRepository, IMapper mapper, ICleaningObjectsService cleaningObjectsService)
     {
@@ -60,9 +62,10 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult UpdateCleaningObject(int id, [FromBody] CleaningObjectUpdateRequest model)
+    public ActionResult UpdateCleaningObject([FromBody] CleaningObjectUpdateRequest model, int id)
     {
-        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id);
+        _userValues = this.GetClaimsValue();
+        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id, _userValues);
         return NoContent();
     }
 
@@ -74,7 +77,8 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddCleaningObject([FromBody] CleaningObjectRequest model)
     {
-        int id = _cleaningObjectsRepository.CreateCleaningObject(_mapper.Map<CleaningObject>(model));
+        _userValues = this.GetClaimsValue();
+        int id = _cleaningObjectsService.CreateCleaningObject(_mapper.Map<CleaningObject>(model), _userValues);
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
@@ -85,7 +89,8 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteCleaningObject(int id)
     {
-        _cleaningObjectsRepository.DeleteCleaningObject(id);
+        _userValues = this.GetClaimsValue();
+        _cleaningObjectsService.DeleteCleaningObject(id, _userValues);
         return NoContent();
     }
 }

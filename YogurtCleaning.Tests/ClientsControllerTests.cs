@@ -52,9 +52,13 @@ public class ClientsControllerTests
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
         Assert.That((int)actualResult.Value, Is.EqualTo(1));
-        _clientsServiceMock.Verify(x => x.CreateClient(It.Is<Client>(c => c.FirstName == client.FirstName &&
-        c.LastName == client.LastName && c.Password == client.Password && c.Email == client.Email &&
-        c.Phone == client.Phone && c.BirthDate == client.BirthDate
+        _clientsServiceMock.Verify(x => x.CreateClient(It.Is<Client>(c => 
+        c.FirstName == client.FirstName &&
+        c.LastName == client.LastName &&
+        c.Password == client.Password &&
+        c.Email == client.Email &&
+        c.Phone == client.Phone &&
+        c.BirthDate == client.BirthDate
         )), Times.Once);
     }
 
@@ -124,9 +128,13 @@ public class ClientsControllerTests
         var actualResult = actual as NoContentResult;
 
         Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
-        _clientsServiceMock.Verify(c => c.UpdateClient(It.Is<Client>(c => c.FirstName == newClientModel.FirstName &&
-        c.LastName == newClientModel.LastName && c.Email == null &&
-        c.BirthDate == newClientModel.BirthDate && c.Phone == newClientModel.Phone), It.Is<int>(i => i == client.Id), It.IsAny<UserValues>()), Times.Once);        
+        _clientsServiceMock.Verify(c => c.UpdateClient(It.Is<Client>(c => 
+        c.FirstName == newClientModel.FirstName &&
+        c.LastName == newClientModel.LastName &&
+        c.Email == null &&
+        c.BirthDate == newClientModel.BirthDate &&
+        c.Phone == newClientModel.Phone
+        ), It.Is<int>(i => i == client.Id), It.IsAny<UserValues>()), Times.Once);        
     }
 
     [Test]

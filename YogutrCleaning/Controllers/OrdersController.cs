@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
@@ -19,6 +20,7 @@ public class OrdersController : ControllerBase
     private readonly IOrdersRepository _ordersRepository;
     private readonly IMapper _mapper;
     private readonly IOrdersService _ordersService;
+    public UserValues? _userValues;
     public OrdersController(IOrdersRepository ordersRepository, IMapper mapper, IOrdersService ordersService)
     {
         _ordersRepository = ordersRepository;
@@ -83,7 +85,8 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteOrder(int orderId)
     {
-        _ordersRepository.DeleteOrder(orderId);
+        _userValues = this.GetClaimsValue();
+        _ordersService.DeleteOrder(orderId, _userValues);
         return NoContent();
     }
 
