@@ -36,7 +36,7 @@ public class ClientsService : IClientsService
     public void DeleteClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
         AuthorizeEnitiyAccess(userValues, client);
         _clientsRepository.DeleteClient(id);
     }
@@ -44,7 +44,7 @@ public class ClientsService : IClientsService
     public void UpdateClient(Client modelToUpdate, int id, UserValues userValues)
     {
         Client client = _clientsRepository.GetClient(id);
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
         AuthorizeEnitiyAccess(userValues, client);
 
         client.FirstName = modelToUpdate.FirstName;
@@ -72,7 +72,7 @@ public class ClientsService : IClientsService
     {
         var client = _clientsRepository.GetClient(id);
 
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
         AuthorizeEnitiyAccess(userValues, client);
         return _clientsRepository.GetAllCommentsByClient(id);
     }
@@ -80,7 +80,7 @@ public class ClientsService : IClientsService
     public List<Order> GetOrdersByClient(int id, UserValues userValues)
     {
         var client = _clientsRepository.GetClient(id);
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
         AuthorizeEnitiyAccess(userValues, client);        
         return _clientsRepository.GetAllOrdersByClient(id);
             
@@ -94,13 +94,5 @@ public class ClientsService : IClientsService
         {
             throw new AccessException($"Access denied");
         }
-    }
-
-    private void CheckThatUserNotNull(Client client, string errorMesage)
-    {
-        if (client == null)
-        {
-            throw new BadRequestException(errorMesage);
-        }
-    }
+    }  
 }

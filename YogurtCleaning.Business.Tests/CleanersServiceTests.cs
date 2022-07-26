@@ -10,10 +10,9 @@ public class CleanersServiceFacts
 {
     private CleanersService _sut;
     private Mock<ICleanersRepository> _cleanersRepositoryMock;
-
     private UserValues userValue;
 
-    private void Setup()
+    public CleanersServiceFacts()
     {
         _cleanersRepositoryMock = new Mock<ICleanersRepository>();
         _sut = new CleanersService(_cleanersRepositoryMock.Object);
@@ -22,8 +21,7 @@ public class CleanersServiceFacts
     [Fact]
     public void CreateCleaner_WhenValidRequestPassed_CleanerAdded()
     {
-        //given
-        Setup();
+        //given        
         _cleanersRepositoryMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
              .Returns(1);
         var expectedId = 1;
@@ -49,8 +47,7 @@ public class CleanersServiceFacts
     [Fact]
     public void CreateCleaner_WhenNotUniqueEmail_ThrowUniquenessException()
     {
-        //given
-        Setup();
+        //given       
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -102,8 +99,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetAllCleaners_WhenValidRequestPassed_CleanersReceived()
     {
-        //given
-        Setup();
+        //given      
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -150,8 +146,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCleaner_WhenCurrentUserIsAdmin_CleanerReceived()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -176,8 +171,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCleaner_WhenIdNotInBase_GetEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var testId = 2;
 
         var cleanerInDb = new Cleaner()
@@ -198,8 +192,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -223,8 +216,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleaner_WhenClentGetOwnComments_CommentsReceived()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner()
         {
 
@@ -269,8 +261,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleaner_WhenCleanerGetSomeoneElsesComments_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -287,8 +278,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleanerId_AdminGetsCommentsWhenCleanerNotInDb_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -319,8 +309,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetOrdersByCleanerId_WhenClentGetsOwnOrders_OrdersReceived()
     {
-        //given
-        Setup();
+        //given       
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -362,8 +351,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetOrdersByCleanerId_WhenCleanersTryToGetSomeoneElsesOrders_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -379,8 +367,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleanerId_AdminGetsOrderssWhenCleanerNotInDb_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -406,8 +393,7 @@ public class CleanersServiceFacts
     [Fact]
     public void UpdateCleaner_WhenCleanerUpdatesProperties_ChangesProperties()
     {
-        //given
-        Setup();
+        //given       
         var cleaner = new Cleaner()
         {
             Id = 1,
@@ -444,8 +430,7 @@ public class CleanersServiceFacts
     [Fact]
     public void UpdateCleaner_WhenEmptyCleanerRequest_ThrowEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -469,8 +454,7 @@ public class CleanersServiceFacts
     [Fact]
     public void UpdateCleaner_CleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
 
         var cleaner = new Cleaner()
@@ -504,8 +488,7 @@ public class CleanersServiceFacts
     [Fact]
     public void DeleteCleaner_WhenValidRequestPassed_DeleteCleaner()
     {
-        //given
-        Setup();
+        //given        
         var expectedCleaner = new Cleaner()
         {
             Id = 1,
@@ -533,8 +516,7 @@ public class CleanersServiceFacts
     [Fact]
     public void DeleteCleaner_EmptyCleanerRequest_ThrowEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var testId = 1;
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
@@ -550,8 +532,7 @@ public class CleanersServiceFacts
     [Fact]
     public void DeleteCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerFirst = new Cleaner()
         {
             Id = 1,

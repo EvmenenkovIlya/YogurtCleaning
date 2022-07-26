@@ -13,7 +13,7 @@ public class ClientsServiceFacts
 
     private UserValues userValue;
 
-    private void Setup()
+    public ClientsServiceFacts()
     {
         _clientsRepositoryMock = new Mock<IClientsRepository>();
         _sut = new ClientsService(_clientsRepositoryMock.Object);
@@ -23,7 +23,6 @@ public class ClientsServiceFacts
     public void CreateClient_WhenValidRequestPassed_ClientAdded()
     {
         //given
-        Setup();
         _clientsRepositoryMock.Setup(c => c.CreateClient(It.IsAny<Client>()))
              .Returns(1);
         var expectedId = 1;
@@ -51,7 +50,6 @@ public class ClientsServiceFacts
     public void CreateClient_WhenNotUniqueEmail_ThrowDataException()
     {
         //given
-        Setup();
         var clients = new List<Client>
         {
             new Client()
@@ -104,7 +102,6 @@ public class ClientsServiceFacts
     public void GetAllClients_WhenValidRequestPassed_ClientsReceived()
     {
         //given
-        Setup();
         var clients = new List<Client>
         {
             new Client()
@@ -152,7 +149,6 @@ public class ClientsServiceFacts
     public void GetClient_WhenCurrentUserIsAdmin_ClientReceived()
     {
         //given
-        Setup();
         var clientInDb = new Client()
         {
             Id = 1,
@@ -178,7 +174,6 @@ public class ClientsServiceFacts
     public void GetClient_WhenIdNotInBase_GetEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 2;
 
         var clientInDb = new Client()
@@ -200,7 +195,6 @@ public class ClientsServiceFacts
     public void GetClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
         var clientInDb = new Client()
         {
@@ -225,7 +219,6 @@ public class ClientsServiceFacts
     public void GetCommentsByClient_WhenClentGetOwnComments_CommentsReceived()
     {
         //given
-        Setup();
         var clientInDb = new Client()
         {
 
@@ -271,7 +264,6 @@ public class ClientsServiceFacts
     public void GetCommentsByClient_WhenClientGetSomeoneElsesComments_ThrowBadRequestException()
     {
         //given
-        Setup();
         var clientInDb = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
@@ -289,7 +281,6 @@ public class ClientsServiceFacts
     public void GetCommentsByClientId_WhenAdminGetsCommentsAndClientIsNotInDb_ThrowBadRequestException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
         var clientInDb = new Client()
         {
@@ -321,7 +312,6 @@ public class ClientsServiceFacts
     public void GetOrdersByClientId_WhenClentGetsOwnOrders_OrdersReceived()
     {
         //given
-        Setup();
         var clientInDb = new Client()
         {
             Id = 1,
@@ -364,7 +354,6 @@ public class ClientsServiceFacts
     public void GetOrdersByClientId_WhenClientsTryToGetSomeoneElsesOrders_ThrowBadRequestException()
     {
         //given
-        Setup();
         var clientInDb = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
@@ -381,7 +370,6 @@ public class ClientsServiceFacts
     public void GetOrdersByClientId_AdminGetsOrderssWhenClientNotInDb_ThrowBadRequestException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
         var clientInDb = new Client()
         {
@@ -408,7 +396,6 @@ public class ClientsServiceFacts
     public void UpdateClient_WhenClientUpdatesProperties_ChangesProperties()
     {
         //given
-        Setup();
         var client = new Client()
         {
             Id = 1,
@@ -449,7 +436,6 @@ public class ClientsServiceFacts
     public void UpdateClient_WhenEmptyClientRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var client = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
@@ -474,7 +460,6 @@ public class ClientsServiceFacts
     public void UpdateClient_ClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
 
         var client = new Client()
@@ -509,7 +494,6 @@ public class ClientsServiceFacts
     public void DeleteClient_WhenValidRequestPassed_DeleteClient()
     {
         //given
-        Setup();
         var expectedClient = new Client()
         {
             Id = 1,
@@ -537,7 +521,6 @@ public class ClientsServiceFacts
     public void DeleteClient_EmptyClientRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 1;
         var client = new Client();
         var testEmail = "FakeClient@gmail.ru";
@@ -554,7 +537,6 @@ public class ClientsServiceFacts
     public void DeleteClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var clientFirst = new Client()
         {
             Id = 1,

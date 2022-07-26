@@ -11,8 +11,8 @@ public class CleaningObjectServiceFacts
     private CleaningObjectsService _sut;
     private Mock<ICleaningObjectsRepository> _cleaningObjectsRepositoryMock;
     private UserValues _userValues;
-
-    private void Setup()
+    
+    public CleaningObjectServiceFacts()
     {
         _cleaningObjectsRepositoryMock = new Mock<ICleaningObjectsRepository>();
         _sut = new CleaningObjectsService(_cleaningObjectsRepositoryMock.Object);
@@ -21,8 +21,7 @@ public class CleaningObjectServiceFacts
     [Fact]
     public void CreateCleaningObject_WhenValidRequestPassed_CleaningObjectAdded()
     {
-        //given
-        Setup();       
+        //given   
         int expectedId = 1;
         _cleaningObjectsRepositoryMock.Setup(c => c.CreateCleaningObject(It.IsAny<CleaningObject>()))
              .Returns(expectedId);
@@ -52,7 +51,6 @@ public class CleaningObjectServiceFacts
     public void UpdateCleaningObject_WhenUserUpdatesOwnCleaningObjectProperties_ChangesProperties()
     {
         //given
-        Setup();
         var cleaningObject = new CleaningObject()
         {
             Id = 1,
@@ -94,7 +92,6 @@ public class CleaningObjectServiceFacts
     public void UpdateCleaningObject_WhenAdminUpdatesOwnCleaningObjectProperties_ChangesProperties()
     {
         //given
-        Setup();
         var cleaningObject = new CleaningObject()
         {
             Id = 1,
@@ -136,7 +133,6 @@ public class CleaningObjectServiceFacts
     public void UpdateCleaningObject_WhenEmptyCleaningObjectRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var cleaningObject = new CleaningObject() { Client = new Client() { Id = 1 } };
 
         CleaningObject newCleaningObjectModel = new CleaningObject()
@@ -159,7 +155,6 @@ public class CleaningObjectServiceFacts
     public void UpdateCleaningObject_UserTryUpdateSomeoneElseCleaningObject_ThrowAccessException()
     {
         //given
-        Setup();
         var testEmail = "FakeCleaningObject@gmail.ru";
 
         var cleaningObject = new CleaningObject()
@@ -187,7 +182,6 @@ public class CleaningObjectServiceFacts
     public void DeleteCleaningObject_WhenValidRequestPassed_DeleteCleaningObject()
     {
         //given
-        Setup();
         var expectedCleaningObject = new CleaningObject()
         {
             Id = 1,
@@ -216,7 +210,6 @@ public class CleaningObjectServiceFacts
     public void DeleteCleaningObject_EmptyCleaningObjectRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 1;
         var cleaningObject = new CleaningObject();
         var testEmail = "FakeCleaningObject@gmail.ru";
@@ -233,7 +226,6 @@ public class CleaningObjectServiceFacts
     public void DeleteCleaningObject_WhenClientDeleteSomeoneElsesCleaningObject_ThrowAccessException()
     {
         //given
-        Setup();
         int clientId = 1;
         var cleaningObject = new CleaningObject()
         {

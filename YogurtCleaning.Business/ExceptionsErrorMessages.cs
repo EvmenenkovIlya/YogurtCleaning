@@ -2,6 +2,7 @@
 
 public static class ExceptionsErrorMessages
 {
+    public const string BundleNotFound = "Bundle with this requestId not found";
     public const string ClientNotFound = "Client with this requestId not found";
     public const string CleanerNotFound = "Cleaner with this requestId not found:";
     public const string CleaningObjectNotFound = "CleaningObject with this requestId not found";

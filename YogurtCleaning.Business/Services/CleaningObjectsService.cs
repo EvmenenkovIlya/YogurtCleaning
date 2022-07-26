@@ -42,7 +42,7 @@ public class CleaningObjectsService : ICleaningObjectsService
     public void DeleteCleaningObject(int id, UserValues userValues)
     {
         var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
-        CheckThatCleaningObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
+        Validator.CheckThatObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
         AuthorizeEnitiyAccess(cleaningObject, userValues);
         _cleaningObjectsRepository.DeleteCleaningObject(id);
     }
@@ -52,14 +52,6 @@ public class CleaningObjectsService : ICleaningObjectsService
         if (!(userValues.Id == cleaningObject.Client.Id || userValues.Role == Role.Admin.ToString()))
         {
             throw new AccessException($"Access denied");
-        }
-    }
-
-    private void CheckThatCleaningObjectNotNull(CleaningObject cleaningObject, string errorMesage)
-    {
-        if (cleaningObject == null)
-        {
-            throw new BadRequestException(errorMesage);
         }
     }
 }

@@ -12,7 +12,7 @@ public class ServicesServiceTests
     private ServicesService _sut;
     private Mock<IServicesRepository> _mockServicesRepository;
 
-    private void Setup()
+    public ServicesServiceTests()
     {
         _mockServicesRepository = new Mock<IServicesRepository>();
         _sut = new ServicesService(_mockServicesRepository.Object);
@@ -22,7 +22,6 @@ public class ServicesServiceTests
     public void UpdateService_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
-        Setup();
         var service = new Service
         {
             Id = 10,

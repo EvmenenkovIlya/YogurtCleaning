@@ -12,7 +12,7 @@ public class CommentsServiceTests
     private Mock<IClientsRepository> _mockClientsRepository;
     private Mock<ICleanersRepository> _mockCleanersRepository;
 
-    private void Setup()
+    public CommentsServiceTests()
     {
         _mockCommentsRepository = new Mock<ICommentsRepository>();
         _mockClientsRepository = new Mock<IClientsRepository>();
@@ -20,12 +20,10 @@ public class CommentsServiceTests
         _sut = new CommentsService(_mockCommentsRepository.Object, _mockClientsRepository.Object, _mockCleanersRepository.Object);
     }
 
-
     [Fact]
     public void AddCommentByClient_WhenValidRequestPassed_CommentAdded()
     {
         // given
-        Setup();
         _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
         
         var expectedId = 1;
@@ -37,8 +35,6 @@ public class CommentsServiceTests
             Order = new() { Id = 1},
             Rating = 5
         };
-
-
 
         // when
         var actual = _sut.AddCommentByClient(comment, comment.Client.Id);
@@ -53,7 +49,6 @@ public class CommentsServiceTests
     public void AddCommentByCleaner_WhenValidRequestPassed_CommentAdded()
     {
         // given
-        Setup();
         _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
 
         var expectedId = 1;
