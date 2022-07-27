@@ -2,16 +2,18 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using YogurtCleaning.API;
+using YogurtCleaning.Business.Infrastrucure;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -30,9 +32,35 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "YogurtCleaning", Version = "v1" });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Authorization: Bearer JWT",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer",
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer",
+                            },
+                        },
+                        Array.Empty<string>()
+                    },
+               });
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -40,20 +68,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            // ���������, ����� �� �������������� �������� ��� ��������� ������
             ValidateIssuer = true,
-            // ������, �������������� ��������
             ValidIssuer = AuthOptions.ISSUER,
-            // ����� �� �������������� ����������� ������
             ValidateAudience = true,
-            // ��������� ����������� ������
             ValidAudience = AuthOptions.AUDIENCE,
-            // ����� �� �������������� ����� �������������
             ValidateLifetime = true,
-            // ��������� ����� ������������
             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            // ��������� ����� ������������
             ValidateIssuerSigningKey = true,
+            SaveSigninToken = true,
         };
     });
 builder.Services.AddDbContext<YogurtCleaningContext>(o =>
@@ -70,19 +92,24 @@ builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
 builder.Services.AddScoped<IBundlesService, BundlesService>();
-
+builder.Services.AddScoped<ICommentsService, CommentsService>();
+builder.Services.AddScoped<IAdminsRepository, AdminsRepository>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
 
+builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<ICleanersService, CleanersService>();
+builder.Services.AddScoped<ICleaningObjectsService, CleaningObjectsService>();
+builder.Services.AddScoped<IOrdersService, OrdersService>();
+builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseCustomExceptionHandler();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

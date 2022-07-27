@@ -12,7 +12,7 @@ public class CleanerRegisterRequestTestSource : IEnumerable
 
         return new CleanerRegisterRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",
@@ -29,7 +29,7 @@ public class CleanerRegisterRequestTestSource : IEnumerable
     public IEnumerator GetEnumerator()
     {
         CleanerRegisterRequest model = GetCleanerRegisterRequestModel();
-        model.Name = null;
+        model.FirstName = null;
         yield return new object[]
         {
             model,
@@ -77,7 +77,7 @@ public class CleanerRegisterRequestTestSource : IEnumerable
         };
 
         model = GetCleanerRegisterRequestModel();
-        model.Name = "This String has more than fifty chars. i promise123451";
+        model.FirstName = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
             model,
