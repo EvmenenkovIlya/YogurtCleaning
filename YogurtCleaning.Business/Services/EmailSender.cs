@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.Business.Services;
 
@@ -17,8 +18,9 @@ public class EmailSender : IEmailSender
         _emailConfig = emailConfig;
     }
 
-    public void SendEmail(Message message)
+    public void SendEmail(int orderId)
     {
+        var message = new Message(new string[] { "yogurtcleaning@gmail.com" }, "Order needs cleaners!", $"Order Id={orderId} doesn't have enought cleaners");
         var emailMessage = CreateEmailMessage(message);
 
         Send(emailMessage);

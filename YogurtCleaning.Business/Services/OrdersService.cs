@@ -50,8 +50,7 @@ public class OrdersService : IOrdersService
 
         if (order.Status == Status.Moderation)
         {
-            var message = new Message(new string[] { "yogurtcleaning@gmail.com" }, "Order needs cleaners!", $"Order {result} doesn't have enought cleaners");
-            _emailSender.SendEmail(message);
+            _emailSender.SendEmail(result);
         }
         return result;
     }
@@ -94,13 +93,13 @@ public class OrdersService : IOrdersService
 
         if (freeCleaners.Count < cleanersCount)
         {
-            for (int i = 0; i < freeCleaners.Count; i++)
-            {
-                cleaners.Add(freeCleaners[i]);
-            }
+            cleaners.AddRange(freeCleaners);
         }
         else
         {
+            Random random = new Random(); 
+            freeCleaners = freeCleaners.OrderBy(x => random.Next()).ToList();
+            
             for (int i = 0; i < cleanersCount; i++)
             {
                 cleaners.Add(freeCleaners[i]);
@@ -112,8 +111,8 @@ public class OrdersService : IOrdersService
     private int GetCleanersCount(Order order)
     {
         var orderDurationInHours = (double)GetOrderDuration(order);
-        var maxOrderEndTime = order.StartTime.Date.AddHours(21);
-        var maxOrderDuration = (maxOrderEndTime - order.StartTime).TotalHours;
+        var maxHour = 21;
+        var maxOrderDuration = maxHour - order.StartTime.Hour;
 
         if (orderDurationInHours > maxOrderDuration)
         {
@@ -136,7 +135,7 @@ public class OrdersService : IOrdersService
         switch (bundle.Measure)
         {
             case Measure.Room:
-                price += price / 2 * (cleaningObject.NumberOfRooms-1);
+                price += price / 2 * (cleaningObject.NumberOfRooms - 1);
                 return price;
             case Measure.Apartment:
                 return price;
