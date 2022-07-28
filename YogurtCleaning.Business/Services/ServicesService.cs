@@ -24,8 +24,9 @@ public class ServicesService : IServicesService
         oldService.Price = service.Price;
         oldService.Unit = service.Unit;
         oldService.Duration = service.Duration;
-        _servicesRepository.UpdateService(oldService);
+        _servicesRepository.UpdateService(oldService); 
     }
     public Service GetService(int id) => _servicesRepository.GetService(id);
 
+    public int AddService(Service service) => _servicesRepository.AddService(service);
 }
