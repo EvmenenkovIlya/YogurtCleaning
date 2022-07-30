@@ -19,7 +19,7 @@ public class OrdersService : IOrdersService
         var order = _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
         AuthorizeEnitiyAccess(userValues, order);
-        _ordersRepository.DeleteOrder(id);
+        _ordersRepository.DeleteOrder(order);
     }
 
     public Order? GetOrder(int id, UserValues userValues)

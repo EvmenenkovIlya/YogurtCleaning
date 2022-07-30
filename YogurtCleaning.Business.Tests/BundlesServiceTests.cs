@@ -158,13 +158,13 @@ public class BundlesServiceTests
         };
 
         _bundlesRepositoryMock.Setup(o => o.GetBundle(expectedBundle.Id)).Returns(expectedBundle);
-        _bundlesRepositoryMock.Setup(o => o.DeleteBundle(expectedBundle.Id));
+        _bundlesRepositoryMock.Setup(o => o.DeleteBundle(expectedBundle));
 
         //when
         _sut.DeleteBundle(expectedBundle.Id);
 
         //then
-        _bundlesRepositoryMock.Verify(c => c.DeleteBundle(expectedBundle.Id), Times.Once);
+        _bundlesRepositoryMock.Verify(c => c.DeleteBundle(expectedBundle), Times.Once);
     }
 
     [Fact]
@@ -173,7 +173,6 @@ public class BundlesServiceTests
         //given
         var testId = 1;
         var bundle = new Bundle();
-        _bundlesRepositoryMock.Setup(o => o.DeleteBundle(testId));
 
         //when
 

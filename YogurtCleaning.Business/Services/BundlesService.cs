@@ -29,7 +29,7 @@ public class BundlesService : IBundlesService
     {
         var bundle = _bundlesRepository.GetBundle(id);
         Validator.CheckThatObjectNotNull(bundle, ExceptionsErrorMessages.BundleNotFound);
-        _bundlesRepository.DeleteBundle(id);
+        _bundlesRepository.DeleteBundle(bundle);
     }
 
     public List<Bundle> GetAllBundles()

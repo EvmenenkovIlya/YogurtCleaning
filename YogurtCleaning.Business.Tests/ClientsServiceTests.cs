@@ -507,14 +507,14 @@ public class ClientsServiceFacts
         };
 
         _clientsRepositoryMock.Setup(o => o.GetClient(expectedClient.Id)).Returns(expectedClient);
-        _clientsRepositoryMock.Setup(o => o.DeleteClient(expectedClient.Id));
+        _clientsRepositoryMock.Setup(o => o.DeleteClient(expectedClient));
         userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Client", Id = 1 };
 
         //when
         _sut.DeleteClient(expectedClient.Id, userValue);
 
         //then
-        _clientsRepositoryMock.Verify(c => c.DeleteClient(expectedClient.Id), Times.Once);
+        _clientsRepositoryMock.Verify(c => c.DeleteClient(expectedClient), Times.Once);
     }
 
     [Fact]
@@ -525,7 +525,6 @@ public class ClientsServiceFacts
         var client = new Client();
         var testEmail = "FakeClient@gmail.ru";
         userValue = new UserValues() { Email = testEmail, Role = "Client" };
-        _clientsRepositoryMock.Setup(o => o.DeleteClient(testId));
 
         //when
 

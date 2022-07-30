@@ -19,9 +19,8 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
         return cleaningObject.Id;
     }
 
-    public void DeleteCleaningObject(int cleaningObjectId)
+    public void DeleteCleaningObject(CleaningObject cleaningObject)
     {
-        var cleaningObject = GetCleaningObject(cleaningObjectId);
         cleaningObject.IsDeleted = true;
         _context.SaveChanges();
     }

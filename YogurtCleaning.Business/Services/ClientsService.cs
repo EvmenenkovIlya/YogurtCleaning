@@ -38,7 +38,7 @@ public class ClientsService : IClientsService
         var client = _clientsRepository.GetClient(id);
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
         AuthorizeEnitiyAccess(userValues, client);
-        _clientsRepository.DeleteClient(id);
+        _clientsRepository.DeleteClient(client);
     }
 
     public void UpdateClient(Client modelToUpdate, int id, UserValues userValues)

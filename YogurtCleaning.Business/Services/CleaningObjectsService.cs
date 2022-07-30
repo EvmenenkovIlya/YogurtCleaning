@@ -44,7 +44,7 @@ public class CleaningObjectsService : ICleaningObjectsService
         var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
         Validator.CheckThatObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
         AuthorizeEnitiyAccess(cleaningObject, userValues);
-        _cleaningObjectsRepository.DeleteCleaningObject(id);
+        _cleaningObjectsRepository.DeleteCleaningObject(cleaningObject);
     }
 
     private void AuthorizeEnitiyAccess(CleaningObject cleaningObject, UserValues userValues)

@@ -28,4 +28,10 @@ public class ServicesService : IServicesService
     }
     public Service GetService(int id) => _servicesRepository.GetService(id);
 
+    public void DeleteService(int id, UserValues userValues)
+    {
+        var service = _servicesRepository.GetService(id);
+        Validator.CheckThatObjectNotNull(service, ExceptionsErrorMessages.ServiceNotFound);
+        _servicesRepository.DeleteService(service);
+    }
 }

@@ -34,7 +34,7 @@ public class CleanersService : ICleanersService
         var cleaner = _cleanersRepository.GetCleaner(id);
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
-        _cleanersRepository.DeleteCleaner(id);
+        _cleanersRepository.DeleteCleaner(cleaner);
     }
 
     public void UpdateCleaner(Cleaner modelToUpdate, int id, UserValues userValues)

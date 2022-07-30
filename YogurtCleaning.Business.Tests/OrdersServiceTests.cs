@@ -30,14 +30,14 @@ public class OrdersServiceFacts
         };
 
         _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).Returns(expectedOrder);
-        _ordersRepositoryMock.Setup(o => o.DeleteOrder(expectedOrder.Id));
+        _ordersRepositoryMock.Setup(o => o.DeleteOrder(expectedOrder));
         userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Admin", Id = 1 };
 
         //when
         _sut.DeleteOrder(expectedOrder.Id, userValue);
 
         //then
-        _ordersRepositoryMock.Verify(c => c.DeleteOrder(expectedOrder.Id), Times.Once);
+        _ordersRepositoryMock.Verify(c => c.DeleteOrder(expectedOrder), Times.Once);
     }
 
     [Fact]
@@ -48,7 +48,6 @@ public class OrdersServiceFacts
         var order = new Order();
         var testEmail = "FakeOrder@gmail.ru";
         userValue = new UserValues() { Email = testEmail, Role = "Admin" };
-        _ordersRepositoryMock.Setup(o => o.DeleteOrder(testId));
 
         //when
 

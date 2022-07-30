@@ -502,14 +502,14 @@ public class CleanersServiceFacts
         };
 
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(expectedCleaner.Id)).Returns(expectedCleaner);
-        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(expectedCleaner.Id));
+        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(expectedCleaner));
         userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Cleaner", Id = 1 };
 
         //when
         _sut.DeleteCleaner(expectedCleaner.Id, userValue);
 
         //then
-        _cleanersRepositoryMock.Verify(c => c.DeleteCleaner(expectedCleaner.Id), Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.DeleteCleaner(expectedCleaner), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(It.IsAny<int>()), Times.Once);
     }
 
@@ -520,8 +520,7 @@ public class CleanersServiceFacts
         var testId = 1;
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
-        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(testId));
+        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };       
 
         //when
 

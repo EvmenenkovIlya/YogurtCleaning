@@ -63,7 +63,7 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        sut.DeleteBundle(bundle.Id);
+        sut.DeleteBundle(bundle);
 
         //then 
         Assert.True(bundle.IsDeleted);

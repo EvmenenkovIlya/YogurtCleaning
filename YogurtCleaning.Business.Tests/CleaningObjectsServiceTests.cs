@@ -196,14 +196,14 @@ public class CleaningObjectServiceFacts
         };
 
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id)).Returns(expectedCleaningObject);
-        _cleaningObjectsRepositoryMock.Setup(o => o.DeleteCleaningObject(expectedCleaningObject.Id));
+        _cleaningObjectsRepositoryMock.Setup(o => o.DeleteCleaningObject(expectedCleaningObject));
         _userValues = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Client", Id = 1 };
 
         //when
         _sut.DeleteCleaningObject(expectedCleaningObject.Id, _userValues);
 
         //then
-        _cleaningObjectsRepositoryMock.Verify(c => c.DeleteCleaningObject(expectedCleaningObject.Id), Times.Once);
+        _cleaningObjectsRepositoryMock.Verify(c => c.DeleteCleaningObject(expectedCleaningObject), Times.Once);
     }
 
     [Fact]
@@ -214,7 +214,6 @@ public class CleaningObjectServiceFacts
         var cleaningObject = new CleaningObject();
         var testEmail = "FakeCleaningObject@gmail.ru";
         _userValues = new UserValues() { Email = testEmail, Role = "Client" };
-        _cleaningObjectsRepositoryMock.Setup(o => o.DeleteCleaningObject(testId));
 
         //when
 

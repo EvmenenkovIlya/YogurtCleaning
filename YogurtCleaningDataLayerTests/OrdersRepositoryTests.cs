@@ -51,7 +51,7 @@ public class OrdersRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteOrder(order.Id);
+        sut.DeleteOrder(order);
 
         //then
         var actual = sut.GetOrder(order.Id);
