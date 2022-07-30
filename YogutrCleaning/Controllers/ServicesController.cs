@@ -66,7 +66,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
-        var result = _servicesRepository.AddService(_mapper.Map<Service>(service));
+        var result = _servicesService.AddService(_mapper.Map<Service>(service));
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
