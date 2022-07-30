@@ -36,7 +36,7 @@ namespace YogurtCleaning.Tests
         public void AddServices_WhenValidRequestPassed_ThenCreatedResultRecived()
         {
             // given
-            _mockServicesRepository.Setup(o => o.AddService(It.IsAny<Service>())).Returns(1);
+            _mockServicesService.Setup(o => o.AddService(It.IsAny<Service>())).Returns(1);
             var service = new ServiceRequest()
             {
                 Name = "Service name",
@@ -52,7 +52,7 @@ namespace YogurtCleaning.Tests
 
             Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
             Assert.True((int)actualResult.Value == 1);
-            _mockServicesRepository.Verify(o => o.AddService(
+            _mockServicesService.Verify(o => o.AddService(
                 It.Is<Service>
                 (s => s.Name == service.Name &&
                 s.Price == service.Price &&
@@ -209,7 +209,7 @@ namespace YogurtCleaning.Tests
             var actualResult = actual as OkResult;
 
             Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-            _mockServicesRepository.Verify(o => o.DeleteService(service.Id), Times.Once);
+            _mockServicesRepository.Verify(o => o.DeleteService(service), Times.Once);
         }
 
 
