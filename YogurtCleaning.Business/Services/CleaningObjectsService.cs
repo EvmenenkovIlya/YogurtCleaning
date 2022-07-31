@@ -8,15 +8,27 @@ namespace YogurtCleaning.Business.Services;
 public class CleaningObjectsService : ICleaningObjectsService
 {
     private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
+    private readonly IClientsRepository _clientsRepository;
 
-    public CleaningObjectsService(ICleaningObjectsRepository cleaningObjectsRepository)
+    public CleaningObjectsService(ICleaningObjectsRepository cleaningObjectsRepository, IClientsRepository clientsRepository)
     {
         _cleaningObjectsRepository = cleaningObjectsRepository;
+        _clientsRepository = clientsRepository;
     }
 
     public int CreateCleaningObject(CleaningObject cleaningObject, UserValues userValues)
     {
-        cleaningObject.Client = new Client() { Id = userValues.Id };
+        if (userValues.Role == Role.Admin)
+        {
+            cleaningObject.Client = _clientsRepository.GetClient(cleaningObject.Client.Id);
+        }
+        else
+        {
+            cleaningObject.Client = _clientsRepository.GetClient(userValues.Id);
+        }
+        cleaningObject.District = _cleaningObjectsRepository.GetDistrict(cleaningObject.District.Id);
+        Validator.CheckThatObjectNotNull(cleaningObject.Client, ExceptionsErrorMessages.ClientNotFound);
+        Validator.CheckThatObjectNotNull(cleaningObject.District, ExceptionsErrorMessages.DistrictNotFound);
         return _cleaningObjectsRepository.CreateCleaningObject(cleaningObject);
     }
 
@@ -49,7 +61,7 @@ public class CleaningObjectsService : ICleaningObjectsService
 
     private void AuthorizeEnitiyAccess(CleaningObject cleaningObject, UserValues userValues)
     {
-        if (!(userValues.Id == cleaningObject.Client.Id || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Id == cleaningObject.Client.Id || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }

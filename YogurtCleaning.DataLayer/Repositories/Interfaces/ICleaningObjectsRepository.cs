@@ -1,4 +1,5 @@
 ﻿using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -9,4 +10,5 @@ public interface ICleaningObjectsRepository
     List<CleaningObject> GetAllCleaningObjects();
     CleaningObject? GetCleaningObject(int cleaningObjectId);
     void UpdateCleaningObject(CleaningObject newProperty);
+    District GetDistrict(DistrictEnum district);
 }

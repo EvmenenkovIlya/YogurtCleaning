@@ -42,7 +42,7 @@ public class OrdersService : IOrdersService
 
     private void AuthorizeEnitiyAccess(UserValues userValues, Order order)
     {
-        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }

@@ -61,8 +61,6 @@ public class CommentsServiceTests
             Rating = 5
         };
 
-
-
         // when
         var actual = _sut.AddCommentByCleaner(comment, comment.Cleaner.Id);
         

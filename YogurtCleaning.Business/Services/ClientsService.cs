@@ -90,7 +90,7 @@ public class ClientsService : IClientsService
 
     private void AuthorizeEnitiyAccess(UserValues userValues, Client client)
     {
-        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }

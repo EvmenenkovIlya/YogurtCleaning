@@ -10,12 +10,14 @@ public class CleaningObjectServiceFacts
 {
     private CleaningObjectsService _sut;
     private Mock<ICleaningObjectsRepository> _cleaningObjectsRepositoryMock;
+    private Mock<IClientsRepository> _clientsRepositoryMock;
     private UserValues _userValues;
     
     public CleaningObjectServiceFacts()
     {
         _cleaningObjectsRepositoryMock = new Mock<ICleaningObjectsRepository>();
-        _sut = new CleaningObjectsService(_cleaningObjectsRepositoryMock.Object);
+        _clientsRepositoryMock = new Mock<IClientsRepository>();
+        _sut = new CleaningObjectsService(_cleaningObjectsRepositoryMock.Object, _clientsRepositoryMock.Object);
     }
 
     [Fact]
@@ -25,7 +27,8 @@ public class CleaningObjectServiceFacts
         int expectedId = 1;
         _cleaningObjectsRepositoryMock.Setup(c => c.CreateCleaningObject(It.IsAny<CleaningObject>()))
              .Returns(expectedId);
-
+        var expectedClient = new Client() { Id = 1 };
+        var expectedDistrict = new District() { Id = DistrictEnum.Vasileostrovskiy };
         var cleaningObject = new CleaningObject()
         {
             NumberOfRooms = 1000,
@@ -34,8 +37,12 @@ public class CleaningObjectServiceFacts
             NumberOfWindows = 1,
             NumberOfBalconies = 0,
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+            Client = new Client() { Id = 1 },
+            District = new District() { Id = DistrictEnum.Vasileostrovskiy},
             IsDeleted = false
         };
+        _clientsRepositoryMock.Setup(c => c.GetClient(cleaningObject.Client.Id)).Returns(expectedClient);
+        _cleaningObjectsRepositoryMock.Setup(c => c.GetDistrict(cleaningObject.District.Id)).Returns(expectedDistrict);
         UserValues userValues = new UserValues() { Id = expectedId };
 
         //when
@@ -44,6 +51,7 @@ public class CleaningObjectServiceFacts
         //then
         Assert.True(actual == expectedId);
         _cleaningObjectsRepositoryMock.Verify(c => c.CreateCleaningObject(cleaningObject), Times.Once);
+        _cleaningObjectsRepositoryMock.Verify(c => c.CreateCleaningObject(It.Is<CleaningObject>(c => c.District.Id == cleaningObject.District.Id)), Times.Once);
         _cleaningObjectsRepositoryMock.Verify(c => c.CreateCleaningObject(It.Is<CleaningObject>(c => c.Client.Id == userValues.Id)), Times.Once);
     }
 
@@ -113,7 +121,7 @@ public class CleaningObjectServiceFacts
             NumberOfBalconies = 8,
             Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
         };
-        _userValues = new UserValues() { Role = Role.Admin.ToString() };
+        _userValues = new UserValues() { Role = Role.Admin };
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).Returns(cleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
 
@@ -197,7 +205,7 @@ public class CleaningObjectServiceFacts
 
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id)).Returns(expectedCleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.DeleteCleaningObject(expectedCleaningObject));
-        _userValues = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Client", Id = 1 };
+        _userValues = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Client, Id = 1 };
 
         //when
         _sut.DeleteCleaningObject(expectedCleaningObject.Id, _userValues);
@@ -213,7 +221,7 @@ public class CleaningObjectServiceFacts
         var testId = 1;
         var cleaningObject = new CleaningObject();
         var testEmail = "FakeCleaningObject@gmail.ru";
-        _userValues = new UserValues() { Email = testEmail, Role = "Client" };
+        _userValues = new UserValues() { Email = testEmail, Role = Role.Client };
 
         //when
 
@@ -239,7 +247,7 @@ public class CleaningObjectServiceFacts
             IsDeleted = false
 
         };
-        _userValues = new UserValues() { Email = cleaningObject.Client.Email, Role = "Client" };
+        _userValues = new UserValues() { Email = cleaningObject.Client.Email, Role = Role.Client };
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).Returns(cleaningObject);
 
         //when

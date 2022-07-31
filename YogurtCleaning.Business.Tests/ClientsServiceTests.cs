@@ -134,7 +134,7 @@ public class ClientsServiceFacts
             }
         };
         _clientsRepositoryMock.Setup(o => o.GetAllClients()).Returns(clients);
-        userValue = new UserValues() {Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() {Email = "AdamSmith@gmail.com1", Role = Role.Admin };
 
         //when
         var actual = _sut.GetAllClients();
@@ -160,7 +160,7 @@ public class ClientsServiceFacts
             BirthDate = DateTime.Today
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
 
         //when
@@ -182,7 +182,7 @@ public class ClientsServiceFacts
             FirstName = "Adam",
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
 
         //when
@@ -206,7 +206,7 @@ public class ClientsServiceFacts
             Phone = "5559997264",
             BirthDate = DateTime.Today
         };
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Client" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
 
         //when
@@ -241,7 +241,7 @@ public class ClientsServiceFacts
                     }
                 }
         };
-        userValue = new UserValues() { Email = clientInDb.Email, Role = "Client" };
+        userValue = new UserValues() { Email = clientInDb.Email, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
         _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
@@ -267,7 +267,7 @@ public class ClientsServiceFacts
         var clientInDb = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
         _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
@@ -299,7 +299,7 @@ public class ClientsServiceFacts
             }
 
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
         //when
@@ -333,7 +333,7 @@ public class ClientsServiceFacts
                 }
             }
         };
-        userValue = new UserValues() { Email = clientInDb.Email, Role = "Client" };
+        userValue = new UserValues() { Email = clientInDb.Email, Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
         _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
 
@@ -357,7 +357,7 @@ public class ClientsServiceFacts
         var clientInDb = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
         //when
@@ -383,7 +383,7 @@ public class ClientsServiceFacts
                 },
             }
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
         //when
@@ -413,7 +413,7 @@ public class ClientsServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = client.Email, Role = "Client" }; ;
+        userValue = new UserValues() { Email = client.Email, Role = Role.Client }; ;
         _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).Returns(client);
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
@@ -446,7 +446,7 @@ public class ClientsServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10)
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
@@ -480,7 +480,7 @@ public class ClientsServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).Returns(client);
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
@@ -508,7 +508,7 @@ public class ClientsServiceFacts
 
         _clientsRepositoryMock.Setup(o => o.GetClient(expectedClient.Id)).Returns(expectedClient);
         _clientsRepositoryMock.Setup(o => o.DeleteClient(expectedClient));
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Client", Id = 1 };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Client, Id = 1 };
 
         //when
         _sut.DeleteClient(expectedClient.Id, userValue);
@@ -524,7 +524,7 @@ public class ClientsServiceFacts
         var testId = 1;
         var client = new Client();
         var testEmail = "FakeClient@gmail.ru";
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         //when
 
@@ -560,7 +560,7 @@ public class ClientsServiceFacts
             IsDeleted = false
 
         };
-        userValue = new UserValues() { Email = clientFirst.Email, Role = "Client" };
+        userValue = new UserValues() { Email = clientFirst.Email, Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientSecond.Id)).Returns(clientSecond);
 
         //when

@@ -132,7 +132,7 @@ public class CleanersServiceFacts
             }
         };
         _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
 
         //when
         var actual = _sut.GetAllCleaners();
@@ -158,7 +158,7 @@ public class CleanersServiceFacts
             BirthDate = DateTime.Today
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
 
         //when
@@ -180,7 +180,7 @@ public class CleanersServiceFacts
             FirstName = "Adam",
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
 
         //when
@@ -204,7 +204,7 @@ public class CleanersServiceFacts
             Phone = "5559997264",
             BirthDate = DateTime.Today
         };
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Cleaner" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
 
         //when
@@ -239,7 +239,7 @@ public class CleanersServiceFacts
                     }
                 }
         };
-        userValue = new UserValues() { Email = cleanerInDb.Email, Role = "Cleaner" };
+        userValue = new UserValues() { Email = cleanerInDb.Email, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
         _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
@@ -265,7 +265,7 @@ public class CleanersServiceFacts
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
         _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
@@ -297,7 +297,7 @@ public class CleanersServiceFacts
             }
 
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
         //when
@@ -331,7 +331,7 @@ public class CleanersServiceFacts
                 }
             }
         };
-        userValue = new UserValues() { Email = cleanerInDb.Email, Role = "Cleaner" };
+        userValue = new UserValues() { Email = cleanerInDb.Email, Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
         _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
 
@@ -355,7 +355,7 @@ public class CleanersServiceFacts
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
         //when
@@ -381,7 +381,7 @@ public class CleanersServiceFacts
                 },
             }
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
         //when
@@ -411,7 +411,7 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = cleaner.Email, Role = "Cleaner" }; ;
+        userValue = new UserValues() { Email = cleaner.Email, Role = Role.Cleaner }; ;
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).Returns(cleaner);
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
@@ -441,7 +441,7 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10)
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
@@ -475,7 +475,7 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).Returns(cleaner);
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
@@ -503,7 +503,7 @@ public class CleanersServiceFacts
 
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(expectedCleaner.Id)).Returns(expectedCleaner);
         _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(expectedCleaner));
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Cleaner", Id = 1 };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Cleaner, Id = 1 };
 
         //when
         _sut.DeleteCleaner(expectedCleaner.Id, userValue);
@@ -520,7 +520,7 @@ public class CleanersServiceFacts
         var testId = 1;
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };       
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };       
 
         //when
 
@@ -556,7 +556,7 @@ public class CleanersServiceFacts
             IsDeleted = false
 
         };
-        userValue = new UserValues() { Email = cleanerFirst.Email, Role = "Cleaner" };
+        userValue = new UserValues() { Email = cleanerFirst.Email, Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerSecond.Id)).Returns(cleanerSecond);
 
         //when

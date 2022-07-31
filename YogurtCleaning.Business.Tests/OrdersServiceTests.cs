@@ -1,6 +1,7 @@
 ﻿using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.Business.Facts;
@@ -31,7 +32,7 @@ public class OrdersServiceFacts
 
         _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).Returns(expectedOrder);
         _ordersRepositoryMock.Setup(o => o.DeleteOrder(expectedOrder));
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Admin", Id = 1 };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Admin, Id = 1 };
 
         //when
         _sut.DeleteOrder(expectedOrder.Id, userValue);
@@ -47,7 +48,7 @@ public class OrdersServiceFacts
         var testId = 1;
         var order = new Order();
         var testEmail = "FakeOrder@gmail.ru";
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         //when
 

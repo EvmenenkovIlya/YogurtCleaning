@@ -83,7 +83,7 @@ public class CleanersService : ICleanersService
 
     private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
     {
-        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -36,4 +37,6 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
         _context.CleaningObjects.Update(modelToUpdate);
         _context.SaveChanges();
     }
+
+    public District GetDistrict(DistrictEnum district) => _context.Districts.FirstOrDefault(o => o.Id == district);
 }
