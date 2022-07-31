@@ -49,6 +49,75 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
+    public void GetCleaningObject_WhenCurrentUserIsAdmin_CleaningObjectReceived()
+    {
+        //given
+        Setup();
+        var cleaningObjectInDb = new CleaningObject()
+        {
+            Id = 1,
+            NumberOfRooms = 1000,
+            NumberOfBathrooms = 1,
+            Square = 1,
+            NumberOfWindows = 1,
+            NumberOfBalconies = 0,
+            Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+            Client = new Client() { Id = 2 },
+            IsDeleted = false
+        };
+
+        _userValues = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin", Id = 1 };
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).Returns(cleaningObjectInDb);
+
+        //when
+        var actual = _sut.GetCleaningObject(cleaningObjectInDb.Id, _userValues);
+
+        //then
+        _cleaningObjectsRepositoryMock.Verify(c => c.GetCleaningObject(cleaningObjectInDb.Id), Times.Once);
+    }
+
+    [Fact]
+    public void GetCleaningObject_WhenIdNotInBase_GetEntityNotFoundException()
+    {
+        //given
+        Setup();
+        var testId = 2;
+        _userValues = new UserValues() { Role = "Admin" };
+
+        //when
+
+        //then
+        Assert.Throws<Exceptions.EntityNotFoundException>(() => _sut.GetCleaningObject(testId, _userValues));
+    }
+
+    [Fact]
+    public void GetCleaningObject_WhenClientGetSomeoneElsesCleaningObject_ThrowAccessException()
+    {
+        //given
+        Setup();
+        var cleaningObjectInDb = new CleaningObject()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1},
+            NumberOfRooms = 1000,
+            NumberOfBathrooms = 1,
+            Square = 1,
+            NumberOfWindows = 1,
+            NumberOfBalconies = 0,
+            Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+            IsDeleted = false
+        };
+        _userValues = new UserValues() { Role = "Client", Id = 2 };
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).Returns(cleaningObjectInDb);
+
+        //when
+
+        //then
+        Assert.Throws<Exceptions.AccessException>(() => _sut.GetCleaningObject(cleaningObjectInDb.Id, _userValues));
+    }
+
+
+    [Fact]
     public void UpdateCleaningObject_WhenUserUpdatesOwnCleaningObjectProperties_ChangesProperties()
     {
         //given

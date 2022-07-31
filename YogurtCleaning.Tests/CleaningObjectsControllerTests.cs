@@ -61,6 +61,39 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
+    public void GetCleaningObject_WhenValidRequestPassed_OkReceived()
+    {
+        //given
+        var expectedCleaningObject = new CleaningObject()
+        {
+            Id = 1,
+            NumberOfRooms = 1000,
+            NumberOfBathrooms = 1,
+            Square = 1,
+            NumberOfWindows = 1,
+            NumberOfBalconies = 0,
+            Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+        };
+
+        _cleaningObjectsServiceMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>())).Returns(expectedCleaningObject);
+
+        //when
+        var actual = _sut.GetCleaningObject(expectedCleaningObject.Id);
+
+        //then
+
+        var actualResult = actual.Result as ObjectResult;
+        var cleaningObjectResponce = actualResult.Value as CleaningObjectResponse;
+        Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
+        Assert.True(cleaningObjectResponce.NumberOfRooms == expectedCleaningObject.NumberOfRooms);
+        Assert.True(cleaningObjectResponce.NumberOfBathrooms == expectedCleaningObject.NumberOfBathrooms);
+        Assert.True(cleaningObjectResponce.Square == expectedCleaningObject.Square);
+        Assert.True(cleaningObjectResponce.NumberOfWindows == expectedCleaningObject.NumberOfWindows);
+        Assert.True(cleaningObjectResponce.Address == expectedCleaningObject.Address);
+        _cleaningObjectsServiceMock.Verify(x => x.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>()), Times.Once);
+    }
+
+    [Test]
     public void UpdateCleaningObject_WhenValidRequestPassed_NoContentReceived()
     {
         //given
