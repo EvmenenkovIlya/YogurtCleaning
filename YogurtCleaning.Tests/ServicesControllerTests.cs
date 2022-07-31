@@ -10,7 +10,7 @@ using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
 using YogurtCleaning.API;
-
+using YogurtCleaning.Business;
 
 namespace YogurtCleaning.Tests
 {
@@ -209,10 +209,7 @@ namespace YogurtCleaning.Tests
             var actualResult = actual as OkResult;
 
             Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-            _mockServicesRepository.Verify(o => o.DeleteService(service), Times.Once);
+            _mockServicesService.Verify(o => o.DeleteService(service.Id, It.IsAny<UserValues>()), Times.Once);
         }
-
-
-
     }
 }
