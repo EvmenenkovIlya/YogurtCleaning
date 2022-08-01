@@ -8,5 +8,5 @@ public interface IBundlesRepository
     List<Bundle> GetAllBundles();
     void UpdateBundle(Bundle bundle);
     int AddBundle(Bundle bundle);
-    void DeleteBundle(int id);
+    void DeleteBundle(Bundle bundle);
 }

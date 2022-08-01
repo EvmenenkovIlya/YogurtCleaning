@@ -18,9 +18,8 @@ public class BundlesRepository : IBundlesRepository
         return bundle.Id;
     }
 
-    public void DeleteBundle(int id)
-    {
-        var bundle = _context.Bundles.FirstOrDefault(b => b.Id == id);
+    public void DeleteBundle(Bundle bundle)
+    {       
         bundle.IsDeleted = true;
         _context.SaveChanges();
     }

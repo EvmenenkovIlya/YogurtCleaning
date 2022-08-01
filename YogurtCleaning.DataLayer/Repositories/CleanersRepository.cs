@@ -32,9 +32,8 @@ public class CleanersRepository : ICleanersRepository
         _context.SaveChanges();
     }
 
-    public void DeleteCleaner(int cleanerId)
+    public void DeleteCleaner(Cleaner cleaner)
     {
-        var cleaner = GetCleaner(cleanerId);
         cleaner.IsDeleted = true;
         _context.SaveChanges();
     }

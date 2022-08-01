@@ -8,5 +8,5 @@ public interface IServicesRepository
     List<Service> GetAllServices();
     void UpdateService(Service service);
     int AddService(Service service);
-    void DeleteService(int id);
+    void DeleteService(Service service);
 }

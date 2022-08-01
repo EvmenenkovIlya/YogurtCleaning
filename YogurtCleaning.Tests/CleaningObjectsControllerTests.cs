@@ -9,6 +9,7 @@ using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.Business;
 using YogurtCleaning.API;
 using YogurtCleaning.DataLayer.Repositories;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Tests;
 public class CleaningObjectControllerTests
@@ -74,7 +75,8 @@ public class CleaningObjectControllerTests
             NumberOfWindows = 1,
             NumberOfBalconies = 0,
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
-            Client = new Client() { Id = 1}
+            Client = new Client() { Id = 1},
+            District = new District() { Id = DistrictEnum.Admiralteisky}
         };
 
         var newCleaningObjectModel = new CleaningObjectUpdateRequest()
@@ -85,6 +87,7 @@ public class CleaningObjectControllerTests
             NumberOfWindows = 3,
             NumberOfBalconies = 8,
             Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
+            District = DistrictEnum.Admiralteisky
         };
 
         _cleaningObjectsServiceMock.Setup(o => o.UpdateCleaningObject(cleaningObject, cleaningObject.Id, _userValues));

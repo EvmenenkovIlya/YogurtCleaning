@@ -5,6 +5,7 @@ using System.Text;
 using YogurtCleaning.DataLayer.Entities;
 using System.Threading.Tasks;
 using YogurtCleaning.DataLayer.Repositories;
+using YogurtCleaning.Business.Exceptions;
 
 namespace YogurtCleaning.Business.Services;
 
@@ -26,7 +27,9 @@ public class BundlesService : IBundlesService
 
     public void DeleteBundle(int id)
     {
-        _bundlesRepository.DeleteBundle(id);
+        var bundle = _bundlesRepository.GetBundle(id);
+        Validator.CheckThatObjectNotNull(bundle, ExceptionsErrorMessages.BundleNotFound);
+        _bundlesRepository.DeleteBundle(bundle);
     }
 
     public List<Bundle> GetAllBundles()
@@ -35,7 +38,6 @@ public class BundlesService : IBundlesService
         return result;
     }
     public Bundle GetBundle(int id)
-
     {
         var result = _bundlesRepository.GetBundle(id);
         return result;

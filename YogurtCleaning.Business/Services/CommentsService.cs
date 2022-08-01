@@ -46,6 +46,8 @@ public class CommentsService : ICommentsService
 
     public void DeleteComment(int id)
     {
-        _commentsRepository.DeleteComment(id);
+        var comment = _commentsRepository.GetCommentById(id);
+        Validator.CheckThatObjectNotNull(comment, ExceptionsErrorMessages.CommentNotFound);
+        _commentsRepository.DeleteComment(comment);
     }
 }

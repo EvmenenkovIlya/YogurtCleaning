@@ -17,9 +17,8 @@ public class ServicesRepository : IServicesRepository
         return service.Id;
     }
 
-    public void DeleteService(int id)
+    public void DeleteService(Service service)
     {
-        var service = _context.Services.FirstOrDefault(s => s.Id == id);
         service.IsDeleted = true;
         _context.SaveChanges();
     }
