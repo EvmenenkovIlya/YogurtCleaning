@@ -81,13 +81,17 @@ public class CleanersControllerTests
         //then
 
         var actualResult = actual.Result as ObjectResult;
-        var cleanerResponce = actualResult.Value as CleanerResponse;
+        var cleanerResponse = actualResult.Value as CleanerResponse;
+
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(expectedCleaner.FirstName, Is.EqualTo(cleanerResponce.FirstName));
-        Assert.That(expectedCleaner.LastName, Is.EqualTo(cleanerResponce.LastName));
-        Assert.That(expectedCleaner.Email, Is.EqualTo(cleanerResponce.Email));
-        Assert.That(expectedCleaner.Phone, Is.EqualTo(cleanerResponce.Phone));
-        Assert.That(expectedCleaner.BirthDate, Is.EqualTo(cleanerResponce.BirthDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cleanerResponse.FirstName, Is.EqualTo(expectedCleaner.FirstName)); 
+            Assert.That(cleanerResponse.LastName, Is.EqualTo(expectedCleaner.LastName));
+            Assert.That(cleanerResponse.Email, Is.EqualTo(expectedCleaner.Email));
+            Assert.That(cleanerResponse.Phone, Is.EqualTo(expectedCleaner.Phone));
+            Assert.That(cleanerResponse.BirthDate, Is.EqualTo(expectedCleaner.BirthDate));
+        });
         _cleanersServiceMock.Verify(x => x.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -165,10 +169,13 @@ public class CleanersControllerTests
         var commentsResponse = actualResult.Value as List<CommentResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(commentsResponse.Count, Is.EqualTo(expectedCleaner.Comments.Count));
-        Assert.That(commentsResponse[0].Id, Is.EqualTo(expectedCleaner.Comments[0].Id));
-        Assert.That(commentsResponse[1].Summary, Is.EqualTo(expectedCleaner.Comments[1].Summary));
-        Assert.That(commentsResponse[0].Rating, Is.EqualTo(expectedCleaner.Comments[0].Rating));
+        Assert.Multiple(() =>
+        {
+            Assert.That(commentsResponse.Count, Is.EqualTo(expectedCleaner.Comments.Count));
+            Assert.That(commentsResponse[0].Id, Is.EqualTo(expectedCleaner.Comments[0].Id));
+            Assert.That(commentsResponse[1].Summary, Is.EqualTo(expectedCleaner.Comments[1].Summary));
+            Assert.That(commentsResponse[0].Rating, Is.EqualTo(expectedCleaner.Comments[0].Rating));
+        });
         _cleanersServiceMock.Verify(c => c.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -208,10 +215,13 @@ public class CleanersControllerTests
         var ordersResponse = actualResult.Value as List<OrderResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(ordersResponse.Count, Is.EqualTo(expectedCleaner.Orders.Count));
-        Assert.That(ordersResponse[0].Id, Is.EqualTo(expectedCleaner.Orders[0].Id));
-        Assert.That(ordersResponse[1].Price, Is.EqualTo(expectedCleaner.Orders[1].Price));
-        Assert.That(ordersResponse[0].Status, Is.EqualTo(expectedCleaner.Orders[0].Status));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ordersResponse.Count, Is.EqualTo(expectedCleaner.Orders.Count));
+            Assert.That(ordersResponse[0].Id, Is.EqualTo(expectedCleaner.Orders[0].Id));
+            Assert.That(ordersResponse[1].Price, Is.EqualTo(expectedCleaner.Orders[1].Price));
+            Assert.That(ordersResponse[0].Status, Is.EqualTo(expectedCleaner.Orders[0].Status));
+        });
         _cleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -239,7 +249,7 @@ public class CleanersControllerTests
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _cleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -289,12 +299,15 @@ public class CleanersControllerTests
 
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(cleaners.Count, Is.EqualTo(cleanersResponse.Count));
-        Assert.That(cleaners[0].FirstName, Is.EqualTo(cleanersResponse[0].FirstName));
-        Assert.That(cleaners[1].LastName, Is.EqualTo(cleanersResponse[1].LastName));
-        Assert.That(cleaners[2].Email, Is.EqualTo(cleanersResponse[2].Email));
-        Assert.That(cleaners[1].Phone, Is.EqualTo(cleanersResponse[1].Phone));
-        Assert.That(cleaners[0].BirthDate, Is.EqualTo(cleanersResponse[0].BirthDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cleanersResponse.Count, Is.EqualTo(cleaners.Count));
+            Assert.That(cleanersResponse[0].FirstName, Is.EqualTo(cleaners[0].FirstName));
+            Assert.That(cleanersResponse[1].LastName, Is.EqualTo(cleaners[1].LastName));
+            Assert.That(cleanersResponse[2].Email, Is.EqualTo(cleaners[2].Email));
+            Assert.That(cleanersResponse[1].Phone, Is.EqualTo(cleaners[1].Phone));
+            Assert.That(cleanersResponse[0].BirthDate, Is.EqualTo(cleaners[0].BirthDate));
+        });
         _cleanersServiceMock.Verify(x => x.GetAllCleaners(), Times.Once);
     }
 }

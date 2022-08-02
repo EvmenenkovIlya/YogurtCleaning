@@ -85,13 +85,16 @@ public class ClientsControllerTests
         //then
         
         var actualResult = actual.Result as ObjectResult;
-        var clientResponce = actualResult.Value as ClientResponse;
+        var clientResponse = actualResult.Value as ClientResponse;
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(expectedClient.FirstName, Is.EqualTo(clientResponce.FirstName));
-        Assert.That(expectedClient.LastName, Is.EqualTo(clientResponce.LastName));
-        Assert.That(expectedClient.Email, Is.EqualTo(clientResponce.Email));
-        Assert.That(expectedClient.Phone, Is.EqualTo(clientResponce.Phone));
-        Assert.That(expectedClient.BirthDate, Is.EqualTo(clientResponce.BirthDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(clientResponse.FirstName, Is.EqualTo(expectedClient.FirstName));
+            Assert.That(clientResponse.LastName, Is.EqualTo(expectedClient.LastName));
+            Assert.That(clientResponse.Email, Is.EqualTo(expectedClient.Email));
+            Assert.That(clientResponse.Phone, Is.EqualTo(expectedClient.Phone));
+            Assert.That(clientResponse.BirthDate, Is.EqualTo(expectedClient.BirthDate));
+        });
         _clientsServiceMock.Verify(x => x.GetClient(expectedClient.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -127,7 +130,7 @@ public class ClientsControllerTests
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _clientsServiceMock.Verify(c => c.UpdateClient(It.Is<Client>(c => 
         c.FirstName == newClientModel.FirstName &&
         c.LastName == newClientModel.LastName &&
@@ -173,10 +176,13 @@ public class ClientsControllerTests
         var commentsResponse = actualResult.Value as List<CommentResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(commentsResponse.Count, Is.EqualTo(expectedClient.Comments.Count));
-        Assert.That(commentsResponse[0].Id, Is.EqualTo(expectedClient.Comments[0].Id));
-        Assert.That(commentsResponse[1].Summary, Is.EqualTo(expectedClient.Comments[1].Summary));
-        Assert.That(commentsResponse[0].Rating, Is.EqualTo(expectedClient.Comments[0].Rating));
+        Assert.Multiple(() =>
+        {
+            Assert.That(commentsResponse.Count, Is.EqualTo(expectedClient.Comments.Count));
+            Assert.That(commentsResponse[0].Id, Is.EqualTo(expectedClient.Comments[0].Id));
+            Assert.That(commentsResponse[1].Summary, Is.EqualTo(expectedClient.Comments[1].Summary));
+            Assert.That(commentsResponse[0].Rating, Is.EqualTo(expectedClient.Comments[0].Rating));
+        });
         _clientsServiceMock.Verify(c => c.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -216,10 +222,13 @@ public class ClientsControllerTests
         var ordersResponse = actualResult.Value as List<OrderResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(ordersResponse.Count, Is.EqualTo(expectedClient.Orders.Count));
-        Assert.That(ordersResponse[0].Id, Is.EqualTo(expectedClient.Orders[0].Id));
-        Assert.That(ordersResponse[1].Price, Is.EqualTo(expectedClient.Orders[1].Price));
-        Assert.That(ordersResponse[0].Status, Is.EqualTo(expectedClient.Orders[0].Status));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ordersResponse.Count, Is.EqualTo(expectedClient.Orders.Count));
+            Assert.That(ordersResponse[0].Id, Is.EqualTo(expectedClient.Orders[0].Id));
+            Assert.That(ordersResponse[1].Price, Is.EqualTo(expectedClient.Orders[1].Price));
+            Assert.That(ordersResponse[0].Status, Is.EqualTo(expectedClient.Orders[0].Status));
+        });
         _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -247,7 +256,7 @@ public class ClientsControllerTests
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -297,12 +306,15 @@ public class ClientsControllerTests
 
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(clients.Count, Is.EqualTo(clientsResponse.Count));
-        Assert.That(clients[0].FirstName, Is.EqualTo(clientsResponse[0].FirstName));
-        Assert.That(clients[1].LastName, Is.EqualTo(clientsResponse[1].LastName));
-        Assert.That(clients[2].Email, Is.EqualTo(clientsResponse[2].Email));
-        Assert.That(clients[1].Phone, Is.EqualTo(clientsResponse[1].Phone));
-        Assert.That(clients[0].BirthDate, Is.EqualTo(clientsResponse[0].BirthDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(clientsResponse.Count, Is.EqualTo(clients.Count));
+            Assert.That(clientsResponse[0].FirstName, Is.EqualTo(clients[0].FirstName));
+            Assert.That(clientsResponse[1].LastName, Is.EqualTo(clients[1].LastName));
+            Assert.That(clientsResponse[2].Email, Is.EqualTo(clients[2].Email));
+            Assert.That(clientsResponse[1].Phone, Is.EqualTo(clients[1].Phone));
+            Assert.That(clients[0].BirthDate, Is.EqualTo(clients[0].BirthDate));
+        });
         _clientsServiceMock.Verify(x => x.GetAllClients(), Times.Once);
     }
 }

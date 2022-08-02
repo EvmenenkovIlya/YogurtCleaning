@@ -51,8 +51,8 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<OrderResponse>> GetAllOrders()
     {
-        var result = _ordersRepository.GetAllOrders();
-        return Ok(result);
+        var orders = _ordersService.GetAllOrders();
+        return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
 
     [AuthorizeRoles(Role.Client)]

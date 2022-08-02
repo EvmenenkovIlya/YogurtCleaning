@@ -42,7 +42,7 @@ public class ClientsServiceFacts
 
         //then
 
-        Assert.Equal(actual, expectedId);
+        Assert.Equal(expectedId, actual);
         _clientsRepositoryMock.Verify(c => c.CreateClient(It.IsAny<Client>()), Times.Once);
     }
 
@@ -252,10 +252,10 @@ public class ClientsServiceFacts
         //then
 
         Assert.Equal(clientInDb.Comments.Count, actual.Count);
-        Assert.Equal(actual[0].Id, clientInDb.Comments[0].Id);
-        Assert.Equal(actual[1].Id, clientInDb.Comments[1].Id);
-        Assert.Equal(actual[0].Rating, clientInDb.Comments[0].Rating);
-        Assert.Equal(actual[1].Rating, clientInDb.Comments[1].Rating);
+        Assert.Equal(clientInDb.Comments[0].Id, actual[0].Id);
+        Assert.Equal(clientInDb.Comments[1].Id, actual[1].Id);
+        Assert.Equal(clientInDb.Comments[0].Rating, actual[0].Rating);
+        Assert.Equal(clientInDb.Comments[1].Rating, actual[1].Rating);
         _clientsRepositoryMock.Verify(c => c.GetClient(clientInDb.Id), Times.Once);
         _clientsRepositoryMock.Verify(c => c.GetAllCommentsByClient(clientInDb.Id), Times.Once);
     }
@@ -342,10 +342,10 @@ public class ClientsServiceFacts
 
         //then
         Assert.Equal(clientInDb.Orders.Count, actual.Count);
-        Assert.Equal(actual[0].Id, clientInDb.Orders[0].Id);
-        Assert.Equal(actual[1].Id, clientInDb.Orders[1].Id);
-        Assert.Equal(actual[0].Price, clientInDb.Orders[0].Price);
-        Assert.Equal(actual[1].Price, clientInDb.Orders[1].Price);
+        Assert.Equal(clientInDb.Orders[0].Id, actual[0].Id);
+        Assert.Equal(clientInDb.Orders[1].Id, actual[1].Id);
+        Assert.Equal(clientInDb.Orders[0].Price, actual[0].Price);
+        Assert.Equal(clientInDb.Orders[1].Price, actual[1].Price);
         _clientsRepositoryMock.Verify(c => c.GetClient(clientInDb.Id), Times.Once);
         _clientsRepositoryMock.Verify(c => c.GetAllOrdersByClient(clientInDb.Id), Times.Once);
     }
