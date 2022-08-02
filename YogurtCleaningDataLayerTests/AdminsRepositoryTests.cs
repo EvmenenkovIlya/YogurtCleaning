@@ -42,7 +42,7 @@ public class AdminRepositoryTests
 
         //then
 
-        Assert.True(actualUser.Password == expectedAdminSecond.Password);
-        Assert.True(actualUser.Email == expectedAdminSecond.Email);
+        Assert.Equal(actualUser.Password, expectedAdminSecond.Password);
+        Assert.Equal(actualUser.Email, expectedAdminSecond.Email);
     }
 }

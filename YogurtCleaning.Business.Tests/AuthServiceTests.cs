@@ -14,20 +14,17 @@ public class AuthServicesTests
     private Mock<ICleanersRepository> _cleanersRepository;
     private Mock<IAdminsRepository> _adminRepository;
 
-    public void Setup()
+    public AuthServicesTests()
     {
-
         _clientsRepositoryMock = new Mock<IClientsRepository>();
         _cleanersRepository = new Mock<ICleanersRepository>();
         _adminRepository = new Mock<IAdminsRepository>();
         _sut = new AuthService(_clientsRepositoryMock.Object, _cleanersRepository.Object, _adminRepository.Object);
     }
 
-
     [Fact]
     public void Login_ValidAdminEmailAndPassword_ClaimModelReturned()
     {
-        Setup();
         //given
         var adminPassword = "12345678954";
         var adminExpected = new Admin()
@@ -43,8 +40,8 @@ public class AuthServicesTests
         var claim = _sut.GetUserForLogin(adminExpected.Email, adminPassword);
         //then
 
-        Assert.True(claim.Role == Role.Admin);
-        Assert.True(claim.Email == adminExpected.Email);
+        Assert.Equal(Role.Admin, claim.Role);
+        Assert.Equal(claim.Email, adminExpected.Email);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Never);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Never);
@@ -53,7 +50,6 @@ public class AuthServicesTests
     [Fact]
     public void Login_ValidClientEmailAndPassword_ClaimModelReturned()
     {
-        Setup();
         //given
         var clientPassword = "12345678";
         var clientExpected = new Client()
@@ -72,18 +68,16 @@ public class AuthServicesTests
         var claim = _sut.GetUserForLogin(clientExpected.Email, clientPassword);
 
         //then
-        Assert.True(claim.Role == Role.Client);
-        Assert.True(claim.Email == clientExpected.Email);
+        Assert.Equal(Role.Client, claim.Role);
+        Assert.Equal(claim.Email, clientExpected.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Once);
-
     }
 
     [Fact]
     public void Login_ValidCleanersEmailAndPassword_ClaimModelReturned()
     {
-        Setup();
         //given
         var passwordCleanersExpected = "12334534";
         var cleanersExpected = new Cleaner()
@@ -100,8 +94,8 @@ public class AuthServicesTests
         var claim = _sut.GetUserForLogin(cleanersExpected.Email, passwordCleanersExpected);
 
         //then
-        Assert.True(claim.Role == Role.Cleaner);
-        Assert.True(claim.Email == cleanersExpected.Email);
+        Assert.Equal(Role.Cleaner, claim.Role);
+        Assert.Equal(claim.Email, cleanersExpected.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Once);
@@ -110,7 +104,6 @@ public class AuthServicesTests
     [Fact]
     public void Login_BadPassword_ThrowEntityNotFoundException()
     {
-        Setup();
         //given
         var badPassword = "123456789541";
         var cleanersExpected = new Cleaner()
@@ -133,7 +126,6 @@ public class AuthServicesTests
     [Fact]
     public void Login_IsDeletedTrue_ThrowEntityNotFoundException()
     {
-        Setup();
         //given
         var password = "12334534";
         var clientExpected = new Client()
@@ -155,7 +147,6 @@ public class AuthServicesTests
     [Fact]
     public void Login_UserNotFound_ThrowEntityNotFoundException()
     {
-        Setup();
         //given
         var badEmail = "ad@mmm.com";
         var clientExpected = new Client()
@@ -176,7 +167,6 @@ public class AuthServicesTests
     [Fact]
     public void GetToken_ValidData_TokenReturned()
     {
-        Setup();
         //given
         var model = new UserValues()
         {
@@ -190,13 +180,11 @@ public class AuthServicesTests
         //then
 
         Assert.NotNull(actual);
-
     }
 
     [Fact]
     public void GetToken_EmailEmpty_ThrowDataException()
     {
-        Setup();
         //given
         var model = new UserValues()
         {
@@ -211,7 +199,6 @@ public class AuthServicesTests
     [Fact]
     public void GetToken_PropertysEmpty_ThrowDataException()
     {
-        Setup();
         //given
         var model = new UserValues();
 

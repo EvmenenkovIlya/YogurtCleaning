@@ -105,12 +105,12 @@ public class ClientsRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Client>));
+        Assert.Equal(typeof(List<Client>), result.GetType());
         Assert.Null(result[0].Comments);
         Assert.Null(result[1].Orders);
         Assert.Null(result[1].Addresses);
-        Assert.True(result[0].IsDeleted == false);
-        Assert.True(result[1].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
+        Assert.False(result[1].IsDeleted);
         Assert.NotNull(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
         Assert.Null(result.Find(x => x.FirstName == "Ilya"));
@@ -155,12 +155,12 @@ public class ClientsRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Client>));
+        Assert.Equal(typeof(List<Client>), result.GetType());
         Assert.True(result.Count == 1);
         Assert.Null(result[0].Comments);
         Assert.Null(result[0].Orders);
         Assert.Null(result[0].Addresses);
-        Assert.True(result[0].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
         Assert.Null(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
         context.Database.EnsureDeleted();
@@ -205,9 +205,9 @@ public class ClientsRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Comment>));
-        Assert.True(result[0].IsDeleted == true);
-        Assert.True(result[1].IsDeleted == false);
+        Assert.Equal(typeof(List<Comment>), result.GetType());
+        Assert.True(result[0].IsDeleted);
+        Assert.False(result[1].IsDeleted);
         Assert.NotNull(result.Find(x => x.Rating == 5));
         Assert.NotNull(result.Find(x => x.Order.Id == 1));
         context.Database.EnsureDeleted();
@@ -254,9 +254,9 @@ public class ClientsRepositoryTests
         var result = sut.GetClient(client.Id);
 
         //then
-        Assert.False(result.FirstName == "Adam");
-        Assert.False(result.LastName == "Smith");
-        Assert.True(result.Email == "ccc@gmail.c");
+        Assert.NotEqual("Adam", result.FirstName);
+        Assert.NotEqual("Smith", result.LastName);
+        Assert.Equal("ccc@gmail.c", result.Email);
         context.Database.EnsureDeleted();
     }
 }

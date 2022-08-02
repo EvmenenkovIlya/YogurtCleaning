@@ -44,9 +44,9 @@ public class ServicesServiceTests
         _sut.UpdateService(updatedService, service.Id);
 
         // then
-        Assert.True(service.Name == updatedService.Name);
-        Assert.True(service.Price == updatedService.Price);
-        Assert.True(service.Unit == updatedService.Unit);
+        Assert.Equal(service.Name, updatedService.Name);
+        Assert.Equal(service.Price, updatedService.Price);
+        Assert.Equal(service.Unit, updatedService.Unit);
         _mockServicesRepository.Verify(s => s.GetService(service.Id), Times.Once);
     }
 }

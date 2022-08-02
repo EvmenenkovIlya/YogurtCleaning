@@ -108,11 +108,11 @@ public class CleanersRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Cleaner>));
+        Assert.Equal(typeof(List<Cleaner>), result.GetType());
         Assert.Null(result[0].Comments);
         Assert.Null(result[1].Orders);
-        Assert.True(result[0].IsDeleted == false);
-        Assert.True(result[1].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
+        Assert.False(result[1].IsDeleted);
         Assert.NotNull(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
         Assert.Null(result.Find(x => x.FirstName == "Ilya"));
@@ -158,11 +158,11 @@ public class CleanersRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Cleaner>));
-        Assert.True(result.Count == 1);
+        Assert.Equal(typeof(List<Cleaner>), result.GetType());
+        Assert.Equal(1, result.Count);
         Assert.Null(result[0].Comments);
         Assert.Null(result[0].Orders);
-        Assert.True(result[0].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
         Assert.Null(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
         context.Database.EnsureDeleted();
@@ -207,9 +207,9 @@ public class CleanersRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Comment>));
-        Assert.True(result[0].IsDeleted == true);
-        Assert.True(result[1].IsDeleted == false);
+        Assert.Equal(typeof(List<Comment>), result.GetType());
+        Assert.True(result[0].IsDeleted);
+        Assert.False(result[1].IsDeleted);
         Assert.NotNull(result.Find(x => x.Rating == 5));
         Assert.NotNull(result.Find(x => x.Order.Id == 1));
         context.Database.EnsureDeleted();

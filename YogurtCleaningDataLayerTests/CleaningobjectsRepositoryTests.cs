@@ -148,8 +148,8 @@ public class CleaningObjectsRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<CleaningObject>));
-        Assert.True(result[0].IsDeleted == false);
+        Assert.Equal(typeof(List<CleaningObject>), result.GetType());
+        Assert.False(result[0].IsDeleted);
         Assert.NotNull(result.Find(x => x.NumberOfBalconies == 0));
         Assert.NotNull(result.Find(x => x.NumberOfRooms == 10));
         Assert.Null(result.Find(x => x.NumberOfBalconies == 12));
@@ -194,10 +194,10 @@ public class CleaningObjectsRepositoryTests
         var result = sut.GetCleaningObject(oldCleaningObject.Id);
 
         //then
-        Assert.False(result.NumberOfBathrooms == 1);
-        Assert.False(result.NumberOfRooms == 1000);
-        Assert.True(result.Square == 1);
-        Assert.False(result.Address == "г. Санкт - Петербург, ул. Льва Толстого, д. 16, кв. 10");
+        Assert.NotEqual(1, result.NumberOfBathrooms);
+        Assert.NotEqual(1000, result.NumberOfRooms);
+        Assert.Equal(1, result.Square);
+        Assert.NotEqual("г. Санкт - Петербург, ул. Льва Толстого, д. 16, кв. 10", result.Address);
         context.Database.EnsureDeleted();
     }
 }
