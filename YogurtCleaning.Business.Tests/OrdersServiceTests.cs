@@ -13,7 +13,7 @@ public class OrdersServiceFacts
 
     private UserValues userValue;
 
-    private void Setup()
+    public OrdersServiceFacts()
     {
         _ordersRepositoryMock = new Mock<IOrdersRepository>();
         _sut = new OrdersService(_ordersRepositoryMock.Object);
@@ -23,7 +23,6 @@ public class OrdersServiceFacts
     public void DeleteOrder_WhenValidRequestPassed_DeleteOrder()
     {
         //given
-        Setup();
         var expectedOrder = new Order()
         {
             Id = 1,
@@ -46,7 +45,6 @@ public class OrdersServiceFacts
     public void DeleteOrder_EmptyOrderRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 1;
         var order = new Order();
         var testEmail = "FakeOrder@gmail.ru";
@@ -63,7 +61,6 @@ public class OrdersServiceFacts
     public void GetAllOrders_WhenValidRequestPassed_OrdersReceived()
     {
         //given
-        Setup();
         var orders = new List<Order>
         {
             new Order()
