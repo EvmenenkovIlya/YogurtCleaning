@@ -1,4 +1,5 @@
-﻿using YogurtCleaning.DataLayer.Entities;
+﻿using YogurtCleaning.Business.Models;
+using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
@@ -32,7 +33,7 @@ public class OrdersService : IOrdersService
         _ordersRepository.UpdateOrder(order);
     }
     
-    public int AddOrder(Order order)
+    public int AddOrder(OrderBusinessModel order)
     {
         order.Price = GetOrderPrice(order);
         order.EndTime = GetOrderEndTime(order);
@@ -57,7 +58,7 @@ public class OrdersService : IOrdersService
 
     private decimal GetOrderPrice(Order order)
     {
-        var bundlesPrice = order.Bundles.Select(b => GetBundlePricePerParameters(b, order.CleaningObject)).Sum();
+        var bundlesPrice = order.Bundles.Select(b => b.GetPrice(b, order.CleaningObject)).Sum();
         var servicesPrice = order.Services.Select(s => s.Price).Sum();
         var orderPrice = bundlesPrice + servicesPrice;
         if (order.Bundles[0].Type == CleaningType.Regular)
@@ -72,13 +73,13 @@ public class OrdersService : IOrdersService
         return orderPrice;
     }
 
-    private decimal GetOrderDuration(Order order)
-    {
-        var bundlesDuration = order.Bundles.Select(b => GetBundleDurationPerParameters(b, order.CleaningObject)).Sum();
-        var servicesDuration = order.Services.Select(s => s.Duration).Sum();
-        var orderDuration = bundlesDuration + servicesDuration;
-        return orderDuration;
-    }
+    //private decimal GetOrderDuration(Order order)
+    //{
+    //    var bundlesDuration = order.Bundles.Select(b => GetBundleDurationPerParameters(b, order.CleaningObject)).Sum();
+    //    var servicesDuration = order.Services.Select(s => s.Duration).Sum();
+    //    var orderDuration = bundlesDuration + servicesDuration;
+    //    return orderDuration;
+    //}
 
     private List<Cleaner> GetCleanersForOrder(Order order)
     {
@@ -108,64 +109,64 @@ public class OrdersService : IOrdersService
         return cleaners;
     }
 
-    private int GetCleanersCount(Order order)
-    {
-        var orderDurationInHours = (double)GetOrderDuration(order);
-        var maxHour = 21;
-        var maxOrderDuration = maxHour - order.StartTime.Hour;
+    //private int GetCleanersCount(Order order)
+    //{
+    //    var orderDurationInHours = (double)GetOrderDuration(order);
+    //    var maxHour = 21;
+    //    var maxOrderDuration = maxHour - order.StartTime.Hour;
 
-        if (orderDurationInHours > maxOrderDuration)
-        {
-            var count = Convert.ToInt32(Math.Ceiling(orderDurationInHours / maxOrderDuration));
-            return count;
-        }
-        else return 1;
-    }
+    //    if (orderDurationInHours > maxOrderDuration)
+    //    {
+    //        var count = Convert.ToInt32(Math.Ceiling(orderDurationInHours / maxOrderDuration));
+    //        return count;
+    //    }
+    //    else return 1;
+    //}
 
-    private DateTime GetOrderEndTime(Order order)
-    {
-        var endTime = order.StartTime.AddHours((double)GetOrderDuration(order) / GetCleanersCount(order));
-        return endTime;
+    //private DateTime GetOrderEndTime(Order order)
+    //{
+    //    var endTime = order.StartTime.AddHours((double)GetOrderDuration(order) / GetCleanersCount(order));
+    //    return endTime;
 
-    }
+    //}
 
-    private decimal GetBundlePricePerParameters(Bundle bundle, CleaningObject cleaningObject)
-    {
-        var price = bundle.Price;
-        switch (bundle.Measure)
-        {
-            case Measure.Room:
-                price += price / 2 * (cleaningObject.NumberOfRooms - 1);
-                return price;
-            case Measure.Apartment:
-                return price;
-            case Measure.SquareMeter:
-                price = price * cleaningObject.Square;
-                return price;
-            case Measure.Unit:
-                price = price * cleaningObject.NumberOfWindows + price * cleaningObject.NumberOfBalconies;
-                return price;
-        }
-        return price;
-    }
+    //private decimal GetBundlePricePerParameters(Bundle bundle, CleaningObject cleaningObject)
+    //{
+    //    var price = bundle.Price;
+    //    switch (bundle.Measure)
+    //    {
+    //        case Measure.Room:
+    //            price += price / 2 * (cleaningObject.NumberOfRooms - 1);
+    //            return price;
+    //        case Measure.Apartment:
+    //            return price;
+    //        case Measure.SquareMeter:
+    //            price = price * cleaningObject.Square;
+    //            return price;
+    //        case Measure.Unit:
+    //            price = price * cleaningObject.NumberOfWindows + price * cleaningObject.NumberOfBalconies;
+    //            return price;
+    //    }
+    //    return price;
+    //}
 
-    private decimal GetBundleDurationPerParameters(Bundle bundle, CleaningObject cleaningObject)
-    {
-        var duration = bundle.Duration;
-        switch (bundle.Measure)
-        {
-            case Measure.Room:
-                duration += duration / 2 * (cleaningObject.NumberOfRooms - 1);
-                return duration;
-            case Measure.Apartment:
-                return duration;
-            case Measure.SquareMeter:
-                duration = duration * cleaningObject.Square;
-                return duration;
-            case Measure.Unit:
-                duration = duration * cleaningObject.NumberOfWindows + duration * cleaningObject.NumberOfBalconies;
-                return duration;
-        }
-        return duration;
-    }
+    //private decimal GetBundleDurationPerParameters(Bundle bundle, CleaningObject cleaningObject)
+    //{
+    //    var duration = bundle.Duration;
+    //    switch (bundle.Measure)
+    //    {
+    //        case Measure.Room:
+    //            duration += duration / 2 * (cleaningObject.NumberOfRooms - 1);
+    //            return duration;
+    //        case Measure.Apartment:
+    //            return duration;
+    //        case Measure.SquareMeter:
+    //            duration = duration * cleaningObject.Square;
+    //            return duration;
+    //        case Measure.Unit:
+    //            duration = duration * cleaningObject.NumberOfWindows + duration * cleaningObject.NumberOfBalconies;
+    //            return duration;
+    //    }
+    //    return duration;
+    //}
 }
