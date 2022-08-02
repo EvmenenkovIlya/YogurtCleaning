@@ -32,7 +32,7 @@ public class CleanersControllerTests
     {
         //given
         _cleanersServiceMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
-         .Returns(1);
+         .ReturnsAsync(1);
 
         var cleaner = new CleanerRegisterRequest()
         {
@@ -45,7 +45,7 @@ public class CleanersControllerTests
             BirthDate = DateTime.Today
         };
         //when
-        var actual = _sut.AddCleaner(cleaner);
+        var actual = await _sut.AddCleaner(cleaner);
 
         //then
         var actualResult = actual.Result as CreatedResult;
@@ -59,7 +59,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public void GetCleaner_WhenValidRequestPassed_OkReceived()
+    public async Task GetCleaner_WhenValidRequestPassed_OkReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -73,10 +73,10 @@ public class CleanersControllerTests
             BirthDate = DateTime.Today
         };
 
-        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner);
+        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaner);
 
         //when
-        var actual = _sut.GetCleaner(expectedCleaner.Id);
+        var actual = await _sut.GetCleaner(expectedCleaner.Id);
 
         //then
 
@@ -96,7 +96,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public void UpdateCleaner_WhenValidRequestPassed_NoContentReceived()
+    public async Task UpdateCleaner_WhenValidRequestPassed_NoContentReceived()
     {
         //given
 
@@ -122,7 +122,7 @@ public class CleanersControllerTests
         _cleanersServiceMock.Setup(o => o.UpdateCleaner(cleaner, cleaner.Id, _userValues));
 
         //when
-        var actual = _sut.UpdateCleaner(newCleanerModel, cleaner.Id);
+        var actual = await _sut.UpdateCleaner(newCleanerModel, cleaner.Id);
 
         //then
         var actualResult = actual as NoContentResult;
@@ -134,7 +134,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public void GetCommentsByCleanerId_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetCommentsByCleanerId_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -159,10 +159,10 @@ public class CleanersControllerTests
             },
 
         };
-        _cleanersServiceMock.Setup(o => o.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner.Comments);
+        _cleanersServiceMock.Setup(o => o.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaner.Comments);
 
         //when
-        var actual = _sut.GetAllCommentsByCleaner(expectedCleaner.Id);
+        var actual = await _sut.GetAllCommentsByCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
@@ -180,7 +180,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public void GetOrdersByCleaner_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetOrdersByCleaner_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -205,10 +205,10 @@ public class CleanersControllerTests
             },
         };
 
-        _cleanersServiceMock.Setup(o => o.GetOrdersByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner.Orders);
+        _cleanersServiceMock.Setup(o => o.GetOrdersByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaner.Orders);
 
         //when
-        var actual = _sut.GetAllOrdersByCleaner(expectedCleaner.Id);
+        var actual = await _sut.GetAllOrdersByCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
@@ -226,7 +226,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public void DeleteCleanerById_WhenValidRequestPassed_NoContentReceived()
+    public async Task DeleteCleanerById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -241,10 +241,10 @@ public class CleanersControllerTests
             IsDeleted = false
         };
 
-        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, _userValues)).Returns(expectedCleaner);
+        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, _userValues)).ReturnsAsync(expectedCleaner);
 
         //when
-        var actual = _sut.DeleteCleaner(expectedCleaner.Id);
+        var actual = await _sut.DeleteCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual as NoContentResult;
@@ -254,7 +254,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public void GetAllCleaners_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetAllCleaners_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var cleaners = new List<Cleaner>
@@ -288,10 +288,10 @@ public class CleanersControllerTests
             }
         };
 
-        _cleanersServiceMock.Setup(o => o.GetAllCleaners()).Returns(cleaners).Verifiable();
+        _cleanersServiceMock.Setup(o => o.GetAllCleaners()).ReturnsAsync(cleaners).Verifiable();
 
         //when
-        var actual = _sut.GetAllCleaners();
+        var actual = await _sut.GetAllCleaners();
 
         //then
         var actualResult = actual.Result as ObjectResult;

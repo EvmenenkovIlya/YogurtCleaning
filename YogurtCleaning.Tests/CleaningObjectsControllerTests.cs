@@ -35,7 +35,7 @@ public class CleaningObjectControllerTests
         //given
         int expectedId = 1;
         _cleaningObjectsServiceMock.Setup(c => c.CreateCleaningObject(It.IsAny<CleaningObject>(), It.IsAny<UserValues>()))
-         .Returns(expectedId);
+         .ReturnsAsync(expectedId);
 
         var cleaningObject = new CleaningObjectRequest()
         {
@@ -48,7 +48,7 @@ public class CleaningObjectControllerTests
         };
 
         //when
-        var actual = _sut.AddCleaningObject(cleaningObject);
+        var actual = await _sut.AddCleaningObject(cleaningObject);
 
         //then
         var actualResult = actual.Result as CreatedResult;
@@ -62,7 +62,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public void GetCleaningObject_WhenValidRequestPassed_OkReceived()
+    public async Task GetCleaningObject_WhenValidRequestPassed_OkReceived()
     {
         //given
         var expectedCleaningObject = new CleaningObject()
@@ -98,7 +98,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public void UpdateCleaningObject_WhenValidRequestPassed_NoContentReceived()
+    public async Task UpdateCleaningObject_WhenValidRequestPassed_NoContentReceived()
     {
         //given
 
@@ -142,7 +142,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public void DeleteCleaningObjectById_WhenValidRequestPassed_NoContentReceived()
+    public async Task DeleteCleaningObjectById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedCleaningObject = new CleaningObject()

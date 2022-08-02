@@ -21,7 +21,7 @@ public class CommentsServiceTests
     }
 
     [Fact]
-    public void AddCommentByClient_WhenValidRequestPassed_CommentAdded()
+    public async Task AddCommentByClient_WhenValidRequestPassed_CommentAdded()
     {
         // given
         _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
@@ -37,7 +37,7 @@ public class CommentsServiceTests
         };
 
         // when
-        var actual = _sut.AddCommentByClient(comment, comment.Client.Id);
+        var actual = await _sut.AddCommentByClient(comment, comment.Client.Id);
 
         // then
         Assert.Equal(expectedId, actual);
@@ -46,7 +46,7 @@ public class CommentsServiceTests
     }
 
     [Fact]
-    public void AddCommentByCleaner_WhenValidRequestPassed_CommentAdded()
+    public async Task AddCommentByCleaner_WhenValidRequestPassed_CommentAdded()
     {
         // given
         _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
@@ -62,7 +62,7 @@ public class CommentsServiceTests
         };
 
         // when
-        var actual = _sut.AddCommentByCleaner(comment, comment.Cleaner.Id);
+        var actual = await _sut.AddCommentByCleaner(comment, comment.Cleaner.Id);
 
         // then
         Assert.Equal(expectedId, actual);

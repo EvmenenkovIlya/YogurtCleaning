@@ -21,7 +21,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void CreateCleaningObject_WhenValidRequestPassed_CleaningObjectAdded()
+    public async Task CreateCleaningObject_WhenValidRequestPassed_CleaningObjectAdded()
     {
         //given   
         int expectedId = 1;
@@ -41,12 +41,12 @@ public class CleaningObjectServiceFacts
             District = new District() { Id = DistrictEnum.Vasileostrovskiy},
             IsDeleted = false
         };
-        _clientsRepositoryMock.Setup(c => c.GetClient(cleaningObject.Client.Id)).Returns(expectedClient);
+        _clientsRepositoryMock.Setup(c => c.GetClient(cleaningObject.Client.Id)).ReturnsAsync(expectedClient);
         _cleaningObjectsRepositoryMock.Setup(c => c.GetDistrict(cleaningObject.District.Id)).Returns(expectedDistrict);
         UserValues userValues = new UserValues() { Id = expectedId };
 
         //when
-        var actual = _sut.CreateCleaningObject(cleaningObject, userValues);
+        var actual = await _sut.CreateCleaningObject(cleaningObject, userValues);
 
         //then
         Assert.Equal(expectedId, actual);
@@ -56,7 +56,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void GetCleaningObject_WhenCurrentUserIsAdmin_CleaningObjectReceived()
+    public async Task GetCleaningObject_WhenCurrentUserIsAdmin_CleaningObjectReceived()
     {
         //given
         var cleaningObjectInDb = new CleaningObject()
@@ -83,7 +83,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void GetCleaningObject_WhenIdNotInBase_GetEntityNotFoundException()
+    public async Task GetCleaningObject_WhenIdNotInBase_GetEntityNotFoundException()
     {
         //given
         var testId = 2;
@@ -96,7 +96,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void GetCleaningObject_WhenClientGetSomeoneElsesCleaningObject_ThrowAccessException()
+    public async Task GetCleaningObject_WhenClientGetSomeoneElsesCleaningObject_ThrowAccessException()
     {
         //given
         var cleaningObjectInDb = new CleaningObject()
@@ -122,7 +122,7 @@ public class CleaningObjectServiceFacts
 
 
     [Fact]
-    public void UpdateCleaningObject_WhenUserUpdatesOwnCleaningObjectProperties_ChangesProperties()
+    public async Task UpdateCleaningObject_WhenUserUpdatesOwnCleaningObjectProperties_ChangesProperties()
     {
         //given
         var cleaningObject = new CleaningObject()
@@ -163,7 +163,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void UpdateCleaningObject_WhenAdminUpdatesOwnCleaningObjectProperties_ChangesProperties()
+    public async Task UpdateCleaningObject_WhenAdminUpdatesOwnCleaningObjectProperties_ChangesProperties()
     {
         //given
         var cleaningObject = new CleaningObject()
@@ -204,7 +204,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void UpdateCleaningObject_WhenEmptyCleaningObjectRequest_ThrowEntityNotFoundException()
+    public async Task UpdateCleaningObject_WhenEmptyCleaningObjectRequest_ThrowEntityNotFoundException()
     {
         //given
         var cleaningObject = new CleaningObject() { Client = new Client() { Id = 1 } };
@@ -226,7 +226,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void UpdateCleaningObject_UserTryUpdateSomeoneElseCleaningObject_ThrowAccessException()
+    public async Task UpdateCleaningObject_UserTryUpdateSomeoneElseCleaningObject_ThrowAccessException()
     {
         //given
         var testEmail = "FakeCleaningObject@gmail.ru";
@@ -253,7 +253,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void DeleteCleaningObject_WhenValidRequestPassed_DeleteCleaningObject()
+    public async Task DeleteCleaningObject_WhenValidRequestPassed_DeleteCleaningObject()
     {
         //given
         var expectedCleaningObject = new CleaningObject()
@@ -281,7 +281,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void DeleteCleaningObject_EmptyCleaningObjectRequest_ThrowEntityNotFoundException()
+    public async Task DeleteCleaningObject_EmptyCleaningObjectRequest_ThrowEntityNotFoundException()
     {
         //given
         var testId = 1;
@@ -296,7 +296,7 @@ public class CleaningObjectServiceFacts
     }
 
     [Fact]
-    public void DeleteCleaningObject_WhenClientDeleteSomeoneElsesCleaningObject_ThrowAccessException()
+    public async Task DeleteCleaningObject_WhenClientDeleteSomeoneElsesCleaningObject_ThrowAccessException()
     {
         //given
         int clientId = 1;

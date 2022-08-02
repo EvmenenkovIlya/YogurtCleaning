@@ -32,7 +32,7 @@ public class ClientsControllerTests
     {
         //given
         _clientsServiceMock.Setup(c => c.CreateClient(It.IsAny<Client>()))
-         .Returns(1);
+         .ReturnsAsync(1);
 
         var client = new ClientRegisterRequest()
         {
@@ -45,7 +45,7 @@ public class ClientsControllerTests
             BirthDate = DateTime.Today
         };
         //when
-        var actual = _sut.AddClient(client);
+        var actual = await _sut.AddClient(client);
 
         //then
         var actualResult = actual.Result as CreatedResult;
@@ -63,7 +63,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void GetClient_WhenValidRequestPassed_OkReceived()
+    public async Task GetClient_WhenValidRequestPassed_OkReceived()
     {
         //given
         var expectedClient = new Client()
@@ -77,10 +77,10 @@ public class ClientsControllerTests
             BirthDate = DateTime.Today
         };
         
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient);
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedClient);
 
         //when
-        var actual = _sut.GetClient(expectedClient.Id);
+        var actual = await _sut.GetClient(expectedClient.Id);
 
         //then
         
@@ -99,7 +99,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void UpdateClient_WhenValidRequestPassed_NoContentReceived()
+    public async Task UpdateClient_WhenValidRequestPassed_NoContentReceived()
     {
         //given
 
@@ -125,7 +125,7 @@ public class ClientsControllerTests
         _clientsServiceMock.Setup(o => o.UpdateClient(client, client.Id, _userValues));       
 
         //when
-        var actual = _sut.UpdateClient(newClientModel, client.Id);
+        var actual = await _sut.UpdateClient(newClientModel, client.Id);
 
         //then
         var actualResult = actual as NoContentResult;
@@ -141,7 +141,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void GetCommentsByClientId_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetCommentsByClientId_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedClient = new Client()
@@ -166,10 +166,10 @@ public class ClientsControllerTests
             },
 
         };
-        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient.Comments);
+        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedClient.Comments);
 
         //when
-        var actual = _sut.GetAllCommentsByClient(expectedClient.Id);
+        var actual = await _sut.GetAllCommentsByClient(expectedClient.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
@@ -187,7 +187,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void GetOrdersByClient_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetOrdersByClient_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedClient = new Client()
@@ -212,10 +212,10 @@ public class ClientsControllerTests
             },
         };
 
-        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient.Orders);
+        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedClient.Orders);
 
         //when
-        var actual = _sut.GetAllOrdersByClient(expectedClient.Id);
+        var actual = await _sut.GetAllOrdersByClient(expectedClient.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
@@ -233,7 +233,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void DeleteClientById_WhenValidRequestPassed_NoContentReceived()
+    public async Task DeleteClientById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedClient = new Client()
@@ -248,10 +248,10 @@ public class ClientsControllerTests
             IsDeleted = false
         };
 
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).Returns(expectedClient);
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).ReturnsAsync(expectedClient);
 
         //when
-        var actual = _sut.DeleteClient(expectedClient.Id);
+        var actual = await _sut.DeleteClient(expectedClient.Id);
 
         //then
         var actualResult = actual as NoContentResult;
@@ -261,7 +261,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void GetAllClients_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetAllClients_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var clients = new List<Client>
@@ -295,10 +295,10 @@ public class ClientsControllerTests
             }
         };
 
-        _clientsServiceMock.Setup(o => o.GetAllClients()).Returns(clients).Verifiable();
+        _clientsServiceMock.Setup(o => o.GetAllClients()).ReturnsAsync(clients).Verifiable();
 
         //when
-        var actual = _sut.GetAllClients();
+        var actual = await _sut.GetAllClients();
 
         //then
         var actualResult = actual.Result as ObjectResult;
