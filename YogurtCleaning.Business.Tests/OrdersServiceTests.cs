@@ -55,4 +55,49 @@ public class OrdersServiceFacts
         //then
         Assert.Throws<Exceptions.BadRequestException>(() => _sut.DeleteOrder(testId, userValue));
     }
+
+    [Fact]
+    public void GetAllOrders_WhenValidRequestPassed_OrdersReceived()
+    {
+        //given
+        var orders = new List<Order>
+        {
+            new Order()
+            {
+                Id = 1,
+                Client = new Client() { Id = 1 },
+                CleanersBand = new List<Cleaner>() { new Cleaner(){ Id = 1}, new Cleaner(){ Id = 2} },
+                CleaningObject = new CleaningObject() {Id = 1},
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now,
+                UpdateTime = DateTime.Now,
+                Price = 20,
+                Bundles = new List<Bundle>() { new Bundle(){ Id = 1}, new Bundle(){ Id = 2} },
+                Services = new List<Service>() { new Service(){ Id = 1}, new Service(){ Id = 2} },
+                Comments = new List<Comment>() { new Comment(){ Id = 1}, new Comment(){ Id = 2} },
+                Status = Status.Created,
+                IsDeleted=false
+            },
+            new Order()
+            {
+                Id = 2,
+                Client = new Client() { Id = 2 },
+                CleanersBand = new List<Cleaner>() { new Cleaner(){ Id = 3}, new Cleaner(){ Id = 4} },
+                CleaningObject = new CleaningObject() {Id = 2},
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now,
+                Price = 30,
+                IsDeleted=false
+            }
+        };
+        _ordersRepositoryMock.Setup(o => o.GetAllOrders()).Returns(orders);
+
+        //when
+        var actual = _sut.GetAllOrders();
+
+        //then
+        Assert.NotNull(actual);
+        Assert.Equal(orders.Count, actual.Count);
+        _ordersRepositoryMock.Verify(c => c.GetAllOrders(), Times.Once);
+    }
 }

@@ -49,7 +49,7 @@ public class CleaningObjectServiceFacts
         var actual = _sut.CreateCleaningObject(cleaningObject, userValues);
 
         //then
-        Assert.True(actual == expectedId);
+        Assert.Equal(expectedId, actual);
         _cleaningObjectsRepositoryMock.Verify(c => c.CreateCleaningObject(cleaningObject), Times.Once);
         _cleaningObjectsRepositoryMock.Verify(c => c.CreateCleaningObject(It.Is<CleaningObject>(c => c.District.Id == cleaningObject.District.Id)), Times.Once);
         _cleaningObjectsRepositoryMock.Verify(c => c.CreateCleaningObject(It.Is<CleaningObject>(c => c.Client.Id == userValues.Id)), Times.Once);

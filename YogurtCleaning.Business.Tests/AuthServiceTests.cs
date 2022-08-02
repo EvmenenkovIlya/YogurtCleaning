@@ -41,7 +41,7 @@ public class AuthServicesTests
         //then
 
         Assert.Equal(Role.Admin, claim.Role);
-        Assert.Equal(claim.Email, adminExpected.Email);
+        Assert.Equal(adminExpected.Email, claim.Email);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Never);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Never);
@@ -69,7 +69,7 @@ public class AuthServicesTests
 
         //then
         Assert.Equal(Role.Client, claim.Role);
-        Assert.Equal(claim.Email, clientExpected.Email);
+        Assert.Equal(clientExpected.Email, claim.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Once);
@@ -95,7 +95,7 @@ public class AuthServicesTests
 
         //then
         Assert.Equal(Role.Cleaner, claim.Role);
-        Assert.Equal(claim.Email, cleanersExpected.Email);
+        Assert.Equal(cleanersExpected.Email, claim.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Once);

@@ -7,5 +7,6 @@ namespace YogurtCleaning.Business.Services
         Order? GetOrder(int id, UserValues userValues);
         void UpdateOrder(Order modelToUpdate, int id);
         void DeleteOrder(int id, UserValues userValues);
+        List<Order> GetAllOrders();
     }
 }
