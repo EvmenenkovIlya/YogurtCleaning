@@ -15,7 +15,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void AddClient_WhenClientAdded_ThenCommentIdMoreThenZero()
+    public async Task AddClient_WhenClientAdded_ThenCommentIdMoreThenZero()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new ClientsRepository(context);
@@ -31,7 +31,7 @@ public class ClientsRepositoryTests
         };
 
         // when
-        var actual = sut.CreateClient(client);
+        var actual = await sut.CreateClient(client);
 
         //then
         Assert.True(actual > 0);
@@ -39,7 +39,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void DeleteClient_WhenCorrectIdPassed_ThenSoftDeleteApplied()
+    public async Task DeleteClient_WhenCorrectIdPassed_ThenSoftDeleteApplied()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -59,16 +59,16 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteClient(client);
+        await sut.DeleteClient(client);
 
         //then
-        var actual = sut.GetClient(client.Id);
+        var actual = await sut.GetClient(client.Id);
         Assert.True(actual.IsDeleted);
         context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void GetAllClients_WhenClientsExist_ThenGetClients()
+    public async Task GetAllClients_WhenClientsExist_ThenGetClients()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -101,7 +101,7 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllClients();
+        var result = await sut.GetAllClients();
 
         //then
         Assert.NotNull(result);
@@ -118,7 +118,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void GetAllClients_WhenClientIsDeleted_ThenClientDoesNotGet()
+    public async Task GetAllClients_WhenClientIsDeleted_ThenClientDoesNotGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -151,7 +151,7 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllClients();
+        var result = await sut.GetAllClients();
 
         //then
         Assert.NotNull(result);
@@ -167,7 +167,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void GetAllCommentsByClient_WhenCommetsGet_ThenCommentsGet()
+    public async Task GetAllCommentsByClient_WhenCommetsGet_ThenCommentsGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -201,7 +201,7 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllCommentsByClient(client.Id);
+        var result = await sut.GetAllCommentsByClient(client.Id);
 
         //then
         Assert.NotNull(result);
@@ -214,7 +214,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void UpdateClient_WhenClientUpdated_ThenClientDoesNotHaveOldProperty()
+    public async Task UpdateClient_WhenClientUpdated_ThenClientDoesNotHaveOldProperty()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -250,8 +250,8 @@ public class ClientsRepositoryTests
         client.LastName = "Pupkin";
 
         //when
-        sut.UpdateClient(client);
-        var result = sut.GetClient(client.Id);
+        await sut.UpdateClient(client);
+        var result = await sut.GetClient(client.Id);
 
         //then
         Assert.NotEqual("Adam", result.FirstName);

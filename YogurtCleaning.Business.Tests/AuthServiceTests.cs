@@ -23,7 +23,7 @@ public class AuthServicesTests
     }
 
     [Fact]
-    public void Login_ValidAdminEmailAndPassword_ClaimModelReturned()
+    public async Task Login_ValidAdminEmailAndPassword_ClaimModelReturned()
     {
         //given
         var adminPassword = "12345678954";
@@ -34,10 +34,10 @@ public class AuthServicesTests
             IsDeleted = false,
         };
 
-        _adminRepository.Setup(m => m.GetAdminByEmail(adminExpected.Email)).Returns(adminExpected);
+        _adminRepository.Setup(m => m.GetAdminByEmail(adminExpected.Email)).ReturnsAsync(adminExpected);
         //when
 
-        var claim = _sut.GetUserForLogin(adminExpected.Email, adminPassword);
+        var claim = await _sut.GetUserForLogin(adminExpected.Email, adminPassword);
         //then
 
         Assert.Equal(Role.Admin, claim.Role);
@@ -48,7 +48,7 @@ public class AuthServicesTests
     }
 
     [Fact]
-    public void Login_ValidClientEmailAndPassword_ClaimModelReturned()
+    public async Task Login_ValidClientEmailAndPassword_ClaimModelReturned()
     {
         //given
         var clientPassword = "12345678";
@@ -62,10 +62,10 @@ public class AuthServicesTests
             BirthDate = DateTime.Today,
         };
 
-        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).Returns(clientExpected);
+        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).ReturnsAsync(clientExpected);
 
         //when
-        var claim = _sut.GetUserForLogin(clientExpected.Email, clientPassword);
+        var claim = await _sut.GetUserForLogin(clientExpected.Email, clientPassword);
 
         //then
         Assert.Equal(Role.Client, claim.Role);
@@ -76,7 +76,7 @@ public class AuthServicesTests
     }
 
     [Fact]
-    public void Login_ValidCleanersEmailAndPassword_ClaimModelReturned()
+    public async Task Login_ValidCleanersEmailAndPassword_ClaimModelReturned()
     {
         //given
         var passwordCleanersExpected = "12334534";
@@ -88,10 +88,10 @@ public class AuthServicesTests
             Password = PasswordHash.HashPassword("12334534")
         };
 
-        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).Returns(cleanersExpected);
+        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).ReturnsAsync(cleanersExpected);
 
         //when
-        var claim = _sut.GetUserForLogin(cleanersExpected.Email, passwordCleanersExpected);
+        var claim = await _sut.GetUserForLogin(cleanersExpected.Email, passwordCleanersExpected);
 
         //then
         Assert.Equal(Role.Cleaner, claim.Role);
@@ -102,7 +102,7 @@ public class AuthServicesTests
     }
 
     [Fact]
-    public void Login_BadPassword_ThrowEntityNotFoundException()
+    public async Task Login_BadPassword_ThrowEntityNotFoundException()
     {
         //given
         var badPassword = "123456789541";
@@ -116,15 +116,15 @@ public class AuthServicesTests
             BirthDate = DateTime.Today,
         };
 
-        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).Returns(cleanersExpected);
+        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).ReturnsAsync(cleanersExpected);
 
         //when, then
-        Assert.Throws<EntityNotFoundException>(() => _sut.GetUserForLogin(cleanersExpected.Email, badPassword));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => _sut.GetUserForLogin(cleanersExpected.Email, badPassword));
 
     }
 
     [Fact]
-    public void Login_IsDeletedTrue_ThrowEntityNotFoundException()
+    public async Task Login_IsDeletedTrue_ThrowEntityNotFoundException()
     {
         //given
         var password = "12334534";
@@ -137,15 +137,15 @@ public class AuthServicesTests
             IsDeleted = true
         };
 
-        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).Returns(clientExpected);
+        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).ReturnsAsync(clientExpected);
 
         //when, then
-        Assert.Throws<EntityNotFoundException>(() => _sut.GetUserForLogin(clientExpected.Email, password));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => _sut.GetUserForLogin(clientExpected.Email, password));
 
     }
 
     [Fact]
-    public void Login_UserNotFound_ThrowEntityNotFoundException()
+    public async Task Login_UserNotFound_ThrowEntityNotFoundException()
     {
         //given
         var badEmail = "ad@mmm.com";
@@ -161,11 +161,11 @@ public class AuthServicesTests
         };
 
         //when, then
-        Assert.Throws<EntityNotFoundException>(() => _sut.GetUserForLogin(badEmail, clientExpected.Password));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => _sut.GetUserForLogin(badEmail, clientExpected.Password));
     }
 
     [Fact]
-    public void GetToken_ValidData_TokenReturned()
+    public async Task GetToken_ValidData_TokenReturned()
     {
         //given
         var model = new UserValues()

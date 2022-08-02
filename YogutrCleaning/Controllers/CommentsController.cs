@@ -46,11 +46,11 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCommentByClient([FromBody] CommentRequest comment)
+    public async Task<ActionResult<int>> AddCommentByClient([FromBody] CommentRequest comment)
     {
         var userId = this.GetClaimsValue().Id;
 
-        var result = _commentsService.AddCommentByClient(_mapper.Map<Comment>(comment), userId);
+        var result = await _commentsService.AddCommentByClient(_mapper.Map<Comment>(comment), userId);
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
@@ -60,11 +60,11 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCommentByCleaner([FromBody] CommentRequest comment)
+    public async Task<ActionResult<int>> AddCommentByCleaner([FromBody] CommentRequest comment)
     {
         var userId = this.GetClaimsValue().Id;
 
-        var result = _commentsService.AddCommentByCleaner(_mapper.Map<Comment>(comment), userId);
+        var result = await _commentsService.AddCommentByCleaner(_mapper.Map<Comment>(comment), userId);
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 

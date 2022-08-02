@@ -12,36 +12,36 @@ public class CleanersRepository : ICleanersRepository
         _context = context;
     }
 
-    public Cleaner? GetCleaner(int clientId) => _context.Cleaners.FirstOrDefault(o => o.Id == clientId);
+    public async Task<Cleaner?> GetCleaner(int clientId) => await _context.Cleaners.FirstOrDefaultAsync(o => o.Id == clientId);
 
-    public List<Cleaner> GetAllCleaners()
+    public async Task<List<Cleaner>> GetAllCleaners()
     {
-        return _context.Cleaners.AsNoTracking().Where(o => !o.IsDeleted).ToList();
+        return await _context.Cleaners.AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
     }
 
-    public int CreateCleaner(Cleaner cleaner)
+    public async Task<int> CreateCleaner(Cleaner cleaner)
     {
         _context.Cleaners.Add(cleaner);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return cleaner.Id;
     }
 
-    public void UpdateCleaner(Cleaner modelToUdate)
+    public async Task UpdateCleaner(Cleaner modelToUdate)
     {
         _context.Update(modelToUdate);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void DeleteCleaner(Cleaner cleaner)
+    public async Task DeleteCleaner(Cleaner cleaner)
     {
         cleaner.IsDeleted = true;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public List<Comment> GetAllCommentsByCleaner(int clientId) =>
-        _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == clientId).ToList();
+    public async Task<List<Comment>> GetAllCommentsByCleaner(int clientId) =>
+        await _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == clientId).ToListAsync();
 
-    public List<Order> GetAllOrdersByCleaner(int id) => _context.Orders.Where(o => o.CleanersBand.Any(c => c.Id == id)).ToList();
+    public async Task<List<Order>> GetAllOrdersByCleaner(int id) => await _context.Orders.Where(o => o.CleanersBand.Any(c => c.Id == id)).ToListAsync();
 
-    public Cleaner? GetCleanerByEmail(string email) => _context.Cleaners.FirstOrDefault(o => o.Email == email);
+    public async Task<Cleaner?> GetCleanerByEmail(string email) => await _context.Cleaners.FirstOrDefaultAsync(o => o.Email == email);
 }

@@ -20,11 +20,11 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void CreateClient_WhenValidRequestPassed_ClientAdded()
+    public async Task CreateClient_WhenValidRequestPassed_ClientAdded()
     {
         //given
         _clientsRepositoryMock.Setup(c => c.CreateClient(It.IsAny<Client>()))
-             .Returns(1);
+             .ReturnsAsync(1);
         var expectedId = 1;
 
         var client = new Client()
@@ -38,7 +38,7 @@ public class ClientsServiceFacts
         };
 
         //when
-        var actual = _sut.CreateClient(client);
+        var actual = await _sut.CreateClient(client);
 
         //then
 
@@ -47,7 +47,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void CreateClient_WhenNotUniqueEmail_ThrowDataException()
+    public async Task CreateClient_WhenNotUniqueEmail_ThrowDataException()
     {
         //given
         var clients = new List<Client>
@@ -91,15 +91,15 @@ public class ClientsServiceFacts
             BirthDate = DateTime.Today,
         };
         _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientNew.Email))
-             .Returns(clients[0]);
+             .ReturnsAsync(clients[0]);
         //when
 
         //then
-        Assert.Throws<Exceptions.UniquenessException>(() => _sut.CreateClient(clientNew));
+        await Assert.ThrowsAsync<Exceptions.UniquenessException>(() => _sut.CreateClient(clientNew));
     }
 
     [Fact]
-    public void GetAllClients_WhenValidRequestPassed_ClientsReceived()
+    public async Task GetAllClients_WhenValidRequestPassed_ClientsReceived()
     {
         //given
         var clients = new List<Client>
@@ -133,11 +133,11 @@ public class ClientsServiceFacts
                 BirthDate = DateTime.Today,
             }
         };
-        _clientsRepositoryMock.Setup(o => o.GetAllClients()).Returns(clients);
+        _clientsRepositoryMock.Setup(o => o.GetAllClients()).ReturnsAsync(clients);
         userValue = new UserValues() {Email = "AdamSmith@gmail.com1", Role = Role.Admin };
 
         //when
-        var actual = _sut.GetAllClients();
+        var actual = await _sut.GetAllClients();
 
         //then
         Assert.NotNull(actual);
@@ -146,7 +146,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void GetClient_WhenCurrentUserIsAdmin_ClientReceived()
+    public async Task GetClient_WhenCurrentUserIsAdmin_ClientReceived()
     {
         //given
         var clientInDb = new Client()
@@ -161,17 +161,17 @@ public class ClientsServiceFacts
         };
 
         userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
-        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
 
         //when
-        var actual = _sut.GetClient(clientInDb.Id, userValue);
+        var actual = await _sut.GetClient(clientInDb.Id, userValue);
 
         //then
         _clientsRepositoryMock.Verify(c => c.GetClient(clientInDb.Id), Times.Once);
     }
 
     [Fact]
-    public void GetClient_WhenIdNotInBase_GetEntityNotFoundException()
+    public async Task GetClient_WhenIdNotInBase_GetEntityNotFoundException()
     {
         //given
         var testId = 2;
@@ -183,16 +183,16 @@ public class ClientsServiceFacts
         };
 
         userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
-        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.EntityNotFoundException>(() => _sut.GetClient(testId, userValue));
+        await Assert.ThrowsAsync<Exceptions.EntityNotFoundException>(() => _sut.GetClient(testId, userValue));
     }
 
     [Fact]
-    public void GetClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
+    public async Task GetClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
         var testEmail = "FakeClient@gmail.ru";
@@ -207,16 +207,16 @@ public class ClientsServiceFacts
             BirthDate = DateTime.Today
         };
         userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Client };
-        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.GetClient(clientInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetClient(clientInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetCommentsByClient_WhenClentGetOwnComments_CommentsReceived()
+    public async Task GetCommentsByClient_WhenClentGetOwnComments_CommentsReceived()
     {
         //given
         var clientInDb = new Client()
@@ -243,11 +243,11 @@ public class ClientsServiceFacts
         };
         userValue = new UserValues() { Email = clientInDb.Email, Role = Role.Client };
 
-        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
-        _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).ReturnsAsync(clientInDb.Comments);
 
         //when
-        var actual = _sut.GetCommentsByClient(clientInDb.Id, userValue);
+        var actual = await _sut.GetCommentsByClient(clientInDb.Id, userValue);
 
         //then
 
@@ -261,7 +261,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void GetCommentsByClient_WhenClientGetSomeoneElsesComments_ThrowBadRequestException()
+    public async Task GetCommentsByClient_WhenClientGetSomeoneElsesComments_ThrowBadRequestException()
     {
         //given
         var clientInDb = new Client();
@@ -269,16 +269,16 @@ public class ClientsServiceFacts
 
         userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
-        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
-        _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).ReturnsAsync(clientInDb.Comments);
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.GetCommentsByClient(clientInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCommentsByClient(clientInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetCommentsByClientId_WhenAdminGetsCommentsAndClientIsNotInDb_ThrowBadRequestException()
+    public async Task GetCommentsByClientId_WhenAdminGetsCommentsAndClientIsNotInDb_ThrowBadRequestException()
     {
         //given
         var testEmail = "FakeClient@gmail.ru";
@@ -301,15 +301,15 @@ public class ClientsServiceFacts
         };
         userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
-        _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
+        _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).ReturnsAsync(clientInDb.Comments);
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.GetCommentsByClient(clientInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetCommentsByClient(clientInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetOrdersByClientId_WhenClentGetsOwnOrders_OrdersReceived()
+    public async Task GetOrdersByClientId_WhenClentGetsOwnOrders_OrdersReceived()
     {
         //given
         var clientInDb = new Client()
@@ -334,11 +334,11 @@ public class ClientsServiceFacts
             }
         };
         userValue = new UserValues() { Email = clientInDb.Email, Role = Role.Client };
-        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
-        _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).ReturnsAsync(clientInDb.Orders);
 
         //when
-        var actual = _sut.GetOrdersByClient(clientInDb.Id, userValue);
+        var actual = await _sut.GetOrdersByClient(clientInDb.Id, userValue);
 
         //then
         Assert.Equal(clientInDb.Orders.Count, actual.Count);
@@ -351,7 +351,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void GetOrdersByClientId_WhenClientsTryToGetSomeoneElsesOrders_ThrowBadRequestException()
+    public async Task GetOrdersByClientId_WhenClientsTryToGetSomeoneElsesOrders_ThrowBadRequestException()
     {
         //given
         var clientInDb = new Client();
@@ -359,15 +359,15 @@ public class ClientsServiceFacts
 
         userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
-        _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
+        _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).ReturnsAsync(clientInDb.Orders);
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.GetOrdersByClient(clientInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetOrdersByClient(clientInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetOrdersByClientId_AdminGetsOrderssWhenClientNotInDb_ThrowBadRequestException()
+    public async Task GetOrdersByClientId_AdminGetsOrderssWhenClientNotInDb_ThrowBadRequestException()
     {
         //given
         var testEmail = "FakeClient@gmail.ru";
@@ -385,15 +385,15 @@ public class ClientsServiceFacts
         };
         userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
-        _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
+        _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).ReturnsAsync(clientInDb.Orders);
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.GetOrdersByClient(clientInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetOrdersByClient(clientInDb.Id, userValue));
     }
 
     [Fact]
-    public void UpdateClient_WhenClientUpdatesProperties_ChangesProperties()
+    public async Task UpdateClient_WhenClientUpdatesProperties_ChangesProperties()
     {
         //given
         var client = new Client()
@@ -414,11 +414,11 @@ public class ClientsServiceFacts
             BirthDate = new DateTime(1996, 10, 10),
         };
         userValue = new UserValues() { Email = client.Email, Role = Role.Client }; ;
-        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).Returns(client);
+        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).ReturnsAsync(client);
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
         //when
-        _sut.UpdateClient(newClientModel, client.Id, userValue);
+        await _sut.UpdateClient(newClientModel, client.Id, userValue);
 
         //then
         _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
@@ -433,7 +433,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void UpdateClient_WhenEmptyClientRequest_ThrowEntityNotFoundException()
+    public async Task UpdateClient_WhenEmptyClientRequest_ThrowEntityNotFoundException()
     {
         //given
         var client = new Client();
@@ -453,11 +453,11 @@ public class ClientsServiceFacts
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.UpdateClient(newClientModel, client.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.UpdateClient(newClientModel, client.Id, userValue));
     }
 
     [Fact]
-    public void UpdateClient_ClientGetSomeoneElsesProfile_ThrowAccessException()
+    public async Task UpdateClient_ClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
         var testEmail = "FakeClient@gmail.ru";
@@ -481,17 +481,17 @@ public class ClientsServiceFacts
             BirthDate = new DateTime(1996, 10, 10),
         };
         userValue = new UserValues() { Email = testEmail, Role = Role.Client };
-        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).Returns(client);
+        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).ReturnsAsync(client);
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.UpdateClient(newClientModel, client.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.UpdateClient(newClientModel, client.Id, userValue));
     }
 
     [Fact]
-    public void DeleteClient_WhenValidRequestPassed_DeleteClient()
+    public async Task DeleteClient_WhenValidRequestPassed_DeleteClient()
     {
         //given
         var expectedClient = new Client()
@@ -506,7 +506,7 @@ public class ClientsServiceFacts
             IsDeleted = false
         };
 
-        _clientsRepositoryMock.Setup(o => o.GetClient(expectedClient.Id)).Returns(expectedClient);
+        _clientsRepositoryMock.Setup(o => o.GetClient(expectedClient.Id)).ReturnsAsync(expectedClient);
         _clientsRepositoryMock.Setup(o => o.DeleteClient(expectedClient));
         userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Client, Id = 1 };
 
@@ -518,7 +518,7 @@ public class ClientsServiceFacts
     }
 
     [Fact]
-    public void DeleteClient_EmptyClientRequest_ThrowEntityNotFoundException()
+    public async Task DeleteClient_EmptyClientRequest_ThrowEntityNotFoundException()
     {
         //given
         var testId = 1;
@@ -529,11 +529,11 @@ public class ClientsServiceFacts
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.DeleteClient(testId, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.DeleteClient(testId, userValue));
     }
 
     [Fact]
-    public void DeleteClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
+    public async Task DeleteClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
         var clientFirst = new Client()
@@ -561,11 +561,11 @@ public class ClientsServiceFacts
 
         };
         userValue = new UserValues() { Email = clientFirst.Email, Role = Role.Client };
-        _clientsRepositoryMock.Setup(o => o.GetClient(clientSecond.Id)).Returns(clientSecond);
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientSecond.Id)).ReturnsAsync(clientSecond);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.DeleteClient(clientSecond.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.DeleteClient(clientSecond.Id, userValue));
     }
 }

@@ -22,17 +22,17 @@ public class CommentsService : ICommentsService
         _cleanersRepository = cleanersRepository;
     }
 
-    public int AddCommentByClient(Comment comment, int clientId)
+    public async Task<int> AddCommentByClient(Comment comment, int clientId)
     {
-        comment.Client = _clientsRepository.GetClient(clientId);
+        comment.Client = await _clientsRepository.GetClient(clientId);
         var result = _commentsRepository.AddComment(comment);
 
         return result;
     }
 
-    public int AddCommentByCleaner(Comment comment, int cleanerId)
+    public async Task<int> AddCommentByCleaner(Comment comment, int cleanerId)
     {
-        comment.Cleaner = _cleanersRepository.GetCleaner(cleanerId);
+        comment.Cleaner = await _cleanersRepository.GetCleaner(cleanerId);
         var result = _commentsRepository.AddComment(comment);
 
         return result;

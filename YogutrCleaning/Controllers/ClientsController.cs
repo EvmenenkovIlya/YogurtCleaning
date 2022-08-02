@@ -32,10 +32,10 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<ClientResponse> GetClient(int id)
+    public async Task<ActionResult<ClientResponse>> GetClient(int id)
     {
         userValues = this.GetClaimsValue();              
-        var client = _clientsService.GetClient(id, userValues);
+        var client = await _clientsService.GetClient(id, userValues);
         return Ok(_mapper.Map<ClientResponse>(client));
     }
 
@@ -44,9 +44,9 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(List<ClientResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<ClientResponse>> GetAllClients()
+    public async Task<ActionResult<List<ClientResponse>>> GetAllClients()
     {
-        var clients = _clientsService.GetAllClients();
+        var clients = await _clientsService.GetAllClients();
         return Ok(_mapper.Map<List<ClientResponse>>(clients));
     }
 
@@ -55,10 +55,10 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateClient([FromBody] ClientUpdateRequest client, int id)
+    public async Task<ActionResult> UpdateClient([FromBody] ClientUpdateRequest client, int id)
     {
         userValues = this.GetClaimsValue();
-        _clientsService.UpdateClient(_mapper.Map<Client>(client), id, userValues);
+        await _clientsService.UpdateClient(_mapper.Map<Client>(client), id, userValues);
         return NoContent();
     }
 
@@ -66,9 +66,9 @@ public class ClientsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddClient([FromBody] ClientRegisterRequest client)
+    public async Task<ActionResult<int>> AddClient([FromBody] ClientRegisterRequest client)
     {
-        int id = _clientsService.CreateClient(_mapper.Map<Client>(client));
+        int id = await _clientsService.CreateClient(_mapper.Map<Client>(client));
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
@@ -77,10 +77,10 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult DeleteClient(int id)
+    public async Task<ActionResult> DeleteClient(int id)
     {
         userValues = this.GetClaimsValue();
-        _clientsService.DeleteClient(id, userValues);
+        await _clientsService.DeleteClient(id, userValues);
         return NoContent();
     }
 
@@ -90,10 +90,10 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<List<CommentResponse>> GetAllCommentsByClient(int id)
+    public async Task<ActionResult<List<CommentResponse>>> GetAllCommentsByClient(int id)
     {
         userValues = this.GetClaimsValue();
-        var comments = _clientsService.GetCommentsByClient(id, userValues);
+        var comments = await _clientsService.GetCommentsByClient(id, userValues);
         return Ok(_mapper.Map<List<CommentResponse>>(comments));
     }
 
@@ -103,10 +103,10 @@ public class ClientsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<List<CommentResponse>> GetAllOrdersByClient(int id)
+    public async Task<ActionResult<List<CommentResponse>>> GetAllOrdersByClient(int id)
     {
         userValues = this.GetClaimsValue();
-        var orders = _clientsService.GetOrdersByClient(id, userValues);
+        var orders = await _clientsService.GetOrdersByClient(id, userValues);
         return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
 }

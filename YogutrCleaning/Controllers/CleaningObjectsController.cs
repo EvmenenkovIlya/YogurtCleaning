@@ -69,10 +69,10 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCleaningObject([FromBody] CleaningObjectRequest model)
+    public async Task<ActionResult<int>> AddCleaningObject([FromBody] CleaningObjectRequest model)
     {
         _userValues = this.GetClaimsValue();
-        int id = _cleaningObjectsService.CreateCleaningObject(_mapper.Map<CleaningObject>(model), _userValues);
+        int id = await _cleaningObjectsService.CreateCleaningObject(_mapper.Map<CleaningObject>(model), _userValues);
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 

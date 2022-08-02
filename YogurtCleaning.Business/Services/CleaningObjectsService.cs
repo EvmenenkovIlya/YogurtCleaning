@@ -16,15 +16,15 @@ public class CleaningObjectsService : ICleaningObjectsService
         _clientsRepository = clientsRepository;
     }
 
-    public int CreateCleaningObject(CleaningObject cleaningObject, UserValues userValues)
+    public async Task<int> CreateCleaningObject(CleaningObject cleaningObject, UserValues userValues)
     {
         if (userValues.Role == Role.Admin)
         {
-            cleaningObject.Client = _clientsRepository.GetClient(cleaningObject.Client.Id);
+            cleaningObject.Client = await _clientsRepository.GetClient(cleaningObject.Client.Id);
         }
         else
         {
-            cleaningObject.Client = _clientsRepository.GetClient(userValues.Id);
+            cleaningObject.Client = await _clientsRepository.GetClient(userValues.Id);
         }
         cleaningObject.District = _cleaningObjectsRepository.GetDistrict(cleaningObject.District.Id);
         Validator.CheckThatObjectNotNull(cleaningObject.Client, ExceptionsErrorMessages.ClientNotFound);
