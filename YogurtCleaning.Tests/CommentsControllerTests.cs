@@ -48,7 +48,7 @@ public class CommentsControllerTests
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.That(expectedId, Is.EqualTo((int)actualResult.Value));
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
         _mockCommentsService.Verify(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
     }
 
@@ -72,9 +72,7 @@ public class CommentsControllerTests
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.That(expectedId, Is.EqualTo((int)actualResult.Value));
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
         _mockCommentsService.Verify(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
     }
 }
-
-    

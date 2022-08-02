@@ -50,7 +50,7 @@ public class BundlesControllerTests
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.That(expectedId, Is.EqualTo((int)actualResult.Value));
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId)); 
         _mockBundlesService.Verify(o => o.AddBundle(It.IsAny<Bundle>()), Times.Once);
     }
 

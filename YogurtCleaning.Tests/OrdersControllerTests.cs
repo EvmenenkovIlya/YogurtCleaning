@@ -98,19 +98,22 @@ public class OrdersControllerTests
         var ordersResponse = actualResult.Value as List<OrderResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(orders.Count, Is.EqualTo(ordersResponse.Count));
-        Assert.That(orders[0].Client.Id, Is.EqualTo(ordersResponse[0].Client.Id));
-        Assert.That(orders[0].CleaningObject.Id, Is.EqualTo(ordersResponse[0].CleaningObject.Id));
-        Assert.That(orders[1].Price, Is.EqualTo(ordersResponse[1].Price));
-        Assert.That(orders[1].CleanersBand.Count, Is.EqualTo(ordersResponse[1].CleanersBand.Count));
-        Assert.That(orders[0].Comments.Count, Is.EqualTo(ordersResponse[0].Comments.Count));
-        Assert.That(orders[0].Bundles.Count, Is.EqualTo(ordersResponse[0].Bundles.Count));
-        Assert.That(orders[0].Services.Count, Is.EqualTo(ordersResponse[0].Services.Count));
-        Assert.That(orders[0].Price, Is.EqualTo(ordersResponse[0].Price));
-        Assert.That(orders[0].StartTime, Is.EqualTo(ordersResponse[0].StartTime));
-        Assert.That(orders[0].EndTime, Is.EqualTo(ordersResponse[0].EndTime));   
-        Assert.That(orders[0].UpdateTime, Is.EqualTo(ordersResponse[0].UpdateTime));
-        Assert.That(orders[0].Status, Is.EqualTo(ordersResponse[0].Status));
+        Assert.That(ordersResponse.Count, Is.EqualTo(orders.Count));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ordersResponse[0].Client.Id, Is.EqualTo(orders[0].Client.Id));
+            Assert.That(ordersResponse[0].CleaningObject.Id, Is.EqualTo(orders[0].CleaningObject.Id));
+            Assert.That(ordersResponse[1].Price, Is.EqualTo(orders[1].Price));
+            Assert.That(ordersResponse[1].CleanersBand.Count, Is.EqualTo(orders[1].CleanersBand.Count));
+            Assert.That(ordersResponse[0].Comments.Count, Is.EqualTo(orders[0].Comments.Count));
+            Assert.That(ordersResponse[0].Bundles.Count, Is.EqualTo(orders[0].Bundles.Count));
+            Assert.That(ordersResponse[0].Services.Count, Is.EqualTo(orders[0].Services.Count));
+            Assert.That(ordersResponse[0].Price, Is.EqualTo(orders[0].Price));
+            Assert.That(ordersResponse[0].StartTime, Is.EqualTo(orders[0].StartTime));
+            Assert.That(ordersResponse[0].EndTime, Is.EqualTo(orders[0].EndTime));
+            Assert.That(ordersResponse[0].UpdateTime, Is.EqualTo(orders[0].UpdateTime));
+            Assert.That(ordersResponse[0].Status, Is.EqualTo(orders[0].Status));
+        });
         _ordersServiceMock.Verify(x => x.GetAllOrders(), Times.Once);
     }
 }

@@ -244,9 +244,9 @@ public class CleanersRepositoryTests
         var result = sut.GetCleaner(cleaner.Id);
 
         //then
-        Assert.False(result.FirstName == "Adam");
-        Assert.False(result.LastName == "Smith");
-        Assert.True(result.Email == "ccc@gmail.c");
+        Assert.NotEqual("Adam", result.FirstName);
+        Assert.NotEqual("Smith", result.LastName);
+        Assert.Equal("ccc@gmail.c", result.Email);
         context.Database.EnsureDeleted();
     }
 }
