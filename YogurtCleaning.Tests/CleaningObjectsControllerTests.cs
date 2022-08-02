@@ -85,12 +85,12 @@ public class CleaningObjectControllerTests
 
         var actualResult = actual.Result as ObjectResult;
         var cleaningObjectResponce = actualResult.Value as CleaningObjectResponse;
-        Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        Assert.True(cleaningObjectResponce.NumberOfRooms == expectedCleaningObject.NumberOfRooms);
-        Assert.True(cleaningObjectResponce.NumberOfBathrooms == expectedCleaningObject.NumberOfBathrooms);
-        Assert.True(cleaningObjectResponce.Square == expectedCleaningObject.Square);
-        Assert.True(cleaningObjectResponce.NumberOfWindows == expectedCleaningObject.NumberOfWindows);
-        Assert.True(cleaningObjectResponce.Address == expectedCleaningObject.Address);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.That(expectedCleaningObject.NumberOfRooms, Is.EqualTo(cleaningObjectResponce.NumberOfRooms));
+        Assert.That(expectedCleaningObject.NumberOfBathrooms, Is.EqualTo(cleaningObjectResponce.NumberOfBathrooms));
+        Assert.That(expectedCleaningObject.Square, Is.EqualTo(cleaningObjectResponce.Square));
+        Assert.That(expectedCleaningObject.NumberOfWindows, Is.EqualTo(cleaningObjectResponce.NumberOfWindows));
+        Assert.That(expectedCleaningObject.Address, Is.EqualTo(cleaningObjectResponce.Address));
         _cleaningObjectsServiceMock.Verify(x => x.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
@@ -131,7 +131,7 @@ public class CleaningObjectControllerTests
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _cleaningObjectsServiceMock.Verify(c => c.UpdateCleaningObject(It.Is<CleaningObject>(c => c.NumberOfRooms == newCleaningObjectModel.NumberOfRooms &&
         c.NumberOfBathrooms == newCleaningObjectModel.NumberOfBathrooms && c.Square == newCleaningObjectModel.Square &&
         c.NumberOfWindows == newCleaningObjectModel.NumberOfWindows && c.NumberOfBalconies == newCleaningObjectModel.NumberOfBalconies &&
@@ -158,7 +158,7 @@ public class CleaningObjectControllerTests
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _cleaningObjectsServiceMock.Verify(c => c.DeleteCleaningObject(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 }

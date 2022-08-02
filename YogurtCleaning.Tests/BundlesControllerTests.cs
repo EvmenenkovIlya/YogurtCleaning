@@ -31,7 +31,9 @@ public class BundlesControllerTests
     public void AddBundle_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
-        _mockBundlesService.Setup(o => o.AddBundle(It.IsAny<Bundle>())).Returns(1);
+        int expectedId = 1;
+        _mockBundlesService.Setup(o => o.AddBundle(It.IsAny<Bundle>())).Returns(expectedId);
+
         var bundle = new BundleRequest()
         {
             Name = "Super Bundle",
@@ -48,7 +50,7 @@ public class BundlesControllerTests
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.True((int)actualResult.Value == 1);
+        Assert.That(expectedId, Is.EqualTo((int)actualResult.Value));
         _mockBundlesService.Verify(o => o.AddBundle(It.IsAny<Bundle>()), Times.Once);
     }
 
@@ -154,7 +156,6 @@ public class BundlesControllerTests
     public void GetAdditionalServicesForBundle_WhenValidRequestPassed_ThenOkResultRecived()
     {
         // given 
-        var expectedServices = new List<ServiceResponse>();
         var bundle = new BundleResponse();
 
         // when 

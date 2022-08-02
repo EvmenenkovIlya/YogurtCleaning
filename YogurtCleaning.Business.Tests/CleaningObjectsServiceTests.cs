@@ -59,7 +59,6 @@ public class CleaningObjectServiceFacts
     public void GetCleaningObject_WhenCurrentUserIsAdmin_CleaningObjectReceived()
     {
         //given
-        Setup();
         var cleaningObjectInDb = new CleaningObject()
         {
             Id = 1,
@@ -73,7 +72,7 @@ public class CleaningObjectServiceFacts
             IsDeleted = false
         };
 
-        _userValues = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin", Id = 1 };
+        _userValues = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin, Id = 1 };
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).Returns(cleaningObjectInDb);
 
         //when
@@ -87,9 +86,8 @@ public class CleaningObjectServiceFacts
     public void GetCleaningObject_WhenIdNotInBase_GetEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 2;
-        _userValues = new UserValues() { Role = "Admin" };
+        _userValues = new UserValues() { Role = Role.Admin };
 
         //when
 
@@ -101,7 +99,6 @@ public class CleaningObjectServiceFacts
     public void GetCleaningObject_WhenClientGetSomeoneElsesCleaningObject_ThrowAccessException()
     {
         //given
-        Setup();
         var cleaningObjectInDb = new CleaningObject()
         {
             Id = 1,
@@ -114,7 +111,7 @@ public class CleaningObjectServiceFacts
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
             IsDeleted = false
         };
-        _userValues = new UserValues() { Role = "Client", Id = 2 };
+        _userValues = new UserValues() { Role = Role.Client, Id = 2 };
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).Returns(cleaningObjectInDb);
 
         //when
@@ -324,5 +321,4 @@ public class CleaningObjectServiceFacts
         //then
         Assert.Throws<Exceptions.AccessException>(() => _sut.DeleteCleaningObject(cleaningObject.Id, _userValues));
     }
-
 }

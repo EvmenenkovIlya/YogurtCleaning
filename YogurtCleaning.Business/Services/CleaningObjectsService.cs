@@ -39,7 +39,7 @@ public class CleaningObjectsService : ICleaningObjectsService
         {
             throw new EntityNotFoundException(ExceptionsErrorMessages.CleaningObjectNotFound);
         }
-        if (!(userValues.Id == cleaningObject.Client.Id || !(userValues.Role == Role.Client.ToString())))
+        if (!(userValues.Id == cleaningObject.Client.Id || !(userValues.Role == Role.Client)))
         {
             throw new AccessException($"Access denied");
         }

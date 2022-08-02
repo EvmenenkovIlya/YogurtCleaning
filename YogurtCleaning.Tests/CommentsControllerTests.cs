@@ -32,7 +32,8 @@ public class CommentsControllerTests
     public void AddCommentByClient_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
-        _mockCommentsService.Setup(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>())).Returns(1);
+        int expectedId = 1;
+        _mockCommentsService.Setup(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>())).Returns(expectedId);
         var comment = new CommentRequest()
         {
             Summary = "ok",
@@ -47,7 +48,7 @@ public class CommentsControllerTests
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.True((int)actualResult.Value == 1);
+        Assert.That(expectedId, Is.EqualTo((int)actualResult.Value));
         _mockCommentsService.Verify(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
     }
 
@@ -55,7 +56,8 @@ public class CommentsControllerTests
     public void AddCommentByCleaner_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
-        _mockCommentsService.Setup(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>())).Returns(1);
+        int expectedId = 1;
+        _mockCommentsService.Setup(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>())).Returns(expectedId);
         var comment = new CommentRequest()
         {
             Summary = "ok",
@@ -70,7 +72,7 @@ public class CommentsControllerTests
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.True((int)actualResult.Value == 1);
+        Assert.That(expectedId, Is.EqualTo((int)actualResult.Value));
         _mockCommentsService.Verify(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
     }
 }
