@@ -209,9 +209,6 @@ public class ServicesControllerTests
         var actualResult = actual as OkResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        _mockServicesRepository.Verify(o => o.DeleteService(service.Id), Times.Once);
+        _mockServicesService.Verify(o => o.DeleteService(service.Id, It.IsAny<UserValues>()), Times.Once);
     }
-
-
-
 }
