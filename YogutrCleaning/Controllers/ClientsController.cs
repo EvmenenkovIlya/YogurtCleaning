@@ -24,8 +24,8 @@ public class ClientsController : ControllerBase
     {
         _mapper = mapper;
         _clientsService = clientsService;
-    }   
-
+    }  
+    
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ClientResponse), StatusCodes.Status200OK)]

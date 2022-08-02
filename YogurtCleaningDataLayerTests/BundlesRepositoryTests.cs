@@ -16,7 +16,7 @@ public class BundlesRepositoryTests
     }
 
     [Fact]
-    public void AddBundle_WhenBundleeAdded_ThenBundleIdMoreThanZero()
+    public async Task AddBundle_WhenBundleeAdded_ThenBundleIdMoreThanZero()
     {
         //given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -32,14 +32,14 @@ public class BundlesRepositoryTests
 
         // when 
         context.Bundles.Add(bundle);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         //then 
         Assert.True(bundle.Id > 0);
     }
 
     [Fact]
-    public void DeleteSBundle_WhenCorrectIdPassed_ThenSoftDeleteApplied()
+    public async Task DeleteSBundle_WhenCorrectIdPassed_ThenSoftDeleteApplied()
     {
         // given 
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -57,14 +57,14 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        sut.DeleteBundle(bundle);
+        await sut.DeleteBundle(bundle);
 
         //then 
         Assert.True(bundle.IsDeleted);
     }
 
     [Fact]
-    public void GetAllBundles_WhenBundlesExist_ThenGetBundles()
+    public async Task GetAllBundles_WhenBundlesExist_ThenGetBundles()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -82,14 +82,14 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = sut.GetAllBundles();
+        var result = await sut.GetAllBundles();
 
         //then 
         Assert.True(result.Contains(bundle));
     }
 
     [Fact]
-    public void GetAllBundles_WhenBundleIsDeleted_ThenBundleDoesNotGet()
+    public async Task GetAllBundles_WhenBundleIsDeleted_ThenBundleDoesNotGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -107,9 +107,9 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = sut.GetAllBundles();
+        var result = await sut.GetAllBundles();
 
         //then 
-        Assert.False(result.Contains(bundle));
+        Assert.DoesNotContain(bundle, result);
     }
 }
