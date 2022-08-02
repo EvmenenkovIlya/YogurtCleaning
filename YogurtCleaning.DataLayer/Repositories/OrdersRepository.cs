@@ -25,17 +25,11 @@ public class OrdersRepository : IOrdersRepository
         return order.Id;
     }
 
-    public void DeleteOrder(int orderId)
+    public void DeleteOrder(Order order)
     {
-        var order = GetOrder(orderId);
-        if (order == null)
-            return;
-        else
-        {
-            order.IsDeleted = true;
-            order.UpdateTime = DateTime.Now;
-            _context.SaveChanges();
-        }
+        order.IsDeleted = true;
+        order.UpdateTime = DateTime.Now;
+        _context.SaveChanges();
     }
 
     public void UpdateOrder(Order modelToUpdate)

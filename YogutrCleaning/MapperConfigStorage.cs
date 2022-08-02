@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API;
@@ -13,8 +14,10 @@ public class MapperConfigStorage : Profile
 		CreateMap<Client, ClientResponse>();
 
 		CreateMap<CleaningObjectRequest, CleaningObject>()
-			.ForMember(o => o.Client, opt => opt.MapFrom(src => new Client() { Id = src.ClientId }));
-		CreateMap<CleaningObjectUpdateRequest, CleaningObject>();
+			.ForMember(o => o.Client, opt => opt.MapFrom(src => new Client() { Id = src.ClientId }))
+			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District}));
+		CreateMap<CleaningObjectUpdateRequest, CleaningObject>()
+			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District }));
 		CreateMap<CleaningObject, CleaningObjectResponse>();
 
 		CreateMap<Order, OrderResponse>();

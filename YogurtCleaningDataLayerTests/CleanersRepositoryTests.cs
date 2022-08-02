@@ -61,7 +61,7 @@ public class CleanersRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteCleaner(cleaner.Id);
+        sut.DeleteCleaner(cleaner);
 
         //then
         var actual = sut.GetCleaner(cleaner.Id);

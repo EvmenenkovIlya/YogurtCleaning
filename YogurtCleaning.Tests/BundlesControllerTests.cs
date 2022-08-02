@@ -7,7 +7,6 @@ using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API.Tests;
@@ -148,6 +147,7 @@ public class BundlesControllerTests
         var actualResult = actual as NoContentResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _mockBundlesService.Verify(o => o.DeleteBundle(bundle.Id), Times.Once);
     }
 
     [Test]

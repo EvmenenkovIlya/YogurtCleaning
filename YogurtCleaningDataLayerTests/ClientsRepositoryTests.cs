@@ -59,7 +59,7 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteClient(client.Id);
+        sut.DeleteClient(client);
 
         //then
         var actual = sut.GetClient(client.Id);

@@ -32,15 +32,15 @@ public class CleanersService : ICleanersService
     public void DeleteCleaner(int id, UserValues userValues)
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
-        _cleanersRepository.DeleteCleaner(id);
+        _cleanersRepository.DeleteCleaner(cleaner);
     }
 
     public void UpdateCleaner(Cleaner modelToUpdate, int id, UserValues userValues)
     {
         Cleaner cleaner = _cleanersRepository.GetCleaner(id);
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
         cleaner.FirstName = modelToUpdate.FirstName;
         cleaner.LastName = modelToUpdate.LastName;
@@ -65,7 +65,7 @@ public class CleanersService : ICleanersService
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
 
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
         return _cleanersRepository.GetAllCommentsByCleaner(id);
     }
@@ -74,7 +74,7 @@ public class CleanersService : ICleanersService
     {
         var cleaner = _cleanersRepository.GetCleaner(id);
 
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
         return _cleanersRepository.GetAllOrdersByCleaner(id);
     }
@@ -83,17 +83,9 @@ public class CleanersService : ICleanersService
 
     private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
     {
-        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }
-    }
-
-    private void CheckThatUserNotNull(Cleaner cleaner, string errorMesage)
-    {
-        if (cleaner == null)
-        {
-            throw new BadRequestException(errorMesage);
-        } 
     }
 }

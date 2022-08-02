@@ -7,7 +7,7 @@ public interface ICleanersRepository
     int CreateCleaner(Cleaner cleaner);
     Cleaner? GetCleaner(int clientId);
     void UpdateCleaner(Cleaner cleaner);
-    void DeleteCleaner(int cleanerId);
+    void DeleteCleaner(Cleaner cleaner);
     List<Cleaner> GetAllCleaners();
     List<Comment> GetAllCommentsByCleaner(int cleanerId);
     List<Order> GetAllOrdersByCleaner(int id);
