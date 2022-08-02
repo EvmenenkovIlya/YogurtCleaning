@@ -36,15 +36,9 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<CleaningObjectResponse> GetCleaningObject(int id)
     {
-        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
-        if (cleaningObject == null)
-        {
-            return NotFound();
-        }
-        else
-        {
-            return Ok(cleaningObject);
-        }
+        _userValues = this.GetClaimsValue();
+        var cleaningObject = _cleaningObjectsService.GetCleaningObject(id, _userValues);
+        return Ok(_mapper.Map<CleaningObjectResponse>(cleaningObject));
     }
 
     [AuthorizeRoles(Role.Client)]

@@ -32,6 +32,21 @@ public class CleaningObjectsService : ICleaningObjectsService
         return _cleaningObjectsRepository.CreateCleaningObject(cleaningObject);
     }
 
+    public CleaningObject GetCleaningObject(int cleaningObjectId, UserValues userValues)
+    {
+        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(cleaningObjectId); ;
+        if (cleaningObject == null)
+        {
+            throw new EntityNotFoundException(ExceptionsErrorMessages.CleaningObjectNotFound);
+        }
+        if (!(userValues.Id == cleaningObject.Client.Id || !(userValues.Role == Role.Client)))
+        {
+            throw new AccessException($"Access denied");
+        }
+        return cleaningObject;
+
+    }
+
     public void UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues)
     {
         var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);

@@ -36,7 +36,8 @@ namespace YogurtCleaning.Tests
         public void AddServices_WhenValidRequestPassed_ThenCreatedResultRecived()
         {
             // given
-            _mockServicesService.Setup(o => o.AddService(It.IsAny<Service>())).Returns(1);
+            int expectedId = 1;
+            _mockServicesService.Setup(o => o.AddService(It.IsAny<Service>())).Returns(expectedId);
             var service = new ServiceRequest()
             {
                 Name = "Service name",
@@ -51,7 +52,7 @@ namespace YogurtCleaning.Tests
             var actualResult = actual.Result as CreatedResult;
 
             Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-            Assert.True((int)actualResult.Value == 1);
+            Assert.That(expectedId, Is.EqualTo((int)actualResult.Value));
             _mockServicesService.Verify(o => o.AddService(
                 It.Is<Service>
                 (s => s.Name == service.Name &&
@@ -85,14 +86,13 @@ namespace YogurtCleaning.Tests
             var serviceResponse = actualResult.Value as ServiceResponse;
 
             Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-            Assert.True(serviceResponse.Id == service.Id);
-            Assert.True(serviceResponse.Name == service.Name);
-            Assert.True(serviceResponse.Price == service.Price);
-            Assert.True(serviceResponse.Unit == service.Unit);
-            Assert.True(serviceResponse.Duration == service.Duration);
+            Assert.That(service.Id, Is.EqualTo(serviceResponse.Id));
+            Assert.That(service.Name, Is.EqualTo(serviceResponse.Name));
+            Assert.That(service.Price, Is.EqualTo(serviceResponse.Price));
+            Assert.That(service.Unit, Is.EqualTo(serviceResponse.Unit));
+            Assert.That(service.Duration, Is.EqualTo(serviceResponse.Duration));
 
             _mockServicesService.Verify(o => o.GetService(service.Id), Times.Once);
-
         }
 
         [Test]
@@ -142,13 +142,12 @@ namespace YogurtCleaning.Tests
             var servicesResponse = actualResult.Value as List<ServiceResponse>;
 
             Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-            Assert.True(servicesResponse.Count == expectedService.Count);
-            Assert.True(servicesResponse[0].Id == expectedService[0].Id);
-            Assert.True(servicesResponse[1].Name == expectedService[1].Name);
-            Assert.True(servicesResponse[2].Price == expectedService[2].Price);
-            Assert.True(servicesResponse[0].Unit == expectedService[0].Unit);
-            Assert.True(servicesResponse[1].Duration == expectedService[1].Duration);
-           
+            Assert.That(expectedService.Count, Is.EqualTo(servicesResponse.Count));
+            Assert.That(expectedService[0].Id, Is.EqualTo(servicesResponse[0].Id));
+            Assert.That(expectedService[1].Name, Is.EqualTo(servicesResponse[1].Name));
+            Assert.That(expectedService[2].Price, Is.EqualTo(servicesResponse[2].Price));
+            Assert.That(expectedService[0].Unit, Is.EqualTo(servicesResponse[0].Unit));
+            Assert.That(expectedService[1].Duration, Is.EqualTo(servicesResponse[1].Duration));           
         }
 
         [Test]

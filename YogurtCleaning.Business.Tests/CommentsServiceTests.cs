@@ -40,7 +40,7 @@ public class CommentsServiceTests
         var actual = _sut.AddCommentByClient(comment, comment.Client.Id);
 
         // then
-        Assert.True(actual == expectedId);
+        Assert.Equal(actual, expectedId);
         _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
 
     }
@@ -65,8 +65,7 @@ public class CommentsServiceTests
         var actual = _sut.AddCommentByCleaner(comment, comment.Cleaner.Id);
         
         // then
-        Assert.True(actual == expectedId);
-        _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
-        
+        Assert.Equal(actual, expectedId);
+        _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);       
     }
 }

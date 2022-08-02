@@ -46,10 +46,10 @@ public class BundlesServiceTests
         _sut.UpdateBundle(updatedBundle, bundle.Id);
 
         // then
-        Assert.True(bundle.Name == updatedBundle.Name);
-        Assert.True(bundle.Price == updatedBundle.Price);
-        Assert.True(bundle.Measure == updatedBundle.Measure);
-        Assert.True(bundle.Services == updatedBundle.Services);
+        Assert.Equal(bundle.Name, updatedBundle.Name);
+        Assert.Equal(bundle.Price, updatedBundle.Price);
+        Assert.Equal(bundle.Measure, updatedBundle.Measure);
+        Assert.Equal(bundle.Services, updatedBundle.Services);
         _bundlesRepositoryMock.Verify(b => b.GetBundle(bundle.Id), Times.Once);
 
     }

@@ -40,7 +40,7 @@ public class CleanersServiceFacts
         var actual = _sut.CreateCleaner(cleaner);
 
         //then
-        Assert.True(actual == expectedId);
+        Assert.Equal(actual, expectedId);
         _cleanersRepositoryMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Once);
     }
 
@@ -250,10 +250,10 @@ public class CleanersServiceFacts
         //then
 
         Assert.Equal(cleanerInDb.Comments.Count, actual.Count);
-        Assert.True(actual[0].Id == cleanerInDb.Comments[0].Id);
-        Assert.True(actual[1].Id == cleanerInDb.Comments[1].Id);
-        Assert.True(actual[0].Rating == cleanerInDb.Comments[0].Rating);
-        Assert.True(actual[1].Rating == cleanerInDb.Comments[1].Rating);
+        Assert.Equal(actual[0].Id, cleanerInDb.Comments[0].Id);
+        Assert.Equal(actual[1].Id, cleanerInDb.Comments[1].Id);
+        Assert.Equal(actual[0].Rating, cleanerInDb.Comments[0].Rating);
+        Assert.Equal(actual[1].Rating, cleanerInDb.Comments[1].Rating);
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleanerInDb.Id), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetAllCommentsByCleaner(cleanerInDb.Id), Times.Once);
     }
@@ -339,11 +339,11 @@ public class CleanersServiceFacts
         var actual = _sut.GetOrdersByCleaner(cleanerInDb.Id, userValue);
 
         //then
-        Assert.True(cleanerInDb.Orders.Count == actual.Count);
-        Assert.True(actual[0].Id == cleanerInDb.Orders[0].Id);
-        Assert.True(actual[1].Id == cleanerInDb.Orders[1].Id);
-        Assert.True(actual[0].Price == cleanerInDb.Orders[0].Price);
-        Assert.True(actual[1].Price == cleanerInDb.Orders[1].Price);
+        Assert.Equal(cleanerInDb.Orders.Count, actual.Count);
+        Assert.Equal(actual[0].Id, cleanerInDb.Orders[0].Id);
+        Assert.Equal(actual[1].Id, cleanerInDb.Orders[1].Id);
+        Assert.Equal(actual[0].Price, cleanerInDb.Orders[0].Price);
+        Assert.Equal(actual[1].Price, cleanerInDb.Orders[1].Price);
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleanerInDb.Id), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetAllOrdersByCleaner(cleanerInDb.Id), Times.Once);
     }
