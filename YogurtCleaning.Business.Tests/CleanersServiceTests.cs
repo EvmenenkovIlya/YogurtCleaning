@@ -162,7 +162,7 @@ public class CleanersServiceFacts
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
 
         //when
-        var actual = _sut.GetCleaner(cleanerInDb.Id, userValue);
+        var actual = await _sut.GetCleaner(cleanerInDb.Id, userValue);
 
         //then
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleanerInDb.Id), Times.Once);

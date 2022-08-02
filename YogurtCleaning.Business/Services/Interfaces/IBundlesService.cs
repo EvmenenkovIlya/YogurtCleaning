@@ -4,10 +4,10 @@ namespace YogurtCleaning.Business.Services;
 
 public interface IBundlesService
 {
-    void UpdateBundle(Bundle bundle, int id);
-    Bundle GetBundle(int id);
-    List<Bundle> GetAllBundles();
-    int AddBundle(Bundle bundle);
-    void DeleteBundle(int id);
-    List<Service> GetAdditionalServices(int id);
+    Task UpdateBundle(Bundle bundle, int id);
+    Task<Bundle> GetBundle(int id);
+    Task<List<Bundle>> GetAllBundles();
+    Task<int> AddBundle(Bundle bundle);
+    Task DeleteBundle(int id);
+    Task<List<Service>> GetAdditionalServices(int id);
 }
