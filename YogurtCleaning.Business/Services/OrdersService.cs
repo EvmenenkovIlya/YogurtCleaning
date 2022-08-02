@@ -63,7 +63,7 @@ public class OrdersService : IOrdersService
 
     private decimal GetOrderPrice(OrderBusinessModel order)
     {
-        var bundlesPrice = order.Bundles.Select(b => b.GetPrice(order.CleaningObject)).Sum();
+        var bundlesPrice = order.Bundles.Select(b => b.GetPriceForCleaningObject(order.CleaningObject)).Sum();
         var servicesPrice = order.Services.Select(s => s.Price).Sum();
         var orderPrice = bundlesPrice + servicesPrice;
         if (order.Bundles[0].Type == CleaningType.Regular)
@@ -81,7 +81,6 @@ public class OrdersService : IOrdersService
     private List<Cleaner> GetCleanersForOrder(OrderBusinessModel order)
     {
         var cleaners = new List<Cleaner>();
-        //var cleanersCount = GetCleanersCount(order);
         var freeCleaners = _cleanersService.GetFreeCleanersForOrder(order);
 
         if (order.EndTime > order.StartTime.Date.AddHours(18))

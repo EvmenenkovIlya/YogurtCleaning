@@ -13,7 +13,7 @@ public class BusinessMapperConfigStorage : Profile
 {
 	public BusinessMapperConfigStorage()
 	{
-		CreateMap<OrderBusinessModel, Order>();
-		CreateMap<Bundle, BundleBusinessModel>();
+		CreateMap<OrderBusinessModel, Order>().ReverseMap();
+		CreateMap<Bundle, BundleBusinessModel>().ReverseMap();
 	}
 }

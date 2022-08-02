@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
@@ -72,7 +73,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddOrder(OrderRequest order)
     {
-        int id = _ordersService.AddOrder(_mapper.Map<Order>(order));
+        int id = _ordersService.AddOrder(_mapper.Map<OrderBusinessModel>(order));
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 

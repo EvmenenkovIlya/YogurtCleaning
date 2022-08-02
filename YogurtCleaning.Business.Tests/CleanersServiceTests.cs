@@ -1,4 +1,5 @@
 ﻿using Moq;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
@@ -572,14 +573,14 @@ public class CleanersServiceFacts
     public void GetFreeCleanersForOrder_WhenAreFreeCleaners_ThenCleanersRecieved()
     {
         //given
-        var order = new Order
+        var order = new OrderBusinessModel
         {
             Client = new() { Id = 1 },
             CleaningObject = new() { Id = 56 },
             Status = Status.Created,
             StartTime = new DateTime(2022, 8, 1, 10, 00, 00),
             EndTime = new DateTime(2022, 8, 1, 18, 00, 00),
-            Bundles = new List<Bundle> { new Bundle { Id = 2, Name = "qwe" } }
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Name = "qwe" } }
         };
 
         var cleaners = new List<Cleaner>
@@ -636,14 +637,14 @@ public class CleanersServiceFacts
     public void GetFreeCleanersForOrder_WhenCleanerIsBusy_ThenDoNotAddToResult()
     {
         //given
-        var order = new Order
+        var order = new OrderBusinessModel
         {
             Client = new() { Id = 1 },
             CleaningObject = new() { Id = 56 },
             Status = Status.Created,
             StartTime = new DateTime(2022, 8, 1, 10, 00, 00),
             EndTime = new DateTime(2022, 8, 1, 18, 00, 00),
-            Bundles = new List<Bundle> { new Bundle { Id = 2, Name = "qwe" } }
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Name = "qwe" } }
         };
 
         var cleaners = new List<Cleaner>

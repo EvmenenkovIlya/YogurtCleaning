@@ -10,7 +10,7 @@ namespace YogurtCleaning.Business.Models;
 
 public class OrderBusinessModel
 {
-    public int Id { get; set; }
+    //public int Id { get; set; }
     public Client Client { get; set; }
     public CleaningObject CleaningObject { get; set; }
     public Status Status { get; set; }
@@ -28,7 +28,7 @@ public class OrderBusinessModel
 
     public decimal GetTotalDuration()
     {
-        var bundlesDuration = this.Bundles.Select(b => b.GetDuration(this.CleaningObject)).Sum();
+        var bundlesDuration = this.Bundles.Select(b => b.GetDurationForCleaningObject(this.CleaningObject)).Sum();
         var servicesDuration = this.Services.Select(s => s.Duration).Sum();
         this.TotalDuration = bundlesDuration + servicesDuration;
         return this.TotalDuration;
