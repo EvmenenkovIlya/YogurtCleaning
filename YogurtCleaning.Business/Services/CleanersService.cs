@@ -1,4 +1,5 @@
 ﻿using YogurtCleaning.Business.Exceptions;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
@@ -99,7 +100,7 @@ public class CleanersService : ICleanersService
         } 
     }
 
-    public List<Cleaner> GetFreeCleanersForOrder(Order order)
+    public List<Cleaner> GetFreeCleanersForOrder(OrderBusinessModel order)
     {
         var freeCleaners = new List<Cleaner>();
         var workingCleaners = _cleanersRepository.GetWorkingCleanersForDate(order.StartTime);

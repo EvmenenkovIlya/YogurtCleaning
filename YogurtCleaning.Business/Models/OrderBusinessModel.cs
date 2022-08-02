@@ -52,21 +52,4 @@ public class OrderBusinessModel
         this.EndTime = this.StartTime.AddHours((double)this.TotalDuration / this.CleanersCount);
         return this.EndTime;
     }
-
-    //public decimal GetPrice()
-    //{
-    //    var bundlesPrice = this.Bundles.Select(b => b.GetPrice(this.CleaningObject)).Sum();
-    //    var servicesPrice = this.Services.Select(s => s.Price).Sum();
-    //    this.Price = bundlesPrice + servicesPrice;
-    //    if (this.Bundles[0].Type == CleaningType.Regular)
-    //    {
-    //        var discount = (decimal)0.2;
-    //        var lastOrder = _clientsRepository.GetLastOrderForCleaningObject(order.Client.Id, order.CleaningObject.Id);
-    //        if (lastOrder != null && lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
-    //        {
-    //            orderPrice -= orderPrice * discount;
-    //        }
-    //    }
-    //    return orderPrice;
-    //}
 }
