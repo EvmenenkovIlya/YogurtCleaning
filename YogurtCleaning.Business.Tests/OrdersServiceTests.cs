@@ -1,9 +1,11 @@
-﻿using Moq;
+﻿using AutoMapper;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
@@ -17,6 +19,7 @@ public class OrdersServiceTests
     private Mock<ICleanersService> _mockCleanersService;
     private Mock<IClientsRepository> _mockClientsRepository;
     private Mock<IEmailSender> _mockEmailSender;
+    private IMapper _mapper;
     private OrdersService _sut;
 
 
@@ -26,7 +29,12 @@ public class OrdersServiceTests
         _mockCleanersService = new Mock<ICleanersService>();
         _mockOrdersRepository = new Mock<IOrdersRepository>();
         _mockEmailSender = new Mock<IEmailSender>();
-        _sut = new OrdersService(_mockOrdersRepository.Object, _mockCleanersService.Object, _mockClientsRepository.Object, _mockEmailSender.Object);
+        var mapper = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile(new BusinessMapperConfigStorage());
+        });
+        _mapper = mapper.CreateMapper();
+        _sut = new OrdersService(_mockOrdersRepository.Object, _mockCleanersService.Object, _mockClientsRepository.Object, _mockEmailSender.Object, _mapper);
     }
 
     [Fact]
@@ -76,5 +84,119 @@ public class OrdersServiceTests
                 && i.CleanersBand == updatedOrder.CleanersBand)),
             Times.Once);
         _mockOrdersRepository.Verify(o => o.GetOrder(order.Id), Times.Once);
+    }
+
+    [Fact]
+    public void AddOrderTest_WhenCleanersIsEnough_ThenOrderStatusIsCreated()
+    {
+        // given
+        var cleaners = new List<Cleaner>
+        {
+            new Cleaner()
+            {
+                Id = 11,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com1",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.FullTime,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            },
+            new Cleaner()
+            {
+                Id = 13,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com2",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.ShiftWork,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            }
+        };
+        var order = new OrderBusinessModel
+        {
+            Client = new() { Id = 11 },
+            CleaningObject = new() { Id = 56 },
+            StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 } },
+            Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } }
+        };
+
+        decimal expectedPrice = 110;
+        var expectedCleanersCount = 2;
+        var expectedEndTime = new DateTime(2022, 8, 1, 18, 00, 00);
+        var expectedStatus = Status.Created;
+
+        _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).Returns(cleaners);
+
+        // when
+        _sut.AddOrder(order);
+
+        // then
+        _mockOrdersRepository.Verify(o => o.CreateOrder(
+            It.Is<Order>(
+                i => i.Price == expectedPrice
+                && i.CleanersBand.Count == expectedCleanersCount
+                && i.Status == expectedStatus
+                && i.EndTime == expectedEndTime)),
+            Times.Once);
+        _mockCleanersService.Verify(c => c.GetFreeCleanersForOrder(order), Times.Once);
+    }
+
+    [Fact]
+    public void AddOrderTest_WhenCleanersIsNotEnough_ThenOrderStatusIsModeration()
+    {
+        // given
+        var cleaners = new List<Cleaner>
+        {
+            new Cleaner()
+            {
+                Id = 11,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Password = "12345678",
+                Email = "AdamSmith@gmail.com1",
+                Phone = "85559997264",
+                BirthDate = DateTime.Today,
+                Schedule = Schedule.FullTime,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            }
+        };
+        var order = new OrderBusinessModel
+        {
+            Client = new() { Id = 11 },
+            CleaningObject = new() { Id = 56 },
+            StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 } },
+            Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } }
+        };
+
+        decimal expectedPrice = 110;
+        var expectedCleanersCount = 1;
+        var expectedEndTime = new DateTime(2022, 8, 1, 18, 00, 00);
+        var expectedStatus = Status.Moderation;
+
+        _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).Returns(cleaners);
+
+        // when
+        _sut.AddOrder(order);
+
+        // then
+        _mockOrdersRepository.Verify(o => o.CreateOrder(
+            It.Is<Order>(
+                i => i.Price == expectedPrice
+                && i.CleanersBand.Count == expectedCleanersCount
+                && i.Status == expectedStatus
+                && i.EndTime == expectedEndTime)),
+            Times.Once);
+        _mockCleanersService.Verify(c => c.GetFreeCleanersForOrder(order), Times.Once);
+        _mockEmailSender.Verify(e => e.SendEmail(It.IsAny<int>()), Times.Once);
     }
 }
