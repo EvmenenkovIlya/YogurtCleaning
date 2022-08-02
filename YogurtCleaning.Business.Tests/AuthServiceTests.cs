@@ -43,7 +43,7 @@ public class AuthServicesTests
         var claim = _sut.GetUserForLogin(adminExpected.Email, adminPassword);
         //then
 
-        Assert.True(claim.Role == Role.Admin.ToString());
+        Assert.True(claim.Role == Role.Admin);
         Assert.True(claim.Email == adminExpected.Email);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Never);
@@ -72,7 +72,7 @@ public class AuthServicesTests
         var claim = _sut.GetUserForLogin(clientExpected.Email, clientPassword);
 
         //then
-        Assert.True(claim.Role == Role.Client.ToString());
+        Assert.True(claim.Role == Role.Client);
         Assert.True(claim.Email == clientExpected.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
@@ -100,7 +100,7 @@ public class AuthServicesTests
         var claim = _sut.GetUserForLogin(cleanersExpected.Email, passwordCleanersExpected);
 
         //then
-        Assert.True(claim.Role == Role.Cleaner.ToString());
+        Assert.True(claim.Role == Role.Cleaner);
         Assert.True(claim.Email == cleanersExpected.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
@@ -181,7 +181,7 @@ public class AuthServicesTests
         var model = new UserValues()
         {
             Email = "ada@gmail.com",
-            Role = "Client"
+            Role = Role.Client
         };
 
         //when
@@ -201,23 +201,7 @@ public class AuthServicesTests
         var model = new UserValues()
         {
             Email = null,
-            Role = "Client"
-        };
-
-        //when, then
-        Assert.Throws<DataException>(() => _sut.GetToken(model));
-
-    }
-
-    [Fact]
-    public void GetToken_RoleEmpty_ThrowDataException()
-    {
-        Setup();
-        //given
-        var model = new UserValues()
-        {
-            Email = "aa@gmail.com",
-            Role = null
+            Role = Role.Client
         };
 
         //when, then

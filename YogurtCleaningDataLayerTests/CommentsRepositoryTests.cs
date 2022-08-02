@@ -68,7 +68,7 @@ public class CommentsRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteComment(comment.Id);
+        sut.DeleteComment(comment);
 
         //then
         var actual = sut.GetCommentById(comment.Id);

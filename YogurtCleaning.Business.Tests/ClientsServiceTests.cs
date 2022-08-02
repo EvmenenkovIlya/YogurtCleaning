@@ -13,7 +13,7 @@ public class ClientsServiceFacts
 
     private UserValues userValue;
 
-    private void Setup()
+    public ClientsServiceFacts()
     {
         _clientsRepositoryMock = new Mock<IClientsRepository>();
         _sut = new ClientsService(_clientsRepositoryMock.Object);
@@ -23,7 +23,6 @@ public class ClientsServiceFacts
     public void CreateClient_WhenValidRequestPassed_ClientAdded()
     {
         //given
-        Setup();
         _clientsRepositoryMock.Setup(c => c.CreateClient(It.IsAny<Client>()))
              .Returns(1);
         var expectedId = 1;
@@ -51,7 +50,6 @@ public class ClientsServiceFacts
     public void CreateClient_WhenNotUniqueEmail_ThrowDataException()
     {
         //given
-        Setup();
         var clients = new List<Client>
         {
             new Client()
@@ -104,7 +102,6 @@ public class ClientsServiceFacts
     public void GetAllClients_WhenValidRequestPassed_ClientsReceived()
     {
         //given
-        Setup();
         var clients = new List<Client>
         {
             new Client()
@@ -137,7 +134,7 @@ public class ClientsServiceFacts
             }
         };
         _clientsRepositoryMock.Setup(o => o.GetAllClients()).Returns(clients);
-        userValue = new UserValues() {Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() {Email = "AdamSmith@gmail.com1", Role = Role.Admin };
 
         //when
         var actual = _sut.GetAllClients();
@@ -152,7 +149,6 @@ public class ClientsServiceFacts
     public void GetClient_WhenCurrentUserIsAdmin_ClientReceived()
     {
         //given
-        Setup();
         var clientInDb = new Client()
         {
             Id = 1,
@@ -164,7 +160,7 @@ public class ClientsServiceFacts
             BirthDate = DateTime.Today
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
 
         //when
@@ -178,7 +174,6 @@ public class ClientsServiceFacts
     public void GetClient_WhenIdNotInBase_GetEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 2;
 
         var clientInDb = new Client()
@@ -187,7 +182,7 @@ public class ClientsServiceFacts
             FirstName = "Adam",
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
 
         //when
@@ -200,7 +195,6 @@ public class ClientsServiceFacts
     public void GetClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
         var clientInDb = new Client()
         {
@@ -212,7 +206,7 @@ public class ClientsServiceFacts
             Phone = "5559997264",
             BirthDate = DateTime.Today
         };
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Client" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
 
         //when
@@ -225,7 +219,6 @@ public class ClientsServiceFacts
     public void GetCommentsByClient_WhenClentGetOwnComments_CommentsReceived()
     {
         //given
-        Setup();
         var clientInDb = new Client()
         {
 
@@ -248,7 +241,7 @@ public class ClientsServiceFacts
                     }
                 }
         };
-        userValue = new UserValues() { Email = clientInDb.Email, Role = "Client" };
+        userValue = new UserValues() { Email = clientInDb.Email, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
         _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
@@ -271,11 +264,10 @@ public class ClientsServiceFacts
     public void GetCommentsByClient_WhenClientGetSomeoneElsesComments_ThrowBadRequestException()
     {
         //given
-        Setup();
         var clientInDb = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
         _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
@@ -289,7 +281,6 @@ public class ClientsServiceFacts
     public void GetCommentsByClientId_WhenAdminGetsCommentsAndClientIsNotInDb_ThrowBadRequestException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
         var clientInDb = new Client()
         {
@@ -308,7 +299,7 @@ public class ClientsServiceFacts
             }
 
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _clientsRepositoryMock.Setup(o => o.GetAllCommentsByClient(clientInDb.Id)).Returns(clientInDb.Comments);
         //when
@@ -321,7 +312,6 @@ public class ClientsServiceFacts
     public void GetOrdersByClientId_WhenClentGetsOwnOrders_OrdersReceived()
     {
         //given
-        Setup();
         var clientInDb = new Client()
         {
             Id = 1,
@@ -343,7 +333,7 @@ public class ClientsServiceFacts
                 }
             }
         };
-        userValue = new UserValues() { Email = clientInDb.Email, Role = "Client" };
+        userValue = new UserValues() { Email = clientInDb.Email, Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).Returns(clientInDb);
         _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
 
@@ -364,11 +354,10 @@ public class ClientsServiceFacts
     public void GetOrdersByClientId_WhenClientsTryToGetSomeoneElsesOrders_ThrowBadRequestException()
     {
         //given
-        Setup();
         var clientInDb = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
         //when
@@ -381,7 +370,6 @@ public class ClientsServiceFacts
     public void GetOrdersByClientId_AdminGetsOrderssWhenClientNotInDb_ThrowBadRequestException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
         var clientInDb = new Client()
         {
@@ -395,7 +383,7 @@ public class ClientsServiceFacts
                 },
             }
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _clientsRepositoryMock.Setup(o => o.GetAllOrdersByClient(clientInDb.Id)).Returns(clientInDb.Orders);
         //when
@@ -408,7 +396,6 @@ public class ClientsServiceFacts
     public void UpdateClient_WhenClientUpdatesProperties_ChangesProperties()
     {
         //given
-        Setup();
         var client = new Client()
         {
             Id = 1,
@@ -426,7 +413,7 @@ public class ClientsServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = client.Email, Role = "Client" }; ;
+        userValue = new UserValues() { Email = client.Email, Role = Role.Client }; ;
         _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).Returns(client);
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
@@ -449,7 +436,6 @@ public class ClientsServiceFacts
     public void UpdateClient_WhenEmptyClientRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var client = new Client();
         var testEmail = "FakeClient@gmail.ru";
 
@@ -460,7 +446,7 @@ public class ClientsServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10)
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
@@ -474,7 +460,6 @@ public class ClientsServiceFacts
     public void UpdateClient_ClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var testEmail = "FakeClient@gmail.ru";
 
         var client = new Client()
@@ -495,7 +480,7 @@ public class ClientsServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).Returns(client);
         _clientsRepositoryMock.Setup(o => o.UpdateClient(newClientModel));
 
@@ -509,7 +494,6 @@ public class ClientsServiceFacts
     public void DeleteClient_WhenValidRequestPassed_DeleteClient()
     {
         //given
-        Setup();
         var expectedClient = new Client()
         {
             Id = 1,
@@ -523,26 +507,24 @@ public class ClientsServiceFacts
         };
 
         _clientsRepositoryMock.Setup(o => o.GetClient(expectedClient.Id)).Returns(expectedClient);
-        _clientsRepositoryMock.Setup(o => o.DeleteClient(expectedClient.Id));
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Client", Id = 1 };
+        _clientsRepositoryMock.Setup(o => o.DeleteClient(expectedClient));
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Client, Id = 1 };
 
         //when
         _sut.DeleteClient(expectedClient.Id, userValue);
 
         //then
-        _clientsRepositoryMock.Verify(c => c.DeleteClient(expectedClient.Id), Times.Once);
+        _clientsRepositoryMock.Verify(c => c.DeleteClient(expectedClient), Times.Once);
     }
 
     [Fact]
     public void DeleteClient_EmptyClientRequest_ThrowEntityNotFoundException()
     {
         //given
-        Setup();
         var testId = 1;
         var client = new Client();
         var testEmail = "FakeClient@gmail.ru";
-        userValue = new UserValues() { Email = testEmail, Role = "Client" };
-        _clientsRepositoryMock.Setup(o => o.DeleteClient(testId));
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
 
         //when
 
@@ -554,7 +536,6 @@ public class ClientsServiceFacts
     public void DeleteClient_WhenClientGetSomeoneElsesProfile_ThrowAccessException()
     {
         //given
-        Setup();
         var clientFirst = new Client()
         {
             Id = 1,
@@ -579,7 +560,7 @@ public class ClientsServiceFacts
             IsDeleted = false
 
         };
-        userValue = new UserValues() { Email = clientFirst.Email, Role = "Client" };
+        userValue = new UserValues() { Email = clientFirst.Email, Role = Role.Client };
         _clientsRepositoryMock.Setup(o => o.GetClient(clientSecond.Id)).Returns(clientSecond);
 
         //when

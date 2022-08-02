@@ -6,6 +6,6 @@ public interface ICommentsRepository
 {
     List<Comment> GetAllComments();
     int AddComment(Comment comment);
-    void DeleteComment(int id);
+    void DeleteComment(Comment comment);
     Comment? GetCommentById(int id);
 }

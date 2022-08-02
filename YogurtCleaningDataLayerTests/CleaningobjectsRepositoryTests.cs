@@ -81,7 +81,7 @@ public class CleaningObjectsRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteCleaningObject(cleaningObject.Id);
+        sut.DeleteCleaningObject(cleaningObject);
 
         //then
         var actual = sut.GetCleaningObject(cleaningObject.Id);

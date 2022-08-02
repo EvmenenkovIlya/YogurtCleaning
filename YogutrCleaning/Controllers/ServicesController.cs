@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
@@ -75,7 +76,8 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteService(int id)
     {
-        _servicesRepository.DeleteService(id);
+        UserValues userValues = this.GetClaimsValue();
+        _servicesService.DeleteService(id, userValues);
         return Ok();
     }
 }

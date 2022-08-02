@@ -10,10 +10,9 @@ public class CleanersServiceFacts
 {
     private CleanersService _sut;
     private Mock<ICleanersRepository> _cleanersRepositoryMock;
-
     private UserValues userValue;
 
-    private void Setup()
+    public CleanersServiceFacts()
     {
         _cleanersRepositoryMock = new Mock<ICleanersRepository>();
         _sut = new CleanersService(_cleanersRepositoryMock.Object);
@@ -22,8 +21,7 @@ public class CleanersServiceFacts
     [Fact]
     public void CreateCleaner_WhenValidRequestPassed_CleanerAdded()
     {
-        //given
-        Setup();
+        //given        
         _cleanersRepositoryMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
              .Returns(1);
         var expectedId = 1;
@@ -49,8 +47,7 @@ public class CleanersServiceFacts
     [Fact]
     public void CreateCleaner_WhenNotUniqueEmail_ThrowUniquenessException()
     {
-        //given
-        Setup();
+        //given       
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -102,8 +99,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetAllCleaners_WhenValidRequestPassed_CleanersReceived()
     {
-        //given
-        Setup();
+        //given      
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -136,7 +132,7 @@ public class CleanersServiceFacts
             }
         };
         _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
 
         //when
         var actual = _sut.GetAllCleaners();
@@ -150,8 +146,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCleaner_WhenCurrentUserIsAdmin_CleanerReceived()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -163,7 +158,7 @@ public class CleanersServiceFacts
             BirthDate = DateTime.Today
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
 
         //when
@@ -176,8 +171,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCleaner_WhenIdNotInBase_GetEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var testId = 2;
 
         var cleanerInDb = new Cleaner()
@@ -186,7 +180,7 @@ public class CleanersServiceFacts
             FirstName = "Adam",
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
 
         //when
@@ -198,8 +192,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -211,7 +204,7 @@ public class CleanersServiceFacts
             Phone = "5559997264",
             BirthDate = DateTime.Today
         };
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Cleaner" };
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
 
         //when
@@ -223,8 +216,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleaner_WhenClentGetOwnComments_CommentsReceived()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner()
         {
 
@@ -247,7 +239,7 @@ public class CleanersServiceFacts
                     }
                 }
         };
-        userValue = new UserValues() { Email = cleanerInDb.Email, Role = "Cleaner" };
+        userValue = new UserValues() { Email = cleanerInDb.Email, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
         _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
@@ -269,12 +261,11 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleaner_WhenCleanerGetSomeoneElsesComments_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
         _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
@@ -287,8 +278,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleanerId_AdminGetsCommentsWhenCleanerNotInDb_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -307,7 +297,7 @@ public class CleanersServiceFacts
             }
 
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
         //when
@@ -319,8 +309,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetOrdersByCleanerId_WhenClentGetsOwnOrders_OrdersReceived()
     {
-        //given
-        Setup();
+        //given       
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -342,7 +331,7 @@ public class CleanersServiceFacts
                 }
             }
         };
-        userValue = new UserValues() { Email = cleanerInDb.Email, Role = "Cleaner" };
+        userValue = new UserValues() { Email = cleanerInDb.Email, Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
         _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
 
@@ -362,12 +351,11 @@ public class CleanersServiceFacts
     [Fact]
     public void GetOrdersByCleanerId_WhenCleanersTryToGetSomeoneElsesOrders_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
         //when
@@ -379,8 +367,7 @@ public class CleanersServiceFacts
     [Fact]
     public void GetCommentsByCleanerId_AdminGetsOrderssWhenCleanerNotInDb_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -394,7 +381,7 @@ public class CleanersServiceFacts
                 },
             }
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
         _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
         //when
@@ -406,8 +393,7 @@ public class CleanersServiceFacts
     [Fact]
     public void UpdateCleaner_WhenCleanerUpdatesProperties_ChangesProperties()
     {
-        //given
-        Setup();
+        //given       
         var cleaner = new Cleaner()
         {
             Id = 1,
@@ -425,7 +411,7 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = cleaner.Email, Role = "Cleaner" }; ;
+        userValue = new UserValues() { Email = cleaner.Email, Role = Role.Cleaner }; ;
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).Returns(cleaner);
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
@@ -444,8 +430,7 @@ public class CleanersServiceFacts
     [Fact]
     public void UpdateCleaner_WhenEmptyCleanerRequest_ThrowEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -456,7 +441,7 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10)
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
@@ -469,8 +454,7 @@ public class CleanersServiceFacts
     [Fact]
     public void UpdateCleaner_CleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
 
         var cleaner = new Cleaner()
@@ -491,7 +475,7 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).Returns(cleaner);
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
@@ -504,8 +488,7 @@ public class CleanersServiceFacts
     [Fact]
     public void DeleteCleaner_WhenValidRequestPassed_DeleteCleaner()
     {
-        //given
-        Setup();
+        //given        
         var expectedCleaner = new Cleaner()
         {
             Id = 1,
@@ -519,27 +502,25 @@ public class CleanersServiceFacts
         };
 
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(expectedCleaner.Id)).Returns(expectedCleaner);
-        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(expectedCleaner.Id));
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Cleaner", Id = 1 };
+        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(expectedCleaner));
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Cleaner, Id = 1 };
 
         //when
         _sut.DeleteCleaner(expectedCleaner.Id, userValue);
 
         //then
-        _cleanersRepositoryMock.Verify(c => c.DeleteCleaner(expectedCleaner.Id), Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.DeleteCleaner(expectedCleaner), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(It.IsAny<int>()), Times.Once);
     }
 
     [Fact]
     public void DeleteCleaner_EmptyCleanerRequest_ThrowEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var testId = 1;
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
-        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(testId));
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };       
 
         //when
 
@@ -550,8 +531,7 @@ public class CleanersServiceFacts
     [Fact]
     public void DeleteCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerFirst = new Cleaner()
         {
             Id = 1,
@@ -576,7 +556,7 @@ public class CleanersServiceFacts
             IsDeleted = false
 
         };
-        userValue = new UserValues() { Email = cleanerFirst.Email, Role = "Cleaner" };
+        userValue = new UserValues() { Email = cleanerFirst.Email, Role = Role.Cleaner };
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerSecond.Id)).Returns(cleanerSecond);
 
         //when

@@ -31,9 +31,8 @@ public class ClientsRepository : IClientsRepository
         _context.SaveChanges();
     }
 
-    public void DeleteClient(int clientId)
+    public void DeleteClient(Client client)
     {
-        var client = GetClient(clientId);
         client.IsDeleted = true;
         _context.SaveChanges();
     }

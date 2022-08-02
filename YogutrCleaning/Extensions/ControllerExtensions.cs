@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Business;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Extensions;
 
@@ -15,7 +16,7 @@ public static class ControllerExtensions
         {
             var Claims = controller.User.Claims.ToList();
             userValues.Email = Claims[0].Value;
-            userValues.Role = Claims[1].Value;
+            userValues.Role = (Role) Enum.Parse(typeof(Role), Claims[1].Value);
             userValues.Id = Convert.ToInt32(Claims[2].Value);
         }       
         return userValues;

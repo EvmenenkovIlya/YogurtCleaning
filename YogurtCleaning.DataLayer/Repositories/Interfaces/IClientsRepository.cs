@@ -5,7 +5,7 @@ namespace YogurtCleaning.DataLayer.Repositories;
 public interface IClientsRepository
 {
     int CreateClient(Client client);
-    void DeleteClient(int clientId);
+    void DeleteClient(Client client);
     List<Client> GetAllClients();
     List<Comment> GetAllCommentsByClient(int clientId);
     List<Order> GetAllOrdersByClient(int clientId);
