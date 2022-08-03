@@ -36,15 +36,9 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<CleaningObjectResponse> GetCleaningObject(int id)
     {
-        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
-        if (cleaningObject == null)
-        {
-            return NotFound();
-        }
-        else
-        {
-            return Ok(cleaningObject);
-        }
+        _userValues = this.GetClaimsValue();
+        var cleaningObject = _cleaningObjectsService.GetCleaningObject(id, _userValues);
+        return Ok(_mapper.Map<CleaningObjectResponse>(cleaningObject));
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -75,10 +69,10 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCleaningObject([FromBody] CleaningObjectRequest model)
+    public async Task<ActionResult<int>> AddCleaningObject([FromBody] CleaningObjectRequest model)
     {
         _userValues = this.GetClaimsValue();
-        int id = _cleaningObjectsService.CreateCleaningObject(_mapper.Map<CleaningObject>(model), _userValues);
+        int id = await _cleaningObjectsService.CreateCleaningObject(_mapper.Map<CleaningObject>(model), _userValues);
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
@@ -89,7 +83,8 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteCleaningObject(int id)
     {
-        _cleaningObjectsRepository.DeleteCleaningObject(id);
+        _userValues = this.GetClaimsValue();
+        _cleaningObjectsService.DeleteCleaningObject(id, _userValues);
         return NoContent();
     }
 }

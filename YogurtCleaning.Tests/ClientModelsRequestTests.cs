@@ -19,7 +19,7 @@ public class ClientModelsRequestTests
         //then
         Assert.IsFalse(isValid);
         var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
     [TestCaseSource(typeof(ClientUpdateRequestTestSource))]
@@ -34,7 +34,7 @@ public class ClientModelsRequestTests
         //then
         Assert.IsFalse(isValid);
         var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
     [TestCase]
@@ -60,7 +60,7 @@ public class ClientModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
@@ -84,7 +84,7 @@ public class ClientModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
@@ -109,7 +109,7 @@ public class ClientModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());
+        Assert.That(validationResults.Count(), Is.EqualTo(0));
     }
 
     [TestCase]
@@ -130,6 +130,6 @@ public class ClientModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());   
+        Assert.That(validationResults.Count(), Is.EqualTo(0));   
     }
 }

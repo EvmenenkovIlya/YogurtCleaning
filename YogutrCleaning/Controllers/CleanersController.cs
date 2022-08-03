@@ -32,10 +32,10 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CleanerResponse> GetCleaner(int id)
+    public async Task<ActionResult<CleanerResponse>> GetCleaner(int id)
     {
         userValues = this.GetClaimsValue();
-        var cleaner = _cleanersService.GetCleaner(id, userValues);
+        var cleaner = await _cleanersService.GetCleaner(id, userValues);
         return Ok(_mapper.Map<CleanerResponse>(cleaner));
     }
 
@@ -44,9 +44,9 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(List<CleanerResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<CleanerResponse>> GetAllCleaners()
+    public async Task<ActionResult<List<CleanerResponse>>> GetAllCleaners()
     {
-        var cleaners = _cleanersService.GetAllCleaners();
+        var cleaners = await _cleanersService.GetAllCleaners();
         return Ok(_mapper.Map<List<CleanerResponse>>(cleaners));
     }
 
@@ -55,10 +55,10 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateCleaner([FromBody] CleanerUpdateRequest cleaner, int id)
+    public async Task<ActionResult> UpdateCleaner([FromBody] CleanerUpdateRequest cleaner, int id)
     {
         userValues = this.GetClaimsValue();
-        _cleanersService.UpdateCleaner(_mapper.Map<Cleaner>(cleaner), id, userValues);
+        await _cleanersService.UpdateCleaner(_mapper.Map<Cleaner>(cleaner), id, userValues);
         return NoContent();
     }
 
@@ -66,9 +66,9 @@ public class CleanersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCleaner([FromBody] CleanerRegisterRequest cleaner)
+    public async Task<ActionResult<int>> AddCleaner([FromBody] CleanerRegisterRequest cleaner)
     {
-        int id = _cleanersService.CreateCleaner(_mapper.Map<Cleaner>(cleaner));
+        int id = await _cleanersService.CreateCleaner(_mapper.Map<Cleaner>(cleaner));
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
@@ -77,10 +77,10 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult DeleteCleaner(int id)
+    public async Task<ActionResult> DeleteCleaner(int id)
     {
         userValues = this.GetClaimsValue();
-        _cleanersService.DeleteCleaner(id, userValues);
+        await _cleanersService.DeleteCleaner(id, userValues);
         return NoContent();
     }
 
@@ -89,10 +89,10 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<CommentResponse>> GetAllCommentsByCleaner (int id)
+    public async Task<ActionResult<List<CommentResponse>>> GetAllCommentsByCleaner (int id)
     {
         userValues = this.GetClaimsValue();
-        var comments = _cleanersService.GetCommentsByCleaner(id, userValues);
+        var comments = await _cleanersService.GetCommentsByCleaner(id, userValues);
         return Ok(_mapper.Map<List<CommentResponse>>(comments));
     }
 
@@ -101,10 +101,10 @@ public class CleanersController : ControllerBase
     [ProducesResponseType(typeof(List<OrderResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<OrderResponse>> GetAllOrdersByCleaner(int id)
+    public async Task<ActionResult<List<OrderResponse>>> GetAllOrdersByCleaner(int id)
     {
         userValues = this.GetClaimsValue();
-        var orders = _cleanersService.GetOrdersByCleaner(id, userValues);
+        var orders = await _cleanersService.GetOrdersByCleaner(id, userValues);
         return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
 }

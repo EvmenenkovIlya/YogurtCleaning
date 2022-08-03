@@ -4,13 +4,13 @@ namespace YogurtCleaning.DataLayer.Repositories;
 
 public interface IClientsRepository
 {
-    int CreateClient(Client client);
-    void DeleteClient(int clientId);
-    List<Client> GetAllClients();
-    List<Comment> GetAllCommentsByClient(int clientId);
-    List<Order> GetAllOrdersByClient(int clientId);
-    Client? GetClient(int clientId);
-    void UpdateClient(Client client);
-    Client? GetClientByEmail(string email);
+    Task<int> CreateClient(Client client);
+    Task DeleteClient(Client client);
+    Task<List<Client>> GetAllClients();
+    Task<List<Comment>> GetAllCommentsByClient(int clientId);
+    Task<List<Order>> GetAllOrdersByClient(int clientId);
+    Task<Client?> GetClient(int clientId);
+    Task UpdateClient(Client client);
+    Task<Client?> GetClientByEmail(string email);
     Order? GetLastOrderForCleaningObject(int clientId, int cleaningObjectId);
 }

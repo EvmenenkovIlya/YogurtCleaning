@@ -1,6 +1,5 @@
 ﻿using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
-using System.Security.Claims;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Business.Exceptions;
 
@@ -15,9 +14,9 @@ public class ClientsService : IClientsService
         _clientsRepository = clientsRepository;
     }
 
-    public Client? GetClient(int id, UserValues userValues)
+    public async Task<Client?> GetClient(int id, UserValues userValues)
     {
-        var client = _clientsRepository.GetClient(id);
+        var client = await _clientsRepository.GetClient(id);
 
         if (client == null)
         {
@@ -27,37 +26,36 @@ public class ClientsService : IClientsService
         return client;
     }
 
-    public List<Client> GetAllClients()
+    public async Task<List<Client>> GetAllClients()
     {
-            var clients = _clientsRepository.GetAllClients();
+            var clients = await _clientsRepository.GetAllClients();
             return clients;
     }
 
-    public void DeleteClient(int id, UserValues userValues)
+    public async Task DeleteClient(int id, UserValues userValues)
     {
-        var client = _clientsRepository.GetClient(id);
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        AuthorizeEnitiyAccess(userValues, client);
-        _clientsRepository.DeleteClient(id);
+        var client = await _clientsRepository.GetClient(id);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
+        AuthorizeEnitiyAccess(userValues, client!);
+        await _clientsRepository.DeleteClient(client!);
     }
 
-    public void UpdateClient(Client modelToUpdate, int id, UserValues userValues)
+    public async Task UpdateClient(Client modelToUpdate, int id, UserValues userValues)
     {
-        Client client = _clientsRepository.GetClient(id);
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        AuthorizeEnitiyAccess(userValues, client);
+        var client = await _clientsRepository.GetClient(id);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
+        AuthorizeEnitiyAccess(userValues, client!);
 
-        client.FirstName = modelToUpdate.FirstName;
+        client!.FirstName = modelToUpdate.FirstName;
         client.LastName = modelToUpdate.LastName;
         client.Phone = modelToUpdate.Phone;
         client.BirthDate = modelToUpdate.BirthDate;
-        _clientsRepository.UpdateClient(client);
-
+        await _clientsRepository.UpdateClient(client);
     }
 
-    public int CreateClient(Client client)
+    public async Task<int> CreateClient(Client client)
     {
-        var isChecked = CheckEmailForUniqueness(client.Email);
+        var isChecked = await CheckEmailForUniqueness(client.Email);
 
         if (!isChecked)
         {
@@ -65,42 +63,35 @@ public class ClientsService : IClientsService
         }
         else
         client.Password = PasswordHash.HashPassword(client.Password);
-        return _clientsRepository.CreateClient(client);
+        return await _clientsRepository.CreateClient(client);
 
     }
-    public List<Comment> GetCommentsByClient(int id, UserValues userValues)
-    {
-        var client = _clientsRepository.GetClient(id);
 
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
-        AuthorizeEnitiyAccess(userValues, client);
-        return _clientsRepository.GetAllCommentsByClient(id);
+    public async Task<List<Comment>> GetCommentsByClient(int id, UserValues userValues)
+    {
+        var client = await _clientsRepository.GetClient(id);
+
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
+        AuthorizeEnitiyAccess(userValues, client!);
+        return await _clientsRepository.GetAllCommentsByClient(id);
     }
 
-    public List<Order> GetOrdersByClient(int id, UserValues userValues)
+    public async Task<List<Order>> GetOrdersByClient(int id, UserValues userValues)
     {
-        var client = _clientsRepository.GetClient(id);
-        CheckThatUserNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
-        AuthorizeEnitiyAccess(userValues, client);        
-        return _clientsRepository.GetAllOrdersByClient(id);
+        var client = await _clientsRepository.GetClient(id);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
+        AuthorizeEnitiyAccess(userValues, client!);        
+        return await _clientsRepository.GetAllOrdersByClient(id);
             
     }
 
-    private bool CheckEmailForUniqueness(string email) => _clientsRepository.GetClientByEmail(email) == null;
+    private async Task<bool> CheckEmailForUniqueness(string email) => await _clientsRepository.GetClientByEmail(email) == null;
 
     private void AuthorizeEnitiyAccess(UserValues userValues, Client client)
     {
-        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }
-    }
-
-    private void CheckThatUserNotNull(Client client, string errorMesage)
-    {
-        if (client == null)
-        {
-            throw new BadRequestException(errorMesage);
-        }
-    }
+    }  
 }

@@ -20,7 +20,7 @@ namespace YogurtCleaning.Tests
             //then
             Assert.IsFalse(isValid);
             var actualMessage = validationResults[0].ErrorMessage;
-            Assert.AreEqual(errorMessage, actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(errorMessage));
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace YogurtCleaning.Tests
             for (int i = 0; i < expectedMessages.Count(); i++)
             {
                 var actualMessage = validationResults[i].ErrorMessage;
-                Assert.AreEqual(expectedMessages[i], actualMessage);
+                Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
             }
         }
 
@@ -70,7 +70,7 @@ namespace YogurtCleaning.Tests
 
             //then
             Assert.IsTrue(isValid);
-            Assert.AreEqual(0, validationResults.Count());
+            Assert.That(validationResults.Count(), Is.EqualTo(0));
         }
     }
 }

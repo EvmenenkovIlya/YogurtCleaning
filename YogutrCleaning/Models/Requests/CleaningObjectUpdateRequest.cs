@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 
 namespace YogurtCleaning.Models
@@ -18,5 +19,6 @@ namespace YogurtCleaning.Models
         [Required(ErrorMessage = ApiErrorMessages.AddressIsRequired)]
         [MaxLength(256, ErrorMessage = ApiErrorMessages.AddressMaxLength)]
         public string Address { get; set; }
+        public DistrictEnum District { get; set; }
     }
 }

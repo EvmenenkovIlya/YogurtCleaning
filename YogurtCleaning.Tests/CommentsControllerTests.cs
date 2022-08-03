@@ -29,10 +29,11 @@ public class CommentsControllerTests
     }
 
     [Test]
-    public void AddCommentByClient_WhenValidRequestPassed_ThenCreatedResultRecived()
+    public async Task AddCommentByClient_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
-        _mockCommentsService.Setup(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>())).Returns(1);
+        int expectedId = 1;
+        _mockCommentsService.Setup(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>())).ReturnsAsync(expectedId);
         var comment = new CommentRequest()
         {
             Summary = "ok",
@@ -41,21 +42,22 @@ public class CommentsControllerTests
         };
 
         // when
-        var actual = _sut.AddCommentByClient(comment);
+        var actual = await _sut.AddCommentByClient(comment);
 
         // then
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.True((int)actualResult.Value == 1);
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
         _mockCommentsService.Verify(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
     }
 
     [Test]
-    public void AddCommentByCleaner_WhenValidRequestPassed_ThenCreatedResultRecived()
+    public async Task AddCommentByCleaner_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
-        _mockCommentsService.Setup(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>())).Returns(1);
+        int expectedId = 1;
+        _mockCommentsService.Setup(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>())).ReturnsAsync(expectedId);
         var comment = new CommentRequest()
         {
             Summary = "ok",
@@ -64,15 +66,13 @@ public class CommentsControllerTests
         };
 
         // when
-        var actual = _sut.AddCommentByCleaner(comment);
+        var actual = await _sut.AddCommentByCleaner(comment);
 
         // then
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.True((int)actualResult.Value == 1);
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
         _mockCommentsService.Verify(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
     }
 }
-
-    

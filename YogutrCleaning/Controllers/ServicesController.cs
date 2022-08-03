@@ -44,10 +44,10 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<ServiceResponse>> GetAllServices()
+    public async Task<ActionResult<List<ServiceResponse>>> GetAllServices()
     {
-        var result = _mapper.Map<List<ServiceResponse>>(_servicesRepository.GetAllServices());
-        return Ok(result);
+        var result = await _servicesService.GetAllServices();
+        return Ok(_mapper.Map<List<ServiceResponse>>(result));
     }
 
     [HttpPut("{id}")]
@@ -68,7 +68,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
-        var result = _servicesRepository.AddService(_mapper.Map<Service>(service));
+        var result = _servicesService.AddService(_mapper.Map<Service>(service));
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
@@ -78,7 +78,8 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteService(int id)
     {
-        _servicesRepository.DeleteService(id);
+        UserValues userValues = this.GetClaimsValue();
+        _servicesService.DeleteService(id, userValues);
         return Ok();
     }
 }

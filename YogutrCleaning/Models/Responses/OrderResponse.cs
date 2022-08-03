@@ -5,7 +5,8 @@ namespace YogurtCleaning.Models;
 public class OrderResponse
 {
     public int Id { get; set; }
-    public int CleaningObjectId { get; set; }
+    public ClientResponse Client { get; set; }
+    public CleaningObjectResponse CleaningObject { get; set; }
     public Status Status { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

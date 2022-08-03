@@ -15,7 +15,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void AddClient_WhenClientAdded_ThenCommentIdMoreThenZero()
+    public async Task AddClient_WhenClientAdded_ThenCommentIdMoreThenZero()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new ClientsRepository(context);
@@ -31,7 +31,7 @@ public class ClientsRepositoryTests
         };
 
         // when
-        var actual = sut.CreateClient(client);
+        var actual = await sut.CreateClient(client);
 
         //then
         Assert.True(actual > 0);
@@ -39,7 +39,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void DeleteClient_WhenCorrectIdPassed_ThenSoftDeleteApplied()
+    public async Task DeleteClient_WhenCorrectIdPassed_ThenSoftDeleteApplied()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -59,16 +59,16 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteClient(client.Id);
+        await sut.DeleteClient(client);
 
         //then
-        var actual = sut.GetClient(client.Id);
+        var actual = await sut.GetClient(client.Id);
         Assert.True(actual.IsDeleted);
         context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void GetAllClients_WhenClientsExist_ThenGetClients()
+    public async Task GetAllClients_WhenClientsExist_ThenGetClients()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -101,16 +101,16 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllClients();
+        var result = await sut.GetAllClients();
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Client>));
+        Assert.Equal(typeof(List<Client>), result.GetType());
         Assert.Null(result[0].Comments);
         Assert.Null(result[1].Orders);
         Assert.Null(result[1].Addresses);
-        Assert.True(result[0].IsDeleted == false);
-        Assert.True(result[1].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
+        Assert.False(result[1].IsDeleted);
         Assert.NotNull(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
         Assert.Null(result.Find(x => x.FirstName == "Ilya"));
@@ -118,7 +118,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void GetAllClients_WhenClientIsDeleted_ThenClientDoesNotGet()
+    public async Task GetAllClients_WhenClientIsDeleted_ThenClientDoesNotGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -151,23 +151,23 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllClients();
+        var result = await sut.GetAllClients();
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Client>));
+        Assert.Equal(typeof(List<Client>), result.GetType());
         Assert.True(result.Count == 1);
         Assert.Null(result[0].Comments);
         Assert.Null(result[0].Orders);
         Assert.Null(result[0].Addresses);
-        Assert.True(result[0].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
         Assert.Null(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
         context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void GetAllCommentsByClient_WhenCommetsGet_ThenCommentsGet()
+    public async Task GetAllCommentsByClient_WhenCommetsGet_ThenCommentsGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -201,20 +201,20 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllCommentsByClient(client.Id);
+        var result = await sut.GetAllCommentsByClient(client.Id);
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Comment>));
-        Assert.True(result[0].IsDeleted == true);
-        Assert.True(result[1].IsDeleted == false);
+        Assert.Equal(typeof(List<Comment>), result.GetType());
+        Assert.True(result[0].IsDeleted);
+        Assert.False(result[1].IsDeleted);
         Assert.NotNull(result.Find(x => x.Rating == 5));
         Assert.NotNull(result.Find(x => x.Order.Id == 1));
         context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void UpdateClient_WhenClientUpdated_ThenClientDoesNotHaveOldProperty()
+    public async Task UpdateClient_WhenClientUpdated_ThenClientDoesNotHaveOldProperty()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -250,13 +250,13 @@ public class ClientsRepositoryTests
         client.LastName = "Pupkin";
 
         //when
-        sut.UpdateClient(client);
-        var result = sut.GetClient(client.Id);
+        await sut.UpdateClient(client);
+        var result = await sut.GetClient(client.Id);
 
         //then
-        Assert.False(result.FirstName == "Adam");
-        Assert.False(result.LastName == "Smith");
-        Assert.True(result.Email == "ccc@gmail.c");
+        Assert.NotEqual("Adam", result.FirstName);
+        Assert.NotEqual("Smith", result.LastName);
+        Assert.Equal("ccc@gmail.c", result.Email);
         context.Database.EnsureDeleted();
     }
 

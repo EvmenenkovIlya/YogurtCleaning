@@ -7,7 +7,6 @@ using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API.Tests;
@@ -15,24 +14,24 @@ namespace YogurtCleaning.API.Tests;
 public class BundlesControllerTests
 {
     private BundlesController _sut;
-    private Mock<ILogger<BundlesController>> _mockLogger;
     private Mock<IBundlesService> _mockBundlesService;
     private Mock<IMapper> _mockMapper;
 
     [SetUp]
     public void Setup()
-    {
-        _mockLogger = new Mock<ILogger<BundlesController>>();
+    {      
         _mockBundlesService = new Mock<IBundlesService>();
         _mockMapper = new Mock<IMapper>();
-        _sut = new BundlesController(_mockLogger.Object, _mockBundlesService.Object, _mockMapper.Object);
+        _sut = new BundlesController(_mockBundlesService.Object, _mockMapper.Object);
     }
 
     [Test]
-    public void AddBundle_WhenValidRequestPassed_ThenCreatedResultRecived()
+    public async Task AddBundle_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
-        _mockBundlesService.Setup(o => o.AddBundle(It.IsAny<Bundle>())).Returns(1);
+        int expectedId = 1;
+        _mockBundlesService.Setup(o => o.AddBundle(It.IsAny<Bundle>())).ReturnsAsync(expectedId);
+
         var bundle = new BundleRequest()
         {
             Name = "Super Bundle",
@@ -43,18 +42,18 @@ public class BundlesControllerTests
         };
 
         // when
-        var actual = _sut.AddBundle(bundle);
+        var actual = await _sut.AddBundle(bundle);
 
         // then
         var actualResult = actual.Result as CreatedResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
-        Assert.True((int)actualResult.Value == 1);
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId)); 
         _mockBundlesService.Verify(o => o.AddBundle(It.IsAny<Bundle>()), Times.Once);
     }
 
     [Test]
-    public void GetBundle_WhenCorrectIdPassed_ThenOkRecieved()
+    public async Task GetBundle_WhenCorrectIdPassed_ThenOkRecieved()
     {
         // given
         var expectedBundle = new Bundle()
@@ -64,29 +63,36 @@ public class BundlesControllerTests
             Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
-            Services = new List<Service>()
+            Services = new List<Service>() { new Service(), new Service()}
         };
-        _mockBundlesService.Setup(o => o.GetBundle(expectedBundle.Id)).Returns(expectedBundle);
+        _mockBundlesService.Setup(o => o.GetBundle(expectedBundle.Id)).ReturnsAsync(expectedBundle);
 
         // when
-        var actual = _sut.GetBundle(expectedBundle.Id);
+        var actual = await _sut.GetBundle(expectedBundle.Id);
 
         // then
         var actualResult = actual.Result as ObjectResult;
-
+        var bundleResponse = actualResult.Value as BundleResponse;
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(bundleResponse.Name, Is.EqualTo(expectedBundle.Name));
+            Assert.That(bundleResponse.Type, Is.EqualTo(expectedBundle.Type));
+            Assert.That(bundleResponse.Price, Is.EqualTo(expectedBundle.Price));
+            Assert.That(bundleResponse.Measure, Is.EqualTo(expectedBundle.Measure));
+            Assert.That(bundleResponse.Services.Count, Is.EqualTo(expectedBundle.Services.Count));
+        });
         _mockBundlesService.Verify(o => o.GetBundle(expectedBundle.Id), Times.Once);
-
     }
 
     [Test]
-    public void GetAllBundles_WhenCorrectRequestPassed_ThenOkRecieved()
+    public async Task GetAllBundles_WhenCorrectRequestPassed_ThenOkRecieved()
     {
         // given
         var expectedBundles = new List<BundleResponse>();
 
         // when
-        var actual = _sut.GetAllBundles();
+        var actual = await _sut.GetAllBundles();
 
 
         // then
@@ -96,7 +102,7 @@ public class BundlesControllerTests
     }
 
     [Test]
-    public void UpdateBundle_WhenCorrectRequestPassed_ThenNoContentRecieved()
+    public async Task UpdateBundle_WhenCorrectRequestPassed_ThenNoContentRecieved()
     {
         // given
         var bundle = new Bundle()
@@ -118,7 +124,7 @@ public class BundlesControllerTests
         _mockBundlesService.Setup(o => o.UpdateBundle(bundle, bundle.Id));
 
         // when
-        var actual = _sut.UpdateBundle(newProperty, bundle.Id);
+        var actual = await _sut.UpdateBundle(newProperty, bundle.Id);
 
         // then
         var actualResult = actual as NoContentResult;
@@ -126,7 +132,7 @@ public class BundlesControllerTests
     }
 
     [Test]
-    public void DeleteBundle_WhenCorrectRequestPassed_ThenOkRecieved()
+    public async Task DeleteBundle_WhenCorrectRequestPassed_ThenOkRecieved()
     {
         // given
         var bundle = new Bundle()
@@ -139,26 +145,26 @@ public class BundlesControllerTests
             Services = new List<Service>()
         };
 
-        _mockBundlesService.Setup(o => o.GetBundle(bundle.Id)).Returns(bundle);
+        _mockBundlesService.Setup(o => o.GetBundle(bundle.Id)).ReturnsAsync(bundle);
 
         // when
-        var actual = _sut.DeleteBundle(bundle.Id);
+        var actual = await _sut.DeleteBundle(bundle.Id);
 
         // then
         var actualResult = actual as NoContentResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _mockBundlesService.Verify(o => o.DeleteBundle(bundle.Id), Times.Once);
     }
 
     [Test]
-    public void GetAdditionalServicesForBundle_WhenValidRequestPassed_ThenOkResultRecived()
+    public async Task GetAdditionalServicesForBundle_WhenValidRequestPassed_ThenOkResultRecived()
     {
         // given 
-        var expectedServices = new List<ServiceResponse>();
         var bundle = new BundleResponse();
 
         // when 
-        var actual = _sut.GetAdditionalServices(bundle.Id);
+        var actual = await _sut.GetAdditionalServices(bundle.Id);
 
 
         // then 

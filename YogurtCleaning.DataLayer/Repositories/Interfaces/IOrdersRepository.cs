@@ -6,7 +6,7 @@ namespace YogurtCleaning.DataLayer.Repositories;
 public interface IOrdersRepository
 {
     int CreateOrder(Order order);
-    void DeleteOrder(int id);
+    void DeleteOrder(Order order);
     Order? GetOrder(int id);
     List<Order> GetAllOrders();
     void UpdateOrder(Order order);

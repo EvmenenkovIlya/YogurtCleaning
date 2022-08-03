@@ -54,14 +54,14 @@ public class ServicesRepositoryTests
         context.SaveChanges();
 
         // when 
-        sut.DeleteService(service.Id);
+        sut.DeleteService(service);
 
         //then 
         Assert.True(service.IsDeleted);
     }
 
     [Fact]
-    public void GetAllComments_WhenCommentsExist_ThenGetComments()
+    public async Task GetAllComments_WhenCommentsExist_ThenGetComments()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -78,14 +78,14 @@ public class ServicesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = sut.GetAllServices();
+        var result = await sut.GetAllServices();
 
         //then 
         Assert.Contains(service, result);
     }
 
     [Fact]
-    public void GetAllServices_WhenServiceIsDeleted_ThenServiceDoesNotGet()
+    public async Task GetAllServices_WhenServiceIsDeleted_ThenServiceDoesNotGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -102,7 +102,7 @@ public class ServicesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = sut.GetAllServices();
+        var result = await sut.GetAllServices();
 
         //then 
         Assert.DoesNotContain(service, result);
