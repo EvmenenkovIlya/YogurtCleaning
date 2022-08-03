@@ -27,7 +27,7 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
     }
 
     public CleaningObject? GetCleaningObject(int cleaningObjectId) => 
-        _context.CleaningObjects.FirstOrDefault(o => o.Id == cleaningObjectId);
+        _context.CleaningObjects.Include(x  => x.Client).Include(x => x.District).FirstOrDefault(o => o.Id == cleaningObjectId);
 
     public List<CleaningObject> GetAllCleaningObjects() => 
         _context.CleaningObjects.Where(o => o.IsDeleted == false).AsNoTracking().ToList();
