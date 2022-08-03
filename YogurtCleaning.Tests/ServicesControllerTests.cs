@@ -113,7 +113,6 @@ public class ServicesControllerTests
                 Unit = "Hour",
                 Duration = 1,
                 IsDeleted = false,
-                Orders = new List<Order>()
             },
             new Service()
             {
@@ -123,7 +122,6 @@ public class ServicesControllerTests
                 Unit = "Hour",
                 Duration = 2,
                 IsDeleted = false,
-                Orders = new List<Order>()
             },
             new Service()
             {
@@ -133,10 +131,9 @@ public class ServicesControllerTests
                 Unit = "Hour",
                 Duration = 3,
                 IsDeleted = false,
-                Orders = new List<Order>()
             }
         };
-        _mockServicesRepository.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
+        _mockServicesService.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
 
         // when
         var actual = await _sut.GetAllServices();
