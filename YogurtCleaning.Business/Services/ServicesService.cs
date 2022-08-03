@@ -35,4 +35,6 @@ public class ServicesService : IServicesService
         Validator.CheckThatObjectNotNull(service, ExceptionsErrorMessages.ServiceNotFound);
         _servicesRepository.DeleteService(service);
     }
+
+    public async Task<List<Service>> GetAllServices() => await _servicesRepository.GetAllServices();
 }

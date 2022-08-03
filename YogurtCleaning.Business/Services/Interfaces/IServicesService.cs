@@ -8,4 +8,5 @@ public interface IServicesService
     Service GetService(int id);
     int AddService(Service service);
     void DeleteService(int id, UserValues userValues);
+    Task<List<Service>> GetAllServices();
 }
