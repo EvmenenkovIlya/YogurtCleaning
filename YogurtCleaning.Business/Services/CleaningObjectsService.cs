@@ -8,16 +8,43 @@ namespace YogurtCleaning.Business.Services;
 public class CleaningObjectsService : ICleaningObjectsService
 {
     private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
+    private readonly IClientsRepository _clientsRepository;
 
-    public CleaningObjectsService(ICleaningObjectsRepository cleaningObjectsRepository)
+    public CleaningObjectsService(ICleaningObjectsRepository cleaningObjectsRepository, IClientsRepository clientsRepository)
     {
         _cleaningObjectsRepository = cleaningObjectsRepository;
+        _clientsRepository = clientsRepository;
     }
 
-    public int CreateCleaningObject(CleaningObject cleaningObject, UserValues userValues)
+    public async Task<int> CreateCleaningObject(CleaningObject cleaningObject, UserValues userValues)
     {
-        cleaningObject.Client = new Client() { Id = userValues.Id };
+        if (userValues.Role == Role.Admin)
+        {
+            cleaningObject.Client = await _clientsRepository.GetClient(cleaningObject.Client.Id);
+        }
+        else
+        {
+            cleaningObject.Client = await _clientsRepository.GetClient(userValues.Id);
+        }
+        cleaningObject.District = _cleaningObjectsRepository.GetDistrict(cleaningObject.District.Id);
+        Validator.CheckThatObjectNotNull(cleaningObject.Client, ExceptionsErrorMessages.ClientNotFound);
+        Validator.CheckThatObjectNotNull(cleaningObject.District, ExceptionsErrorMessages.DistrictNotFound);
         return _cleaningObjectsRepository.CreateCleaningObject(cleaningObject);
+    }
+
+    public CleaningObject GetCleaningObject(int cleaningObjectId, UserValues userValues)
+    {
+        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(cleaningObjectId); ;
+        if (cleaningObject == null)
+        {
+            throw new EntityNotFoundException(ExceptionsErrorMessages.CleaningObjectNotFound);
+        }
+        if (!(userValues.Id == cleaningObject.Client.Id || !(userValues.Role == Role.Client)))
+        {
+            throw new AccessException($"Access denied");
+        }
+        return cleaningObject;
+
     }
 
     public void UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues)
@@ -42,24 +69,16 @@ public class CleaningObjectsService : ICleaningObjectsService
     public void DeleteCleaningObject(int id, UserValues userValues)
     {
         var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
-        CheckThatCleaningObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
+        Validator.CheckThatObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
         AuthorizeEnitiyAccess(cleaningObject, userValues);
-        _cleaningObjectsRepository.DeleteCleaningObject(id);
+        _cleaningObjectsRepository.DeleteCleaningObject(cleaningObject);
     }
 
     private void AuthorizeEnitiyAccess(CleaningObject cleaningObject, UserValues userValues)
     {
-        if (!(userValues.Id == cleaningObject.Client.Id || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Id == cleaningObject.Client.Id || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
-        }
-    }
-
-    private void CheckThatCleaningObjectNotNull(CleaningObject cleaningObject, string errorMesage)
-    {
-        if (cleaningObject == null)
-        {
-            throw new BadRequestException(errorMesage);
         }
     }
 }

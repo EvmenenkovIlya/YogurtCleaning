@@ -22,22 +22,22 @@ public class AuthService : IAuthService
         _adminsRepository = adminsRepository;
     }
 
-    public UserValues GetUserForLogin(string email, string password)
+    public async Task<UserValues> GetUserForLogin(string email, string password)
     {
         UserValues userValues = new();
 
-        var admin = _adminsRepository.GetAdminByEmail(email);
+        var admin = await _adminsRepository.GetAdminByEmail(email);
 
         if (admin is not null && email == admin.Email && !admin.IsDeleted &&
             PasswordHash.ValidatePassword(password, admin.Password))
         {
             userValues.Email = email;
-            userValues.Role = Role.Admin.ToString();
+            userValues.Role = Role.Admin;
         }
         else
         {
-            var client = _clientsRepository.GetClientByEmail(email);
-            var cleaner = _cleanersRepository.GetCleanerByEmail(email);
+            var client = await _clientsRepository.GetClientByEmail(email);
+            var cleaner = await _cleanersRepository.GetCleanerByEmail(email);
             CheckUserInBase(client, cleaner);            
             dynamic user = client != null ? client : cleaner;
             if (user.IsDeleted)
@@ -46,7 +46,7 @@ public class AuthService : IAuthService
             }
             ValidatePassword(password, user.Password);
             userValues.Email = user.Email;
-            userValues.Role = client != null ? Role.Client.ToString() : Role.Cleaner.ToString();
+            userValues.Role = client != null ? Role.Client : Role.Cleaner;
             userValues.Id = user.Id;
         }
         CheckUserValuesNotNull(userValues);
@@ -56,12 +56,12 @@ public class AuthService : IAuthService
 
     public string GetToken(UserValues model)
     {
-        if (model is null || model.Email is null || model.Role is null)
+        if (model is null || model.Email is null)
         {
             throw new DataException("Object or part of it is empty");
         }
         Claim idClaim = new Claim(ClaimTypes.NameIdentifier, model.Id.ToString());
-        var claims = new List<Claim> { new Claim(ClaimTypes.Name, model.Email), { new Claim(ClaimTypes.Role, model.Role) }, idClaim };
+        var claims = new List<Claim> { new Claim(ClaimTypes.Name, model.Email), { new Claim(ClaimTypes.Role, model.Role.ToString()) }, idClaim };
 
         var jwt = new JwtSecurityToken(
                 issuer: AuthOptions.ISSUER,
@@ -96,6 +96,5 @@ public class AuthService : IAuthService
         {
             throw new EntityNotFoundException("User not found");
         }
-    }
-    
+    }   
 }

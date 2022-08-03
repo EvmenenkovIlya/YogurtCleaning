@@ -14,9 +14,9 @@ public class CleanersService : ICleanersService
         _cleanersRepository = cleanersRepository;
     }
 
-    public Cleaner? GetCleaner(int id, UserValues userValues)
+    public async Task<Cleaner?> GetCleaner(int id, UserValues userValues)
     {
-        var cleaner = _cleanersRepository.GetCleaner(id);
+        var cleaner = await _cleanersRepository.GetCleaner(id);
 
         if (cleaner == null )
         {
@@ -26,74 +26,66 @@ public class CleanersService : ICleanersService
         return cleaner;
     }
 
-    public List<Cleaner> GetAllCleaners() => _cleanersRepository.GetAllCleaners();
+    public async Task<List<Cleaner>> GetAllCleaners() => await _cleanersRepository.GetAllCleaners();
 
 
-    public void DeleteCleaner(int id, UserValues userValues)
+    public async Task DeleteCleaner(int id, UserValues userValues)
     {
-        var cleaner = _cleanersRepository.GetCleaner(id);
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
+        var cleaner = await _cleanersRepository.GetCleaner(id);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
-        _cleanersRepository.DeleteCleaner(id);
+        _cleanersRepository.DeleteCleaner(cleaner);
     }
 
-    public void UpdateCleaner(Cleaner modelToUpdate, int id, UserValues userValues)
+    public async Task UpdateCleaner(Cleaner modelToUpdate, int id, UserValues userValues)
     {
-        Cleaner cleaner = _cleanersRepository.GetCleaner(id);
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
+        Cleaner cleaner = await _cleanersRepository.GetCleaner(id);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
         cleaner.FirstName = modelToUpdate.FirstName;
         cleaner.LastName = modelToUpdate.LastName;
         cleaner.Services = modelToUpdate.Services;
         cleaner.BirthDate = modelToUpdate.BirthDate;
         cleaner.Phone = modelToUpdate.Phone;
-        _cleanersRepository.UpdateCleaner(cleaner);
+        await _cleanersRepository.UpdateCleaner(cleaner);
     }
 
-    public int CreateCleaner(Cleaner cleaner)
+    public async Task<int> CreateCleaner(Cleaner cleaner)
     {
-        var isChecked = CheckEmailForUniqueness(cleaner.Email);
+        var isChecked = await CheckEmailForUniqueness(cleaner.Email);
         if (!isChecked)
         {
             throw new UniquenessException($"That email is registred");
         }
-        return _cleanersRepository.CreateCleaner(cleaner);
+        return await _cleanersRepository.CreateCleaner(cleaner);
 
     }
 
-    public List<Comment> GetCommentsByCleaner(int id, UserValues userValues)
+    public async Task<List<Comment>> GetCommentsByCleaner(int id, UserValues userValues)
     {
-        var cleaner = _cleanersRepository.GetCleaner(id);
+        var cleaner = await _cleanersRepository.GetCleaner(id);
 
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
-        return _cleanersRepository.GetAllCommentsByCleaner(id);
+        return await _cleanersRepository.GetAllCommentsByCleaner(id);
     }
 
-    public List<Order> GetOrdersByCleaner(int id, UserValues userValues)
+    public async Task<List<Order>> GetOrdersByCleaner(int id, UserValues userValues)
     {
-        var cleaner = _cleanersRepository.GetCleaner(id);
+        var cleaner = await _cleanersRepository.GetCleaner(id);
 
-        CheckThatUserNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
-        return _cleanersRepository.GetAllOrdersByCleaner(id);
+        return await _cleanersRepository.GetAllOrdersByCleaner(id);
     }
 
-    private bool CheckEmailForUniqueness(string email) => _cleanersRepository.GetCleanerByEmail(email) == null;
+    private async Task<bool> CheckEmailForUniqueness(string email) => await _cleanersRepository.GetCleanerByEmail(email) == null;
 
     private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
     {
-        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }
-    }
-
-    private void CheckThatUserNotNull(Cleaner cleaner, string errorMesage)
-    {
-        if (cleaner == null)
-        {
-            throw new BadRequestException(errorMesage);
-        } 
     }
 }

@@ -17,15 +17,17 @@ public class OrdersService : IOrdersService
     public void DeleteOrder(int id, UserValues userValues)
     {
         var order = _ordersRepository.GetOrder(id);
-        CheckThatOrderNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
         AuthorizeEnitiyAccess(userValues, order);
-        _ordersRepository.DeleteOrder(id);
+        _ordersRepository.DeleteOrder(order);
     }
 
     public Order? GetOrder(int id, UserValues userValues)
     {
         throw new NotImplementedException();
     }
+
+    public List<Order> GetAllOrders() => _ordersRepository.GetAllOrders();
 
     public void UpdateOrder(Order modelToUpdate, int id)
     {
@@ -42,17 +44,9 @@ public class OrdersService : IOrdersService
 
     private void AuthorizeEnitiyAccess(UserValues userValues, Order order)
     {
-        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin.ToString()))
+        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
-        }
-    }
-
-    private void CheckThatOrderNotNull(Order order, string errorMesage)
-    {
-        if (order == null)
-        {
-            throw new BadRequestException(errorMesage);
         }
     }
 }

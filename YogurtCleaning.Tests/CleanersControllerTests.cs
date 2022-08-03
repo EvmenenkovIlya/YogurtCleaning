@@ -32,7 +32,7 @@ public class CleanersControllerTests
     {
         //given
         _cleanersServiceMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
-         .Returns(1);
+         .ReturnsAsync(1);
 
         var cleaner = new CleanerRegisterRequest()
         {
@@ -45,7 +45,7 @@ public class CleanersControllerTests
             BirthDate = DateTime.Today
         };
         //when
-        var actual = _sut.AddCleaner(cleaner);
+        var actual = await _sut.AddCleaner(cleaner);
 
         //then
         var actualResult = actual.Result as CreatedResult;
@@ -59,7 +59,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public void GetCleaner_WhenValidRequestPassed_OkReceived()
+    public async Task GetCleaner_WhenValidRequestPassed_OkReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -73,26 +73,30 @@ public class CleanersControllerTests
             BirthDate = DateTime.Today
         };
 
-        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner);
+        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaner);
 
         //when
-        var actual = _sut.GetCleaner(expectedCleaner.Id);
+        var actual = await _sut.GetCleaner(expectedCleaner.Id);
 
         //then
 
         var actualResult = actual.Result as ObjectResult;
-        var cleanerResponce = actualResult.Value as CleanerResponse;
-        Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        Assert.True(cleanerResponce.FirstName == expectedCleaner.FirstName);
-        Assert.True(cleanerResponce.LastName == expectedCleaner.LastName);
-        Assert.True(cleanerResponce.Email == expectedCleaner.Email);
-        Assert.True(cleanerResponce.Phone == expectedCleaner.Phone);
-        Assert.True(cleanerResponce.BirthDate == expectedCleaner.BirthDate);
+        var cleanerResponse = actualResult.Value as CleanerResponse;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cleanerResponse.FirstName, Is.EqualTo(expectedCleaner.FirstName)); 
+            Assert.That(cleanerResponse.LastName, Is.EqualTo(expectedCleaner.LastName));
+            Assert.That(cleanerResponse.Email, Is.EqualTo(expectedCleaner.Email));
+            Assert.That(cleanerResponse.Phone, Is.EqualTo(expectedCleaner.Phone));
+            Assert.That(cleanerResponse.BirthDate, Is.EqualTo(expectedCleaner.BirthDate));
+        });
         _cleanersServiceMock.Verify(x => x.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void UpdateCleaner_WhenValidRequestPassed_NoContentReceived()
+    public async Task UpdateCleaner_WhenValidRequestPassed_NoContentReceived()
     {
         //given
 
@@ -118,19 +122,19 @@ public class CleanersControllerTests
         _cleanersServiceMock.Setup(o => o.UpdateCleaner(cleaner, cleaner.Id, _userValues));
 
         //when
-        var actual = _sut.UpdateCleaner(newCleanerModel, cleaner.Id);
+        var actual = await _sut.UpdateCleaner(newCleanerModel, cleaner.Id);
 
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _cleanersServiceMock.Verify(c => c.UpdateCleaner(It.Is<Cleaner>(c => c.FirstName == newCleanerModel.FirstName &&
         c.LastName == newCleanerModel.LastName && c.Email == null &&
         c.BirthDate == newCleanerModel.BirthDate && c.Phone == newCleanerModel.Phone), It.Is<int>(i => i == cleaner.Id), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void GetCommentsByCleanerId_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetCommentsByCleanerId_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -155,25 +159,28 @@ public class CleanersControllerTests
             },
 
         };
-        _cleanersServiceMock.Setup(o => o.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner.Comments);
+        _cleanersServiceMock.Setup(o => o.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaner.Comments);
 
         //when
-        var actual = _sut.GetAllCommentsByCleaner(expectedCleaner.Id);
+        var actual = await _sut.GetAllCommentsByCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
         var commentsResponse = actualResult.Value as List<CommentResponse>;
 
-        Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        Assert.True(expectedCleaner.Comments.Count == commentsResponse.Count);
-        Assert.True(expectedCleaner.Comments[0].Id == commentsResponse[0].Id);
-        Assert.True(expectedCleaner.Comments[1].Summary == commentsResponse[1].Summary);
-        Assert.True(expectedCleaner.Comments[0].Rating == commentsResponse[0].Rating);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(commentsResponse.Count, Is.EqualTo(expectedCleaner.Comments.Count));
+            Assert.That(commentsResponse[0].Id, Is.EqualTo(expectedCleaner.Comments[0].Id));
+            Assert.That(commentsResponse[1].Summary, Is.EqualTo(expectedCleaner.Comments[1].Summary));
+            Assert.That(commentsResponse[0].Rating, Is.EqualTo(expectedCleaner.Comments[0].Rating));
+        });
         _cleanersServiceMock.Verify(c => c.GetCommentsByCleaner(expectedCleaner.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void GetOrdersByCleaner_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetOrdersByCleaner_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -198,25 +205,28 @@ public class CleanersControllerTests
             },
         };
 
-        _cleanersServiceMock.Setup(o => o.GetOrdersByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).Returns(expectedCleaner.Orders);
+        _cleanersServiceMock.Setup(o => o.GetOrdersByCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaner.Orders);
 
         //when
-        var actual = _sut.GetAllOrdersByCleaner(expectedCleaner.Id);
+        var actual = await _sut.GetAllOrdersByCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
         var ordersResponse = actualResult.Value as List<OrderResponse>;
 
-        Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        Assert.True(expectedCleaner.Orders.Count == ordersResponse.Count);
-        Assert.True(expectedCleaner.Orders[0].Id == ordersResponse[0].Id);
-        Assert.True(expectedCleaner.Orders[1].Price == ordersResponse[1].Price);
-        Assert.True(expectedCleaner.Orders[0].Status == ordersResponse[0].Status);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ordersResponse.Count, Is.EqualTo(expectedCleaner.Orders.Count));
+            Assert.That(ordersResponse[0].Id, Is.EqualTo(expectedCleaner.Orders[0].Id));
+            Assert.That(ordersResponse[1].Price, Is.EqualTo(expectedCleaner.Orders[1].Price));
+            Assert.That(ordersResponse[0].Status, Is.EqualTo(expectedCleaner.Orders[0].Status));
+        });
         _cleanersServiceMock.Verify(c => c.GetOrdersByCleaner(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void DeleteCleanerById_WhenValidRequestPassed_NoContentReceived()
+    public async Task DeleteCleanerById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedCleaner = new Cleaner()
@@ -231,20 +241,20 @@ public class CleanersControllerTests
             IsDeleted = false
         };
 
-        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, _userValues)).Returns(expectedCleaner);
+        _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, _userValues)).ReturnsAsync(expectedCleaner);
 
         //when
-        var actual = _sut.DeleteCleaner(expectedCleaner.Id);
+        var actual = await _sut.DeleteCleaner(expectedCleaner.Id);
 
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _cleanersServiceMock.Verify(c => c.DeleteCleaner(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void GetAllCleaners_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetAllCleaners_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var cleaners = new List<Cleaner>
@@ -278,23 +288,26 @@ public class CleanersControllerTests
             }
         };
 
-        _cleanersServiceMock.Setup(o => o.GetAllCleaners()).Returns(cleaners).Verifiable();
+        _cleanersServiceMock.Setup(o => o.GetAllCleaners()).ReturnsAsync(cleaners).Verifiable();
 
         //when
-        var actual = _sut.GetAllCleaners();
+        var actual = await _sut.GetAllCleaners();
 
         //then
         var actualResult = actual.Result as ObjectResult;
         var cleanersResponse = actualResult.Value as List<CleanerResponse>;
 
 
-        Assert.AreEqual(StatusCodes.Status200OK, actualResult.StatusCode);
-        Assert.True(cleanersResponse.Count == cleaners.Count);
-        Assert.True(cleanersResponse[0].FirstName == cleaners[0].FirstName);
-        Assert.True(cleanersResponse[1].LastName == cleaners[1].LastName);
-        Assert.True(cleanersResponse[2].Email == cleaners[2].Email);
-        Assert.True(cleanersResponse[1].Phone == cleaners[1].Phone);
-        Assert.True(cleanersResponse[0].BirthDate == cleaners[0].BirthDate);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cleanersResponse.Count, Is.EqualTo(cleaners.Count));
+            Assert.That(cleanersResponse[0].FirstName, Is.EqualTo(cleaners[0].FirstName));
+            Assert.That(cleanersResponse[1].LastName, Is.EqualTo(cleaners[1].LastName));
+            Assert.That(cleanersResponse[2].Email, Is.EqualTo(cleaners[2].Email));
+            Assert.That(cleanersResponse[1].Phone, Is.EqualTo(cleaners[1].Phone));
+            Assert.That(cleanersResponse[0].BirthDate, Is.EqualTo(cleaners[0].BirthDate));
+        });
         _cleanersServiceMock.Verify(x => x.GetAllCleaners(), Times.Once);
     }
 }

@@ -10,22 +10,20 @@ public class CleanersServiceFacts
 {
     private CleanersService _sut;
     private Mock<ICleanersRepository> _cleanersRepositoryMock;
-
     private UserValues userValue;
 
-    private void Setup()
+    public CleanersServiceFacts()
     {
         _cleanersRepositoryMock = new Mock<ICleanersRepository>();
         _sut = new CleanersService(_cleanersRepositoryMock.Object);
     }
 
     [Fact]
-    public void CreateCleaner_WhenValidRequestPassed_CleanerAdded()
+    public async Task CreateCleaner_WhenValidRequestPassed_CleanerAdded()
     {
-        //given
-        Setup();
+        //given        
         _cleanersRepositoryMock.Setup(c => c.CreateCleaner(It.IsAny<Cleaner>()))
-             .Returns(1);
+             .ReturnsAsync(1);
         var expectedId = 1;
 
         var cleaner = new Cleaner()
@@ -39,18 +37,17 @@ public class CleanersServiceFacts
         };
 
         //when
-        var actual = _sut.CreateCleaner(cleaner);
+        var actual = await _sut.CreateCleaner(cleaner);
 
         //then
-        Assert.True(actual == expectedId);
+        Assert.Equal(expectedId, actual);
         _cleanersRepositoryMock.Verify(c => c.CreateCleaner(It.IsAny<Cleaner>()), Times.Once);
     }
 
     [Fact]
-    public void CreateCleaner_WhenNotUniqueEmail_ThrowUniquenessException()
+    public async Task CreateCleaner_WhenNotUniqueEmail_ThrowUniquenessException()
     {
-        //given
-        Setup();
+        //given       
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -92,18 +89,17 @@ public class CleanersServiceFacts
             BirthDate = DateTime.Today,
         };
         _cleanersRepositoryMock.Setup(c => c.GetCleanerByEmail(cleanerNew.Email))
-             .Returns(cleaners[0]);
+             .ReturnsAsync(cleaners[0]);
         //when
 
         //then
-        Assert.Throws<Exceptions.UniquenessException>(() => _sut.CreateCleaner(cleanerNew));
+        await Assert.ThrowsAsync<Exceptions.UniquenessException>(() => _sut.CreateCleaner(cleanerNew));
     }
 
     [Fact]
-    public void GetAllCleaners_WhenValidRequestPassed_CleanersReceived()
+    public async Task GetAllCleaners_WhenValidRequestPassed_CleanersReceived()
     {
-        //given
-        Setup();
+        //given      
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -135,11 +131,11 @@ public class CleanersServiceFacts
                 BirthDate = DateTime.Today,
             }
         };
-        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).Returns(cleaners);
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
+        _cleanersRepositoryMock.Setup(o => o.GetAllCleaners()).ReturnsAsync(cleaners);
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
 
         //when
-        var actual = _sut.GetAllCleaners();
+        var actual = await _sut.GetAllCleaners();
 
         //then
         Assert.NotNull(actual);
@@ -148,10 +144,9 @@ public class CleanersServiceFacts
     }
 
     [Fact]
-    public void GetCleaner_WhenCurrentUserIsAdmin_CleanerReceived()
+    public async Task GetCleaner_WhenCurrentUserIsAdmin_CleanerReceived()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -163,21 +158,20 @@ public class CleanersServiceFacts
             BirthDate = DateTime.Today
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
 
         //when
-        var actual = _sut.GetCleaner(cleanerInDb.Id, userValue);
+        var actual = await _sut.GetCleaner(cleanerInDb.Id, userValue);
 
         //then
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleanerInDb.Id), Times.Once);
     }
 
     [Fact]
-    public void GetCleaner_WhenIdNotInBase_GetEntityNotFoundException()
+    public async Task GetCleaner_WhenIdNotInBase_GetEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var testId = 2;
 
         var cleanerInDb = new Cleaner()
@@ -186,20 +180,19 @@ public class CleanersServiceFacts
             FirstName = "Adam",
         };
 
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Admin" };
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin };
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.EntityNotFoundException>(() => _sut.GetCleaner(testId, userValue));
+        await Assert.ThrowsAsync<Exceptions.EntityNotFoundException>(() => _sut.GetCleaner(testId, userValue));
     }
 
     [Fact]
-    public void GetCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
+    public async Task GetCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -211,20 +204,19 @@ public class CleanersServiceFacts
             Phone = "5559997264",
             BirthDate = DateTime.Today
         };
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = "Cleaner" };
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Cleaner };
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.GetCleaner(cleanerInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCleaner(cleanerInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetCommentsByCleaner_WhenClentGetOwnComments_CommentsReceived()
+    public async Task GetCommentsByCleaner_WhenClentGetOwnComments_CommentsReceived()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner()
         {
 
@@ -247,48 +239,46 @@ public class CleanersServiceFacts
                     }
                 }
         };
-        userValue = new UserValues() { Email = cleanerInDb.Email, Role = "Cleaner" };
+        userValue = new UserValues() { Email = cleanerInDb.Email, Role = Role.Cleaner };
 
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
-        _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
+        _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb.Comments);
 
         //when
-        var actual = _sut.GetCommentsByCleaner(cleanerInDb.Id, userValue);
+        var actual = await _sut.GetCommentsByCleaner(cleanerInDb.Id, userValue);
 
         //then
 
         Assert.Equal(cleanerInDb.Comments.Count, actual.Count);
-        Assert.True(actual[0].Id == cleanerInDb.Comments[0].Id);
-        Assert.True(actual[1].Id == cleanerInDb.Comments[1].Id);
-        Assert.True(actual[0].Rating == cleanerInDb.Comments[0].Rating);
-        Assert.True(actual[1].Rating == cleanerInDb.Comments[1].Rating);
+        Assert.Equal(cleanerInDb.Comments[0].Id, actual[0].Id);
+        Assert.Equal(cleanerInDb.Comments[1].Id, actual[1].Id);
+        Assert.Equal(cleanerInDb.Comments[0].Rating, actual[0].Rating);
+        Assert.Equal(cleanerInDb.Comments[1].Rating, actual[1].Rating);
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleanerInDb.Id), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetAllCommentsByCleaner(cleanerInDb.Id), Times.Once);
     }
 
     [Fact]
-    public void GetCommentsByCleaner_WhenCleanerGetSomeoneElsesComments_ThrowBadRequestException()
+    public async Task GetCommentsByCleaner_WhenCleanerGetSomeoneElsesComments_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
-        _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
+        _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb.Comments);
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.GetCommentsByCleaner(cleanerInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCommentsByCleaner(cleanerInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetCommentsByCleanerId_AdminGetsCommentsWhenCleanerNotInDb_ThrowBadRequestException()
+    public async Task GetCommentsByCleanerId_AdminGetsCommentsWhenCleanerNotInDb_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -307,20 +297,19 @@ public class CleanersServiceFacts
             }
 
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
-        _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Comments);
+        _cleanersRepositoryMock.Setup(o => o.GetAllCommentsByCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb.Comments);
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.GetCommentsByCleaner(cleanerInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetCommentsByCleaner(cleanerInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetOrdersByCleanerId_WhenClentGetsOwnOrders_OrdersReceived()
+    public async Task GetOrdersByCleanerId_WhenClentGetsOwnOrders_OrdersReceived()
     {
-        //given
-        Setup();
+        //given       
         var cleanerInDb = new Cleaner()
         {
             Id = 1,
@@ -342,45 +331,43 @@ public class CleanersServiceFacts
                 }
             }
         };
-        userValue = new UserValues() { Email = cleanerInDb.Email, Role = "Cleaner" };
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).Returns(cleanerInDb);
-        _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
+        userValue = new UserValues() { Email = cleanerInDb.Email, Role = Role.Cleaner };
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
+        _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb.Orders);
 
         //when
-        var actual = _sut.GetOrdersByCleaner(cleanerInDb.Id, userValue);
+        var actual = await _sut.GetOrdersByCleaner(cleanerInDb.Id, userValue);
 
         //then
-        Assert.True(cleanerInDb.Orders.Count == actual.Count);
-        Assert.True(actual[0].Id == cleanerInDb.Orders[0].Id);
-        Assert.True(actual[1].Id == cleanerInDb.Orders[1].Id);
-        Assert.True(actual[0].Price == cleanerInDb.Orders[0].Price);
-        Assert.True(actual[1].Price == cleanerInDb.Orders[1].Price);
+        Assert.Equal(cleanerInDb.Orders.Count, actual.Count);
+        Assert.Equal(cleanerInDb.Orders[0].Id, actual[0].Id);
+        Assert.Equal(cleanerInDb.Orders[1].Id, actual[1].Id);
+        Assert.Equal(cleanerInDb.Orders[0].Price, actual[0].Price);
+        Assert.Equal(cleanerInDb.Orders[1].Price, actual[1].Price);
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleanerInDb.Id), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetAllOrdersByCleaner(cleanerInDb.Id), Times.Once);
     }
 
     [Fact]
-    public void GetOrdersByCleanerId_WhenCleanersTryToGetSomeoneElsesOrders_ThrowBadRequestException()
+    public async Task GetOrdersByCleanerId_WhenCleanersTryToGetSomeoneElsesOrders_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerInDb = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
-        _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
+        _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb.Orders);
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.GetOrdersByCleaner(cleanerInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetOrdersByCleaner(cleanerInDb.Id, userValue));
     }
 
     [Fact]
-    public void GetCommentsByCleanerId_AdminGetsOrderssWhenCleanerNotInDb_ThrowBadRequestException()
+    public async Task GetCommentsByCleanerId_AdminGetsOrderssWhenCleanerNotInDb_ThrowBadRequestException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
         var cleanerInDb = new Cleaner()
         {
@@ -394,20 +381,19 @@ public class CleanersServiceFacts
                 },
             }
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Admin" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
 
-        _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).Returns(cleanerInDb.Orders);
+        _cleanersRepositoryMock.Setup(o => o.GetAllOrdersByCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb.Orders);
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.GetOrdersByCleaner(cleanerInDb.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetOrdersByCleaner(cleanerInDb.Id, userValue));
     }
 
     [Fact]
-    public void UpdateCleaner_WhenCleanerUpdatesProperties_ChangesProperties()
+    public async Task UpdateCleaner_WhenCleanerUpdatesProperties_ChangesProperties()
     {
-        //given
-        Setup();
+        //given       
         var cleaner = new Cleaner()
         {
             Id = 1,
@@ -425,12 +411,12 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = cleaner.Email, Role = "Cleaner" }; ;
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).Returns(cleaner);
+        userValue = new UserValues() { Email = cleaner.Email, Role = Role.Cleaner }; ;
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).ReturnsAsync(cleaner);
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
         //when
-        _sut.UpdateCleaner(newCleanerModel, cleaner.Id, userValue);
+        await _sut.UpdateCleaner(newCleanerModel, cleaner.Id, userValue);
 
         //then
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleaner.Id), Times.Once);
@@ -442,10 +428,9 @@ public class CleanersServiceFacts
     }
 
     [Fact]
-    public void UpdateCleaner_WhenEmptyCleanerRequest_ThrowEntityNotFoundException()
+    public async Task UpdateCleaner_WhenEmptyCleanerRequest_ThrowEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
 
@@ -456,21 +441,20 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10)
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.UpdateCleaner(newCleanerModel, cleaner.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.UpdateCleaner(newCleanerModel, cleaner.Id, userValue));
     }
 
     [Fact]
-    public void UpdateCleaner_CleanerGetSomeoneElsesProfile_ThrowAccessException()
+    public async Task UpdateCleaner_CleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given       
         var testEmail = "FakeCleaner@gmail.ru";
 
         var cleaner = new Cleaner()
@@ -491,21 +475,20 @@ public class CleanersServiceFacts
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
         };
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).Returns(cleaner);
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).ReturnsAsync(cleaner);
         _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.UpdateCleaner(newCleanerModel, cleaner.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.UpdateCleaner(newCleanerModel, cleaner.Id, userValue));
     }
 
     [Fact]
-    public void DeleteCleaner_WhenValidRequestPassed_DeleteCleaner()
+    public async Task DeleteCleaner_WhenValidRequestPassed_DeleteCleaner()
     {
-        //given
-        Setup();
+        //given        
         var expectedCleaner = new Cleaner()
         {
             Id = 1,
@@ -518,40 +501,37 @@ public class CleanersServiceFacts
             IsDeleted = false
         };
 
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(expectedCleaner.Id)).Returns(expectedCleaner);
-        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(expectedCleaner.Id));
-        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = "Cleaner", Id = 1 };
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(expectedCleaner.Id)).ReturnsAsync(expectedCleaner);
+        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(expectedCleaner));
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Cleaner, Id = 1 };
 
         //when
-        _sut.DeleteCleaner(expectedCleaner.Id, userValue);
+        await _sut.DeleteCleaner(expectedCleaner.Id, userValue);
 
         //then
-        _cleanersRepositoryMock.Verify(c => c.DeleteCleaner(expectedCleaner.Id), Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.DeleteCleaner(expectedCleaner), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(It.IsAny<int>()), Times.Once);
     }
 
     [Fact]
-    public void DeleteCleaner_EmptyCleanerRequest_ThrowEntityNotFoundException()
+    public async Task DeleteCleaner_EmptyCleanerRequest_ThrowEntityNotFoundException()
     {
-        //given
-        Setup();
+        //given        
         var testId = 1;
         var cleaner = new Cleaner();
         var testEmail = "FakeCleaner@gmail.ru";
-        userValue = new UserValues() { Email = testEmail, Role = "Cleaner" };
-        _cleanersRepositoryMock.Setup(o => o.DeleteCleaner(testId));
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
 
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.DeleteCleaner(testId, userValue));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.DeleteCleaner(testId, userValue));
     }
 
     [Fact]
-    public void DeleteCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
+    public async Task DeleteCleaner_WhenCleanerGetSomeoneElsesProfile_ThrowAccessException()
     {
-        //given
-        Setup();
+        //given        
         var cleanerFirst = new Cleaner()
         {
             Id = 1,
@@ -576,12 +556,12 @@ public class CleanersServiceFacts
             IsDeleted = false
 
         };
-        userValue = new UserValues() { Email = cleanerFirst.Email, Role = "Cleaner" };
-        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerSecond.Id)).Returns(cleanerSecond);
+        userValue = new UserValues() { Email = cleanerFirst.Email, Role = Role.Cleaner };
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerSecond.Id)).ReturnsAsync(cleanerSecond);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.DeleteCleaner(cleanerSecond.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.DeleteCleaner(cleanerSecond.Id, userValue));
     }
 }

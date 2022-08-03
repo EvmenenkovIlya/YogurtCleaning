@@ -12,7 +12,7 @@ public class CommentsServiceTests
     private Mock<IClientsRepository> _mockClientsRepository;
     private Mock<ICleanersRepository> _mockCleanersRepository;
 
-    private void Setup()
+    public CommentsServiceTests()
     {
         _mockCommentsRepository = new Mock<ICommentsRepository>();
         _mockClientsRepository = new Mock<IClientsRepository>();
@@ -20,12 +20,10 @@ public class CommentsServiceTests
         _sut = new CommentsService(_mockCommentsRepository.Object, _mockClientsRepository.Object, _mockCleanersRepository.Object);
     }
 
-
     [Fact]
-    public void AddCommentByClient_WhenValidRequestPassed_CommentAdded()
+    public async Task AddCommentByClient_WhenValidRequestPassed_CommentAdded()
     {
         // given
-        Setup();
         _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
         
         var expectedId = 1;
@@ -38,22 +36,19 @@ public class CommentsServiceTests
             Rating = 5
         };
 
-
-
         // when
-        var actual = _sut.AddCommentByClient(comment, comment.Client.Id);
+        var actual = await _sut.AddCommentByClient(comment, comment.Client.Id);
 
         // then
-        Assert.True(actual == expectedId);
+        Assert.Equal(expectedId, actual);
         _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
 
     }
 
     [Fact]
-    public void AddCommentByCleaner_WhenValidRequestPassed_CommentAdded()
+    public async Task AddCommentByCleaner_WhenValidRequestPassed_CommentAdded()
     {
         // given
-        Setup();
         _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
 
         var expectedId = 1;
@@ -66,14 +61,11 @@ public class CommentsServiceTests
             Rating = 5
         };
 
-
-
         // when
-        var actual = _sut.AddCommentByCleaner(comment, comment.Cleaner.Id);
-        
+        var actual = await _sut.AddCommentByCleaner(comment, comment.Cleaner.Id);
+
         // then
-        Assert.True(actual == expectedId);
-        _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
-        
+        Assert.Equal(expectedId, actual);
+        _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);       
     }
 }

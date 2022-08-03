@@ -4,6 +4,6 @@ namespace YogurtCleaning.DataLayer.Repositories
 {
     public interface IAdminsRepository
     {
-        Admin? GetAdminByEmail(string email);
+        Task<Admin?> GetAdminByEmail(string email);
     }
 }

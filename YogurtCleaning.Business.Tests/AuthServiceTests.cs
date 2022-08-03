@@ -14,20 +14,17 @@ public class AuthServicesTests
     private Mock<ICleanersRepository> _cleanersRepository;
     private Mock<IAdminsRepository> _adminRepository;
 
-    public void Setup()
+    public AuthServicesTests()
     {
-
         _clientsRepositoryMock = new Mock<IClientsRepository>();
         _cleanersRepository = new Mock<ICleanersRepository>();
         _adminRepository = new Mock<IAdminsRepository>();
         _sut = new AuthService(_clientsRepositoryMock.Object, _cleanersRepository.Object, _adminRepository.Object);
     }
 
-
     [Fact]
-    public void Login_ValidAdminEmailAndPassword_ClaimModelReturned()
+    public async Task Login_ValidAdminEmailAndPassword_ClaimModelReturned()
     {
-        Setup();
         //given
         var adminPassword = "12345678954";
         var adminExpected = new Admin()
@@ -37,23 +34,22 @@ public class AuthServicesTests
             IsDeleted = false,
         };
 
-        _adminRepository.Setup(m => m.GetAdminByEmail(adminExpected.Email)).Returns(adminExpected);
+        _adminRepository.Setup(m => m.GetAdminByEmail(adminExpected.Email)).ReturnsAsync(adminExpected);
         //when
 
-        var claim = _sut.GetUserForLogin(adminExpected.Email, adminPassword);
+        var claim = await _sut.GetUserForLogin(adminExpected.Email, adminPassword);
         //then
 
-        Assert.True(claim.Role == Role.Admin.ToString());
-        Assert.True(claim.Email == adminExpected.Email);
+        Assert.Equal(Role.Admin, claim.Role);
+        Assert.Equal(adminExpected.Email, claim.Email);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Never);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
-    public void Login_ValidClientEmailAndPassword_ClaimModelReturned()
+    public async Task Login_ValidClientEmailAndPassword_ClaimModelReturned()
     {
-        Setup();
         //given
         var clientPassword = "12345678";
         var clientExpected = new Client()
@@ -66,24 +62,22 @@ public class AuthServicesTests
             BirthDate = DateTime.Today,
         };
 
-        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).Returns(clientExpected);
+        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).ReturnsAsync(clientExpected);
 
         //when
-        var claim = _sut.GetUserForLogin(clientExpected.Email, clientPassword);
+        var claim = await _sut.GetUserForLogin(clientExpected.Email, clientPassword);
 
         //then
-        Assert.True(claim.Role == Role.Client.ToString());
-        Assert.True(claim.Email == clientExpected.Email);
+        Assert.Equal(Role.Client, claim.Role);
+        Assert.Equal(clientExpected.Email, claim.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Once);
-
     }
 
     [Fact]
-    public void Login_ValidCleanersEmailAndPassword_ClaimModelReturned()
+    public async Task Login_ValidCleanersEmailAndPassword_ClaimModelReturned()
     {
-        Setup();
         //given
         var passwordCleanersExpected = "12334534";
         var cleanersExpected = new Cleaner()
@@ -94,23 +88,22 @@ public class AuthServicesTests
             Password = PasswordHash.HashPassword("12334534")
         };
 
-        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).Returns(cleanersExpected);
+        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).ReturnsAsync(cleanersExpected);
 
         //when
-        var claim = _sut.GetUserForLogin(cleanersExpected.Email, passwordCleanersExpected);
+        var claim = await _sut.GetUserForLogin(cleanersExpected.Email, passwordCleanersExpected);
 
         //then
-        Assert.True(claim.Role == Role.Cleaner.ToString());
-        Assert.True(claim.Email == cleanersExpected.Email);
+        Assert.Equal(Role.Cleaner, claim.Role);
+        Assert.Equal(cleanersExpected.Email, claim.Email);
         _clientsRepositoryMock.Verify(c => c.GetClientByEmail(It.IsAny<string>()), Times.Once);
         _adminRepository.Verify(c => c.GetAdminByEmail(It.IsAny<string>()), Times.Once);
         _cleanersRepository.Verify(c => c.GetCleanerByEmail(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
-    public void Login_BadPassword_ThrowEntityNotFoundException()
+    public async Task Login_BadPassword_ThrowEntityNotFoundException()
     {
-        Setup();
         //given
         var badPassword = "123456789541";
         var cleanersExpected = new Cleaner()
@@ -123,17 +116,16 @@ public class AuthServicesTests
             BirthDate = DateTime.Today,
         };
 
-        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).Returns(cleanersExpected);
+        _cleanersRepository.Setup(c => c.GetCleanerByEmail(cleanersExpected.Email)).ReturnsAsync(cleanersExpected);
 
         //when, then
-        Assert.Throws<EntityNotFoundException>(() => _sut.GetUserForLogin(cleanersExpected.Email, badPassword));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => _sut.GetUserForLogin(cleanersExpected.Email, badPassword));
 
     }
 
     [Fact]
-    public void Login_IsDeletedTrue_ThrowEntityNotFoundException()
+    public async Task Login_IsDeletedTrue_ThrowEntityNotFoundException()
     {
-        Setup();
         //given
         var password = "12334534";
         var clientExpected = new Client()
@@ -145,17 +137,16 @@ public class AuthServicesTests
             IsDeleted = true
         };
 
-        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).Returns(clientExpected);
+        _clientsRepositoryMock.Setup(c => c.GetClientByEmail(clientExpected.Email)).ReturnsAsync(clientExpected);
 
         //when, then
-        Assert.Throws<EntityNotFoundException>(() => _sut.GetUserForLogin(clientExpected.Email, password));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => _sut.GetUserForLogin(clientExpected.Email, password));
 
     }
 
     [Fact]
-    public void Login_UserNotFound_ThrowEntityNotFoundException()
+    public async Task Login_UserNotFound_ThrowEntityNotFoundException()
     {
-        Setup();
         //given
         var badEmail = "ad@mmm.com";
         var clientExpected = new Client()
@@ -170,18 +161,17 @@ public class AuthServicesTests
         };
 
         //when, then
-        Assert.Throws<EntityNotFoundException>(() => _sut.GetUserForLogin(badEmail, clientExpected.Password));
+        await Assert.ThrowsAsync<EntityNotFoundException>(() => _sut.GetUserForLogin(badEmail, clientExpected.Password));
     }
 
     [Fact]
-    public void GetToken_ValidData_TokenReturned()
+    public async Task GetToken_ValidData_TokenReturned()
     {
-        Setup();
         //given
         var model = new UserValues()
         {
             Email = "ada@gmail.com",
-            Role = "Client"
+            Role = Role.Client
         };
 
         //when
@@ -190,34 +180,16 @@ public class AuthServicesTests
         //then
 
         Assert.NotNull(actual);
-
     }
 
     [Fact]
     public void GetToken_EmailEmpty_ThrowDataException()
     {
-        Setup();
         //given
         var model = new UserValues()
         {
             Email = null,
-            Role = "Client"
-        };
-
-        //when, then
-        Assert.Throws<DataException>(() => _sut.GetToken(model));
-
-    }
-
-    [Fact]
-    public void GetToken_RoleEmpty_ThrowDataException()
-    {
-        Setup();
-        //given
-        var model = new UserValues()
-        {
-            Email = "aa@gmail.com",
-            Role = null
+            Role = Role.Client
         };
 
         //when, then
@@ -227,7 +199,6 @@ public class AuthServicesTests
     [Fact]
     public void GetToken_PropertysEmpty_ThrowDataException()
     {
-        Setup();
         //given
         var model = new UserValues();
 

@@ -16,7 +16,7 @@ public class AdminRepositoryTests
     }
 
     [Fact]
-    public void GetAdminByEmail_WhenCorrectEmail_AdminReturned()
+    public async Task GetAdminByEmail_WhenCorrectEmail_AdminReturned()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new AdminsRepository(context);
@@ -38,11 +38,11 @@ public class AdminRepositoryTests
         context.SaveChanges();
 
         //when
-        var actualUser = sut.GetAdminByEmail(expectedAdminSecond.Email);
+        var actualUser = await sut.GetAdminByEmail(expectedAdminSecond.Email);
 
         //then
 
-        Assert.True(actualUser.Password == expectedAdminSecond.Password);
-        Assert.True(actualUser.Email == expectedAdminSecond.Email);
+        Assert.Equal(expectedAdminSecond.Password, actualUser.Password);
+        Assert.Equal(expectedAdminSecond.Email, actualUser.Email);
     }
 }
