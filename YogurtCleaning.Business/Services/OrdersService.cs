@@ -31,24 +31,24 @@ public class OrdersService : IOrdersService
         _mapper = mapper;
     }
 
-    public void DeleteOrder(int id, UserValues userValues)
+    public async Task DeleteOrder(int id, UserValues userValues)
     {
-        var order = _ordersRepository.GetOrder(id);
+        var order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
         AuthorizeEnitiyAccess(userValues, order);
         _ordersRepository.DeleteOrder(order);
     }
 
-    public Order? GetOrder(int id, UserValues userValues)
+    public async Task<Order?> GetOrder(int id, UserValues userValues)
     {
         throw new NotImplementedException();
     }
 
-    public List<Order> GetAllOrders() => _ordersRepository.GetAllOrders();
+    public async Task <List<Order>> GetAllOrders() => await _ordersRepository.GetAllOrders();
 
-    public void UpdateOrder(Order modelToUpdate, int id)
+    public async Task UpdateOrder(Order modelToUpdate, int id)
     {
-        Order order = _ordersRepository.GetOrder(id);
+        Order order = await _ordersRepository.GetOrder(id);
 
         order.Status = modelToUpdate.Status;
         order.StartTime = modelToUpdate.StartTime;
@@ -56,7 +56,7 @@ public class OrdersService : IOrdersService
         order.Bundles = modelToUpdate.Bundles;
         order.Services = modelToUpdate.Services;
         order.CleanersBand = modelToUpdate.CleanersBand;
-        _ordersRepository.UpdateOrder(order);
+        await _ordersRepository.UpdateOrder(order);
     }
 
     private void AuthorizeEnitiyAccess(UserValues userValues, Order order)
@@ -67,7 +67,7 @@ public class OrdersService : IOrdersService
         }
     }
     
-    public int AddOrder(OrderBusinessModel order)
+    public async Task<int> AddOrder(OrderBusinessModel order)
     {
         var fullBundles = new List<BundleBusinessModel>();
         foreach(var b in order.Bundles)
@@ -76,8 +76,8 @@ public class OrdersService : IOrdersService
             fullBundles.Add(fullBundle);
         }
         order.Bundles = fullBundles;
-        order.Price = GetOrderPrice(order);
-        order.CleanersBand = GetCleanersForOrder(order); 
+        order.Price = await GetOrderPrice(order);
+        order.CleanersBand = await GetCleanersForOrder(order); 
         if(order.CleanersBand.Count < order.CleanersCount)
         {
             order.Status = Status.Moderation;
@@ -87,7 +87,7 @@ public class OrdersService : IOrdersService
             order.Status = Status.Created;
         }
 
-        var result = _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
+        var result = await _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
 
         if (order.Status == Status.Moderation)
         {
@@ -96,7 +96,7 @@ public class OrdersService : IOrdersService
         return result;
     } 
 
-    private decimal GetOrderPrice(OrderBusinessModel order)
+    private async Task<decimal> GetOrderPrice(OrderBusinessModel order)
     {
 
         order.Bundles.ForEach(b => b.SetPriceForCleaningObject(order.CleaningObject));
@@ -108,7 +108,7 @@ public class OrdersService : IOrdersService
         if (order.Bundles[0].Type == CleaningType.Regular)
         {
             var discount = (decimal)0.2;
-            var lastOrder = _clientsRepository.GetLastOrderForCleaningObject(order.Client.Id, order.CleaningObject.Id);
+            var lastOrder = await _clientsRepository.GetLastOrderForCleaningObject(order.Client.Id, order.CleaningObject.Id);
             if (lastOrder != null && lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
             {
                 orderPrice -= orderPrice * discount;
@@ -117,10 +117,10 @@ public class OrdersService : IOrdersService
         return orderPrice;
     }
 
-    private List<Cleaner> GetCleanersForOrder(OrderBusinessModel order)
+    private async Task<List<Cleaner>> GetCleanersForOrder(OrderBusinessModel order)
     {
         var cleaners = new List<Cleaner>();
-        var freeCleaners = _cleanersService.GetFreeCleanersForOrder(order);
+        var freeCleaners = await _cleanersService.GetFreeCleanersForOrder(order);
 
         if (order.EndTime > order.StartTime.Date.AddHours(18))
         {

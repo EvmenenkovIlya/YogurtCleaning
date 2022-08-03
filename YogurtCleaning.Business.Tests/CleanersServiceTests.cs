@@ -569,7 +569,7 @@ public class CleanersServiceFacts
     }
 
     [Fact]
-    public void GetFreeCleanersForOrder_WhenAreFreeCleaners_ThenCleanersRecieved()
+    public async Task GetFreeCleanersForOrder_WhenAreFreeCleaners_ThenCleanersRecieved()
     {
         //given
         var order = new OrderBusinessModel
@@ -621,10 +621,10 @@ public class CleanersServiceFacts
                 DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
             }
         };
-        _cleanersRepositoryMock.Setup(o => o.GetWorkingCleanersForDate(order.StartTime)).Returns(cleaners);
+        _cleanersRepositoryMock.Setup(o => o.GetWorkingCleanersForDate(order.StartTime)).ReturnsAsync(cleaners);
 
         //when
-        var actual = _sut.GetFreeCleanersForOrder(order);
+        var actual = await _sut.GetFreeCleanersForOrder(order);
 
         //then
         Assert.NotNull(actual);
@@ -633,7 +633,7 @@ public class CleanersServiceFacts
     }
 
     [Fact]
-    public void GetFreeCleanersForOrder_WhenCleanerIsBusy_ThenDoNotAddToResult()
+    public async Task GetFreeCleanersForOrder_WhenCleanerIsBusy_ThenDoNotAddToResult()
     {
         //given
         var order = new OrderBusinessModel
@@ -689,11 +689,11 @@ public class CleanersServiceFacts
                 DateOfStartWork = new DateTime(2022, 8, 1, 10, 00, 00)
             }
         };
-        _cleanersRepositoryMock.Setup(o => o.GetWorkingCleanersForDate(order.StartTime)).Returns(cleaners);
+        _cleanersRepositoryMock.Setup(o => o.GetWorkingCleanersForDate(order.StartTime)).ReturnsAsync(cleaners);
         var expectedCount = 0;
 
         //when
-        var actual = _sut.GetFreeCleanersForOrder(order);
+        var actual = await _sut.GetFreeCleanersForOrder(order);
 
         //then
         Assert.NotNull(actual);

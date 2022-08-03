@@ -12,5 +12,5 @@ public interface IClientsRepository
     Task<Client?> GetClient(int clientId);
     Task UpdateClient(Client client);
     Task<Client?> GetClientByEmail(string email);
-    Order? GetLastOrderForCleaningObject(int clientId, int cleaningObjectId);
+    Task <Order?> GetLastOrderForCleaningObject(int clientId, int cleaningObjectId);
 }

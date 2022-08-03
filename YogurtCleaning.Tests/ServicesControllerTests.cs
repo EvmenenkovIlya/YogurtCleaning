@@ -21,6 +21,7 @@ public class ServicesControllerTests
     private Mock<IServicesService> _mockServicesService;
     private Mock<IServicesRepository> _mockServicesRepository;
     private IMapper _mapper;
+    private Mock<IEmailSender> _emailSender;
 
     [SetUp]
     public void Setup()
@@ -29,7 +30,8 @@ public class ServicesControllerTests
         _mockServicesRepository = new Mock<IServicesRepository>();
         _mockServicesService = new Mock<IServicesService>();
         _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
-        _sut = new ServicesController(_mockLogger.Object, _mockServicesRepository.Object, _mockServicesService.Object, _mapper);
+        _emailSender = new Mock<IEmailSender>();
+        _sut = new ServicesController(_mockLogger.Object, _mockServicesRepository.Object, _mockServicesService.Object, _mapper, _emailSender.Object);
     }
 
     [Test]

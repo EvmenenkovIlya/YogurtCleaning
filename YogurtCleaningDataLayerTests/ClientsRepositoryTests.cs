@@ -261,7 +261,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void GetLastOrderForCleaningObject_WhenOrderExist_ThenItRecieved()
+    public async Task GetLastOrderForCleaningObject_WhenOrderExist_ThenItRecieved()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -286,7 +286,7 @@ public class ClientsRepositoryTests
         var expectedId = 1;
 
         // when
-        var result = sut.GetLastOrderForCleaningObject(client.Id, 1);
+        var result = await sut.GetLastOrderForCleaningObject(client.Id, 1);
 
         //then
         Assert.NotNull(result);
@@ -295,7 +295,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void GetLastOrderForCleaningObject_WhenFewOrdersExist_ThenLastOneRecieved()
+    public async Task GetLastOrderForCleaningObject_WhenFewOrdersExist_ThenLastOneRecieved()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -322,7 +322,7 @@ public class ClientsRepositoryTests
         var expectedId = 2;
 
         // when
-        var result = sut.GetLastOrderForCleaningObject(client.Id, 1);
+        var result = await sut.GetLastOrderForCleaningObject(client.Id, 1);
 
         //then
         Assert.NotNull(result);
@@ -331,7 +331,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public void GetLastOrderForCleaningObject_WhenOrdersNotExist_ThenNullRecieved()
+    public async Task GetLastOrderForCleaningObject_WhenOrdersNotExist_ThenNullRecieved()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -356,7 +356,7 @@ public class ClientsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetLastOrderForCleaningObject(client.Id, 1);
+        var result = await sut.GetLastOrderForCleaningObject(client.Id, 1);
 
         //then
         Assert.Null(result);

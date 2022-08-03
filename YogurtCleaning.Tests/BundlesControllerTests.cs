@@ -65,7 +65,7 @@ public class BundlesControllerTests
             Measure = Measure.Room,
             Services = new List<Service>() { new Service(), new Service()}
         };
-        _mockBundlesService.Setup(o => o.GetBundle(expectedBundle.Id)).ReturnsAsync(expectedBundle);
+        _mockBundlesService.Setup(o => o.GetBundle(expectedBundle.Id)).Returns(Task.FromResult(expectedBundle));
 
         // when
         var actual = await _sut.GetBundle(expectedBundle.Id);

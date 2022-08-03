@@ -92,10 +92,10 @@ public class CleanersService : ICleanersService
         }
     }
 
-    public List<Cleaner> GetFreeCleanersForOrder(OrderBusinessModel order)
+    public async Task<List<Cleaner>> GetFreeCleanersForOrder(OrderBusinessModel order)
     {
         var freeCleaners = new List<Cleaner>();
-        var workingCleaners = _cleanersRepository.GetWorkingCleanersForDate(order.StartTime);
+        var workingCleaners = await _cleanersRepository.GetWorkingCleanersForDate(order.StartTime);
 
         foreach (var cleaner in workingCleaners)
         {

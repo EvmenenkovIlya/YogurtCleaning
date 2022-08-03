@@ -46,9 +46,9 @@ public class CleanersRepository : ICleanersRepository
 
     public async Task<Cleaner?> GetCleanerByEmail(string email) => await _context.Cleaners.FirstOrDefaultAsync(o => o.Email == email);
 
-    public List<Cleaner> GetWorkingCleanersForDate(DateTime orderDate)
+    public async Task<List<Cleaner>> GetWorkingCleanersForDate(DateTime orderDate)
     {
-        var workingCleaners = GetAllCleaners()
+        var workingCleaners = (await GetAllCleaners())
             .Where(c => (c.Schedule is Schedule.ShiftWork && Convert.ToInt32((orderDate - c.DateOfStartWork).TotalDays % 4) < 2) ||
             (c.Schedule is Schedule.FullTime && orderDate.DayOfWeek != DayOfWeek.Sunday && orderDate.DayOfWeek != DayOfWeek.Saturday))
             .ToList();

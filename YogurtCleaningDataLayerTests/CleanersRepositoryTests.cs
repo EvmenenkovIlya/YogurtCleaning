@@ -252,7 +252,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void GetWorkingCleanersForDate_WhenCleanerIsWorking_ThenItAddedToList()
+    public async Task GetWorkingCleanersForDate_WhenCleanerIsWorking_ThenItAddedToList()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -309,7 +309,7 @@ public class CleanersRepositoryTests
         var expectedCount = 3;
 
         //when
-        var actual = sut.GetWorkingCleanersForDate(orderDate);
+        var actual = await sut.GetWorkingCleanersForDate(orderDate);
 
         //then
         Assert.Equal(expectedCount, actual.Count);
@@ -317,7 +317,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void GetWorkingCleanersForDate_WhenCleanerIsNotWorking_ThenItDidNotAddToList()
+    public async Task GetWorkingCleanersForDate_WhenCleanerIsNotWorking_ThenItDidNotAddToList()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -358,7 +358,7 @@ public class CleanersRepositoryTests
         var expectedCount = 0;
 
         //when
-        var actual = sut.GetWorkingCleanersForDate(orderDate);
+        var actual = await sut.GetWorkingCleanersForDate(orderDate);
 
         //then
         Assert.Equal(expectedCount, actual.Count);

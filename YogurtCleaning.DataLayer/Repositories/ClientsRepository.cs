@@ -44,9 +44,9 @@ public class ClientsRepository : IClientsRepository
 
     public async Task<Client?> GetClientByEmail(string email) => await _context.Clients.FirstOrDefaultAsync(o => o.Email == email);
 
-    public Order? GetLastOrderForCleaningObject(int clientId, int cleaningObjectId)
+    public async Task<Order?> GetLastOrderForCleaningObject(int clientId, int cleaningObjectId)
     {
-        var clientOrders = GetAllOrdersByClient(clientId).Where(o => o.CleaningObject.Id == cleaningObjectId);
+        var clientOrders = (await GetAllOrdersByClient(clientId)).Where(o => o.CleaningObject.Id == cleaningObjectId);
         var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
         return lastOrder;
     }

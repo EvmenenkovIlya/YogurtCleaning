@@ -5,12 +5,12 @@ namespace YogurtCleaning.DataLayer.Repositories;
 
 public interface IOrdersRepository
 {
-    int CreateOrder(Order order);
-    void DeleteOrder(Order order);
-    Order? GetOrder(int id);
-    List<Order> GetAllOrders();
-    void UpdateOrder(Order order);
-    List<Service> GetServices(int orderId);
-    void UpdateOrderStatus(int orderId, Status statusEnam);
-    CleaningObject GetCleaningObject(int orderId);
+    Task <int> CreateOrder(Order order);
+    Task DeleteOrder(Order order);
+    Task <Order?> GetOrder(int id);
+    Task <List<Order>> GetAllOrders();
+    Task UpdateOrder(Order order);
+    Task <List<Service>> GetServices(int orderId);
+    Task UpdateOrderStatus(int orderId, Status statusEnam);
+    Task <CleaningObject> GetCleaningObject(int orderId);
 }
