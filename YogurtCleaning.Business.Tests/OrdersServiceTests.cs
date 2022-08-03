@@ -125,12 +125,13 @@ public class OrdersServiceTests
             CleaningObject = new() { Id = 56 },
             StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
             Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 } },
-            Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } }
+            Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } },
+            TotalDuration = 8,
+            CleanersCount = 2,
+            EndTime = new DateTime(2022, 8, 1, 18, 00, 00)
         };
 
         decimal expectedPrice = 110;
-        var expectedCleanersCount = 2;
-        var expectedEndTime = new DateTime(2022, 8, 1, 18, 00, 00);
         var expectedStatus = Status.Created;
 
         _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).Returns(cleaners);
@@ -142,9 +143,7 @@ public class OrdersServiceTests
         _mockOrdersRepository.Verify(o => o.CreateOrder(
             It.Is<Order>(
                 i => i.Price == expectedPrice
-                && i.CleanersBand.Count == expectedCleanersCount
-                && i.Status == expectedStatus
-                && i.EndTime == expectedEndTime)),
+                && i.Status == expectedStatus)),
             Times.Once);
         _mockCleanersService.Verify(c => c.GetFreeCleanersForOrder(order), Times.Once);
     }
@@ -175,12 +174,13 @@ public class OrdersServiceTests
             CleaningObject = new() { Id = 56 },
             StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
             Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 } },
-            Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } }
+            Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } },
+            TotalDuration = 8,
+            CleanersCount = 2,
+            EndTime = new DateTime(2022, 8, 1, 18, 00, 00)
         };
 
         decimal expectedPrice = 110;
-        var expectedCleanersCount = 1;
-        var expectedEndTime = new DateTime(2022, 8, 1, 18, 00, 00);
         var expectedStatus = Status.Moderation;
 
         _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).Returns(cleaners);
@@ -192,9 +192,7 @@ public class OrdersServiceTests
         _mockOrdersRepository.Verify(o => o.CreateOrder(
             It.Is<Order>(
                 i => i.Price == expectedPrice
-                && i.CleanersBand.Count == expectedCleanersCount
-                && i.Status == expectedStatus
-                && i.EndTime == expectedEndTime)),
+                && i.Status == expectedStatus)),
             Times.Once);
         _mockCleanersService.Verify(c => c.GetFreeCleanersForOrder(order), Times.Once);
         _mockEmailSender.Verify(e => e.SendEmail(It.IsAny<int>()), Times.Once);

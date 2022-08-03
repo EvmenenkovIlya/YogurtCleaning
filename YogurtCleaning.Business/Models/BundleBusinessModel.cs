@@ -20,45 +20,28 @@ public class BundleBusinessModel
     public decimal Duration { get; set; }
     public decimal DurationForCleaningObject { get; set; }
     public bool IsDeleted { get; set; }
-    public List<Order> Orders { get; set; }
 
-    public decimal GetDurationForCleaningObject(CleaningObject cleaningObject)
+    public void SetDurationForCleaningObject(CleaningObject cleaningObject)
     {
-        switch (Measure)
+        DurationForCleaningObject = Measure switch
         {
-            case Measure.Room:
-                DurationForCleaningObject += Duration / 2 * (cleaningObject.NumberOfRooms - 1);
-                return DurationForCleaningObject;
-            case Measure.Apartment:
-                DurationForCleaningObject = Duration;
-                return DurationForCleaningObject;
-            case Measure.SquareMeter:
-                DurationForCleaningObject = Duration * cleaningObject.Square;
-                return Duration;
-            case Measure.Unit:
-                DurationForCleaningObject = Duration * cleaningObject.NumberOfWindows + Duration * cleaningObject.NumberOfBalconies;
-                return DurationForCleaningObject;
-        }
-        return DurationForCleaningObject;
+            Measure.Room => Duration / 2 * (cleaningObject.NumberOfRooms - 1),
+            Measure.Apartment => Duration,
+            Measure.SquareMeter => Duration * cleaningObject.Square,
+            Measure.Unit => Duration * cleaningObject.NumberOfWindows + Duration * cleaningObject.NumberOfBalconies,
+            _ => 0,
+        };
     }
 
-    public decimal GetPriceForCleaningObject(CleaningObject cleaningObject)
+    public void SetPriceForCleaningObject(CleaningObject cleaningObject)
     {
-        switch (Measure)
+        PriceForCleaningObject = Measure switch
         {
-            case Measure.Room:
-                PriceForCleaningObject += Price / 2 * (cleaningObject.NumberOfRooms - 1);
-                return PriceForCleaningObject;
-            case Measure.Apartment:
-                PriceForCleaningObject = Price;
-                return PriceForCleaningObject;
-            case Measure.SquareMeter:
-                PriceForCleaningObject = Price * cleaningObject.Square;
-                return PriceForCleaningObject;
-            case Measure.Unit:
-                PriceForCleaningObject = Price * cleaningObject.NumberOfWindows + Price * cleaningObject.NumberOfBalconies;
-                return PriceForCleaningObject;
-        }
-        return PriceForCleaningObject;
+            Measure.Room => Price / 2 * (cleaningObject.NumberOfRooms - 1),
+            Measure.Apartment => Price,
+            Measure.SquareMeter => Price * cleaningObject.Square,
+            Measure.Unit => Price * cleaningObject.NumberOfWindows + Price * cleaningObject.NumberOfBalconies,
+            _ => 0,
+        };
     }
 }

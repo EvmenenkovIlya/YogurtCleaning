@@ -26,15 +26,15 @@ public class OrderBusinessModel
     public List<Comment> Comments { get; set; }
     public bool IsDeleted { get; set; }
 
-    public decimal GetTotalDuration()
+    public void SetTotalDuration()
     {
-        var bundlesDuration = this.Bundles.Select(b => b.GetDurationForCleaningObject(this.CleaningObject)).Sum();
+        this.Bundles.ForEach(b => b.SetDurationForCleaningObject(this.CleaningObject));
+        var bundlesDuration = this.Bundles.Select(b => b.DurationForCleaningObject).Sum();
         var servicesDuration = this.Services.Select(s => s.Duration).Sum();
         this.TotalDuration = bundlesDuration + servicesDuration;
-        return this.TotalDuration;
     }
 
-    public int GetCleanersCount()
+    public void SetCleanersCount()
     {
         var maxHour = 21;
         var maxOrderDuration = maxHour - this.StartTime.Hour;
@@ -42,14 +42,12 @@ public class OrderBusinessModel
         if (this.TotalDuration > maxOrderDuration)
         {
             this.CleanersCount = Convert.ToInt32(Math.Ceiling(this.TotalDuration / maxOrderDuration));
-            return this.CleanersCount;
         }
-        else return this.CleanersCount = 1;
+        else this.CleanersCount = 1;
     }
 
-    public DateTime GetEndTime()
+    public void SetEndTime()
     {
         this.EndTime = this.StartTime.AddHours((double)this.TotalDuration / this.CleanersCount);
-        return this.EndTime;
     }
 }

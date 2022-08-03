@@ -11,10 +11,10 @@ namespace YogurtCleaning.Business.Tests;
 
 public class BundleBusinessModelTests
 {
-    
-    
+
+
     [Fact]
-    public void GetDurationForCleaningObject_WhenModelsGet_ThenDurationRecieved()
+    public void SetDurationForCleaningObject_WhenModelsGet_ThenDurationRecieved()
     {
         // given
         var bundle = new BundleBusinessModel()
@@ -40,7 +40,8 @@ public class BundleBusinessModelTests
         var expectedDuration = bundle.Duration;
 
         // when
-        var actual = bundle.GetDurationForCleaningObject(cleaningObject);
+        bundle.SetDurationForCleaningObject(cleaningObject);
+        var actual = bundle.DurationForCleaningObject;
 
 
         // then
@@ -48,7 +49,7 @@ public class BundleBusinessModelTests
     }
 
     [Fact]
-    public void GetPriceForCleaningObject_WhenModelsGet_ThenDurationRecieved()
+    public void SetPriceForCleaningObject_WhenModelsGet_ThenDurationRecieved()
     {
         // given
         var bundle = new BundleBusinessModel()
@@ -74,7 +75,8 @@ public class BundleBusinessModelTests
         var expectedPrice = bundle.Price * 2;
 
         // when
-        var actual = bundle.GetPriceForCleaningObject(cleaningObject);
+        bundle.SetPriceForCleaningObject(cleaningObject);
+        var actual = bundle.PriceForCleaningObject;
 
 
         // then

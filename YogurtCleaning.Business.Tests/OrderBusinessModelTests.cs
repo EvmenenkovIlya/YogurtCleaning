@@ -12,7 +12,7 @@ namespace YogurtCleaning.Business.Tests;
 public class OrderBusinessModelTests
 {
     [Fact]
-    public void GetTotalDurationTest_WhenModelGet_ThenDurationRecieved()
+    public void SetTotalDurationTest_WhenModelGet_ThenDurationRecieved()
     {
         // given
         var order = new OrderBusinessModel
@@ -21,20 +21,21 @@ public class OrderBusinessModelTests
             CleaningObject = new() { Id = 56 },
             StartTime = DateTime.Now.AddDays(1),
             Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 2, Measure = Measure.Apartment } },
-            Services = new List<Service> { new Service { Id = 42, Duration = 2} }
+            Services = new List<Service> { new Service { Id = 42, Duration = 2 } }
         };
 
         var expectedDuration = (decimal)4;
 
         // when
-        var actualDuration = order.GetTotalDuration();
+        order.SetTotalDuration();
+        var actual = order.TotalDuration;
 
         // then
-        Assert.True(expectedDuration == actualDuration);
+        Assert.True(expectedDuration == actual);
     }
 
     [Fact]
-    public void GetCleanersCountTest_WhenTotalDurationMoreThanEndOfWorkingDay_ThenMorethanOneRecieved()
+    public void SetCleanersCountTest_WhenTotalDurationMoreThanEndOfWorkingDay_ThenMorethanOneRecieved()
     {
         // given
         var order = new OrderBusinessModel
@@ -48,14 +49,15 @@ public class OrderBusinessModelTests
         var expectedCount = 2;
 
         // when
-        var actualCount = order.GetCleanersCount();
+        order.SetCleanersCount();
+        var actual = order.CleanersCount;
 
         // then
-        Assert.True(expectedCount == actualCount);
+        Assert.True(expectedCount == actual);
     }
 
     [Fact]
-    public void GetCleanersCountTest_WhenTotalDurationLessThanEndOfWorkingDay_ThenOneRecieved()
+    public void SetCleanersCountTest_WhenTotalDurationLessThanEndOfWorkingDay_ThenOneRecieved()
     {
         // given
         var order = new OrderBusinessModel
@@ -69,14 +71,15 @@ public class OrderBusinessModelTests
         var expectedCount = 1;
 
         // when
-        var actualCount = order.GetCleanersCount();
+        order.SetCleanersCount();
+        var actual = order.CleanersCount;
 
         // then
-        Assert.True(expectedCount == actualCount);
+        Assert.True(expectedCount == actual);
     }
 
     [Fact]
-    public void GetEndTimeTest_When_Then()
+    public void SetEndTimeTest_When_Then()
     {
         // given
         var order = new OrderBusinessModel
@@ -89,9 +92,10 @@ public class OrderBusinessModelTests
         var expectedEndTime = new DateTime(2022, 8, 1, 20, 00, 00);
 
         // when
-        var actualEndTime = order.GetEndTime();
+        order.SetEndTime();
+        var actual = order.EndTime;
 
         // then
-        Assert.True(expectedEndTime == actualEndTime);
+        Assert.True(expectedEndTime == actual);
     }
 }
