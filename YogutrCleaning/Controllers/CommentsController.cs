@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.Enams;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -16,12 +18,15 @@ namespace YogurtCleaning.Controllers;
 public class CommentsController : Controller
 {
     private readonly ILogger<CommentsController> _logger;
-    private readonly ICommentsRepository _commentsRepository;
+    private readonly ICommentsService _commentsService;
+    private readonly IMapper _mapper;
+    public UserValues? userValues;
 
-    public CommentsController(ILogger<CommentsController> logger, ICommentsRepository commentsRepository)
+    public CommentsController(ILogger<CommentsController> logger, ICommentsService commentsService, IMapper mapper)
     {
         _logger = logger;
-        _commentsRepository = commentsRepository;
+        _commentsService = commentsService;
+        _mapper = mapper;
     }
 
     [AuthorizeRoles]
@@ -31,7 +36,7 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult<List<CommentResponse>> GetAllComments()
     {
-        var result = _commentsRepository.GetAllComments();
+        var result = _commentsService.GetComments();
         return Ok(result);
     }
 
@@ -41,11 +46,12 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCommentByClient([FromBody] CommentRequest comment)
+    public async Task<ActionResult<int>> AddCommentByClient([FromBody] CommentRequest comment)
     {
-        int commentId = new CommentResponse().Id;
-        //var result = _commentsRepository.AddComment(comment);
-        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
+        var userId = this.GetClaimsValue().Id;
+
+        var result = await _commentsService.AddCommentByClient(_mapper.Map<Comment>(comment), userId);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [AuthorizeRoles(Role.Cleaner)]
@@ -54,11 +60,12 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddCommentByCleaner([FromBody] CommentRequest comment)
+    public async Task<ActionResult<int>> AddCommentByCleaner([FromBody] CommentRequest comment)
     {
-        int commentId = new CommentResponse().Id;
-        //var result = _commentsRepository.AddComment(comment);
-        return Created($"{this.GetRequestFullPath()}/{commentId}", commentId);
+        var userId = this.GetClaimsValue().Id;
+
+        var result = await _commentsService.AddCommentByCleaner(_mapper.Map<Comment>(comment), userId);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [AuthorizeRoles]
@@ -69,7 +76,7 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public ActionResult DeleteComment(int id)
     {
-        _commentsRepository.DeleteComment(id);
+        _commentsService.DeleteComment(id);
         return NoContent();
     }
 }

@@ -51,7 +51,7 @@ public class OrdersRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteOrder(order.Id);
+        sut.DeleteOrder(order);
 
         //then
         var actual = sut.GetOrder(order.Id);
@@ -87,9 +87,9 @@ public class OrdersRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Order>));
+        Assert.Equal(typeof(List<Order>), result.GetType());
         Assert.True(result.Count() == 1);
-        Assert.True(result[0].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
         context.Database.EnsureDeleted();
     }
 
@@ -116,8 +116,8 @@ public class OrdersRepositoryTests
         var result = sut.GetOrder(oldOrder.Id);
 
         //then
-        Assert.False(result.Price == 15);
-        Assert.True(result.EndTime == DateTime.MinValue);
+        Assert.NotEqual(15, result.Price);
+        Assert.Equal(result.EndTime, DateTime.MinValue);
         context.Database.EnsureDeleted();
     }
 
@@ -175,9 +175,9 @@ public class OrdersRepositoryTests
 
         //then
         Assert.NotNull(result);
-        Assert.True(result.GetType() == typeof(List<Service>));
+        Assert.Equal(typeof(List<Service>), result.GetType());
         Assert.True(result.Count() == 2);
-        Assert.True(result[0].IsDeleted == false);
+        Assert.False(result[0].IsDeleted);
         context.Database.EnsureDeleted();
     }
 
@@ -203,8 +203,8 @@ public class OrdersRepositoryTests
         var result = sut.GetOrder(oldOrder.Id);
 
         //then
-        Assert.False(result.Status == Enums.Status.Created);
-        Assert.True(result.Status == Enums.Status.Done);
+        Assert.NotEqual(Enums.Status.Created, result.Status);
+        Assert.Equal(Enums.Status.Done, result.Status);
         context.Database.EnsureDeleted();
     }
 
@@ -236,8 +236,8 @@ public class OrdersRepositoryTests
         var result = sut.GetCleaningObject(oldOrder.Id);
 
         //then
-        Assert.True(result.Square == 800);
-        Assert.True(result.Address == "Улица Пушкина, 10");
+        Assert.Equal(800, result.Square);
+        Assert.Equal("Улица Пушкина, 10", result.Address);
         context.Database.EnsureDeleted();
     }
 }

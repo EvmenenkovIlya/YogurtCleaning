@@ -22,7 +22,7 @@ public class CommentModelRequestTests
         //then
         Assert.IsFalse(isValid);
         var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
     [Test]
@@ -31,9 +31,7 @@ public class CommentModelRequestTests
         //given
         CommentRequest comment = new CommentRequest();
         List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.AuthorIdIsRequred,
-            ApiErrorMessages.OrderIdIsRequred,
-            ApiErrorMessages.RatingIsRequred
+            ApiErrorMessages.OrderIdIsRequred
         };
         var validationResults = new List<ValidationResult>();
         
@@ -45,7 +43,7 @@ public class CommentModelRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
@@ -56,7 +54,6 @@ public class CommentModelRequestTests
         CommentRequest comment = new CommentRequest()
         {
             Summary = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempus suscipit tempus.",
-            AuthorId = 1,
             OrderId = 1,
             Rating = 5
         };
@@ -67,6 +64,6 @@ public class CommentModelRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());
+        Assert.That(validationResults.Count(), Is.EqualTo(0));
     }
 }

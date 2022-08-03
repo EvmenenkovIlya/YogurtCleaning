@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
@@ -14,28 +11,27 @@ public class BundlesRepository : IBundlesRepository
     {
         _context = context;
     }
-    public int AddBundle(Bundle bundle)
+    public async Task<int> AddBundle(Bundle bundle)
     {
         _context.Bundles.Add(bundle);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return bundle.Id;
     }
 
-    public void DeleteBundle(int id)
-    {
-        var bundle = _context.Bundles.FirstOrDefault(b => b.Id == id);
+    public async Task DeleteBundle(Bundle bundle)
+    {       
         bundle.IsDeleted = true;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public List<Bundle> GetAllBundles() => _context.Bundles.Where(b => !b.IsDeleted).ToList();
+    public async Task<List<Bundle>> GetAllBundles() => await _context.Bundles.Where(b => !b.IsDeleted).ToListAsync();
 
-    public Bundle GetBundle(int id) => _context.Bundles.FirstOrDefault(b => b.Id == id && !b.IsDeleted);
+    public async Task<Bundle> GetBundle(int id) => await _context.Bundles.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted)!;
 
-    public void UpdateBundle(Bundle bundle)
+    public async Task UpdateBundle(Bundle bundle)
     {
         _context.Bundles.Update(bundle);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 }

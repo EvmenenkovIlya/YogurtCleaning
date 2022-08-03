@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YogurtCleaning.DataLayer.Entities;
+﻿using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
 public interface IBundlesRepository
 {
-    Bundle GetBundle(int id);
-    List<Bundle> GetAllBundles();
-    void UpdateBundle(Bundle bundle);
-    int AddBundle(Bundle bundle);
-    void DeleteBundle(int id);
+    Task<Bundle> GetBundle(int id);
+    Task<List<Bundle>> GetAllBundles();
+    Task UpdateBundle(Bundle bundle);
+    Task<int> AddBundle(Bundle bundle);
+    Task DeleteBundle(Bundle bundle);
 }

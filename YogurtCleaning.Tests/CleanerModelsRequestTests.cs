@@ -20,7 +20,7 @@ public class CleanerModelsRequestTests
         //then
         Assert.IsFalse(isValid);
         var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
     [TestCaseSource(typeof(CleanerUpdateRequestTestSource))]
@@ -62,7 +62,7 @@ public class CleanerModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
@@ -86,7 +86,7 @@ public class CleanerModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
@@ -96,7 +96,7 @@ public class CleanerModelsRequestTests
         //given
         CleanerRegisterRequest cleaner = new CleanerRegisterRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",
@@ -115,7 +115,7 @@ public class CleanerModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());
+        Assert.That(validationResults.Count, Is.EqualTo(0));
     }
 
     [Test]
@@ -138,6 +138,6 @@ public class CleanerModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());   
+        Assert.That(validationResults.Count, Is.EqualTo(0));   
     }
 }

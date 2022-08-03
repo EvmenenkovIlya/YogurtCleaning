@@ -54,7 +54,7 @@ public class ServicesRepositoryTests
         context.SaveChanges();
 
         // when 
-        sut.DeleteService(service.Id);
+        sut.DeleteService(service);
 
         //then 
         Assert.True(service.IsDeleted);

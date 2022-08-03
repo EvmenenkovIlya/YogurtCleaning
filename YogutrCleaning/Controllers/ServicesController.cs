@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
@@ -33,7 +34,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
     public ActionResult<ServiceResponse> GetService(int id)
     {
-        var result = _mapper.Map<ServiceResponse>(_servicesRepository.GetService(id));
+        var result = _mapper.Map<ServiceResponse>(_servicesService.GetService(id));
         return Ok(result);
     }
 
@@ -65,7 +66,7 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
-        var result = _servicesRepository.AddService(_mapper.Map<Service>(service));
+        var result = _servicesService.AddService(_mapper.Map<Service>(service));
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
@@ -75,7 +76,8 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteService(int id)
     {
-        _servicesRepository.DeleteService(id);
+        UserValues userValues = this.GetClaimsValue();
+        _servicesService.DeleteService(id, userValues);
         return Ok();
     }
 }

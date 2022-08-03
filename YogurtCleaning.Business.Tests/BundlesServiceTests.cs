@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.Business.Services;
-using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
@@ -11,24 +9,53 @@ namespace YogurtCleaning.Business.Tests;
 public class BundlesServiceTests
 {
     private BundlesService _sut;
-    private Mock<IBundlesRepository> _mockBundlesRepository;
-    private Mock<IServicesRepository> _mockServicesRepository;
-    private readonly DbContextOptions<YogurtCleaningContext> _dbContextOptions;
+    private Mock<IBundlesRepository> _bundlesRepositoryMock;
+    private Mock<IServicesRepository> _servicesRepositoryMock;
 
     public BundlesServiceTests()
     {
-        _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
+        _bundlesRepositoryMock = new Mock<IBundlesRepository>();
+        _servicesRepositoryMock = new Mock<IServicesRepository>();
+        _sut = new BundlesService(_bundlesRepositoryMock.Object, _servicesRepositoryMock.Object);
     }
 
     [Fact]
-    public void UpdateBundle_WhenUpdatePassed_ThenPropertiesValuesChandged()
+    public async Task GetBundle_WhenBundleInDb_BundleReceived()
+    {
+        //given        
+        var bundleInDb = new Bundle()
+        {
+            Id = 1,
+            Name = "qwe",
+            Price = 1000,
+            Measure = Measure.Room,
+            IsDeleted = false
+        };
+        
+        _bundlesRepositoryMock.Setup(o => o.GetBundle(bundleInDb.Id)).ReturnsAsync(bundleInDb);
+
+        //when
+        var actual = await _sut.GetBundle(bundleInDb.Id);
+
+        //then
+        _bundlesRepositoryMock.Verify(c => c.GetBundle(bundleInDb.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetBundle_WhenBundleNotInDb_ThrowBadRequestException()
+    {
+        //given        
+        int idNotFromDb = 5;
+
+        //when
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetBundle(idNotFromDb));
+    }
+
+    [Fact]
+    public async Task UpdateBundle_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
-        var context = new YogurtCleaningContext(_dbContextOptions);
-        var bundlesRepository = new BundlesRepository(context);
-
         var bundle = new Bundle
         {
             Id = 10,
@@ -46,32 +73,23 @@ public class BundlesServiceTests
             IsDeleted = false
         };
 
-        context.Add(bundle);
-        context.SaveChanges();
+        _bundlesRepositoryMock.Setup(b => b.GetBundle(bundle.Id)).ReturnsAsync(bundle);
 
         // when
-        _sut.UpdateBundle(updatedBundle, bundle.Id);
+        await _sut.UpdateBundle(updatedBundle, bundle.Id);
 
         // then
-        Assert.True(bundle.Name == updatedBundle.Name);
-        Assert.True(bundle.Price == updatedBundle.Price);
-        Assert.True(bundle.Measure == updatedBundle.Measure);
-        Assert.True(bundle.Services == updatedBundle.Services);
-    }
-
-
-    private void Setup()
-    {
-        _mockBundlesRepository = new Mock<IBundlesRepository>();
-        _mockServicesRepository = new Mock<IServicesRepository>();
-        _sut = new BundlesService(_mockBundlesRepository.Object, _mockServicesRepository.Object);
+        Assert.Equal(updatedBundle.Name, bundle.Name);
+        Assert.Equal(updatedBundle.Price, bundle.Price);
+        Assert.Equal(updatedBundle.Measure, bundle.Measure);
+        Assert.Equal(updatedBundle.Services, bundle.Services);
+        _bundlesRepositoryMock.Verify(b => b.GetBundle(bundle.Id), Times.Once);
     }
 
     [Fact]
-    public void GetAdditionalServices_WhenServiceIsInBundle_ThenResultDoesNotConteinIt()
+    public async Task GetAdditionalServices_WhenServiceIsInBundle_ThenResultDoesNotConteinIt()
     {
         // given
-        Setup();
         var services = new List<Service>();
         var service = new Service()
         {
@@ -85,7 +103,7 @@ public class BundlesServiceTests
 
         services.Add(service);
 
-        _mockServicesRepository.Setup(s => s.GetAllServices()).Returns(services);
+        _servicesRepositoryMock.Setup(s => s.GetAllServices()).Returns(services);
 
         var bundle = new Bundle
         {
@@ -102,23 +120,21 @@ public class BundlesServiceTests
                 } 
             }
         };
-        _mockBundlesRepository.Setup(b => b.GetBundle(bundle.Id)).Returns(bundle);
+        _bundlesRepositoryMock.Setup(b => b.GetBundle(bundle.Id)).ReturnsAsync(bundle);
 
         // when
-        var result = _sut.GetAdditionalServices(bundle.Id);
+        var result = await _sut.GetAdditionalServices(bundle.Id);
 
         // then
         Assert.DoesNotContain(service, result);
-        _mockServicesRepository.Verify(s => s.GetAllServices(), Times.Once);
-        _mockBundlesRepository.Verify(b => b.GetBundle(bundle.Id), Times.Once);
+        _servicesRepositoryMock.Verify(s => s.GetAllServices(), Times.Once);
+        _bundlesRepositoryMock.Verify(b => b.GetBundle(bundle.Id), Times.Once);
     }
 
     [Fact]
-    public void GetAdditionalServices_WhenServiceIsNotInBundle_ThenResultConteinIt()
+    public async Task GetAdditionalServices_WhenServiceIsNotInBundle_ThenResultConteinIt()
     {
         // given
-        Setup();
-
         var services = new List<Service>();
         var service = new Service()
         {
@@ -132,7 +148,7 @@ public class BundlesServiceTests
 
         services.Add(service);
 
-        _mockServicesRepository.Setup(s => s.GetAllServices()).Returns(services);
+        _servicesRepositoryMock.Setup(s => s.GetAllServices()).Returns(services);
 
 
         var bundle = new Bundle
@@ -150,14 +166,49 @@ public class BundlesServiceTests
             }
         };
 
-        _mockBundlesRepository.Setup(b => b.GetBundle(bundle.Id)).Returns(bundle);
+        _bundlesRepositoryMock.Setup(b => b.GetBundle(bundle.Id)).ReturnsAsync(bundle);
 
         // when
-        var result = _sut.GetAdditionalServices(bundle.Id);
+        var result = await _sut.GetAdditionalServices(bundle.Id);
 
         // then
         Assert.Contains(service, result);
-        _mockServicesRepository.Verify(s => s.GetAllServices(), Times.Once);
-        _mockBundlesRepository.Verify(b => b.GetBundle(bundle.Id), Times.Once);
+        _servicesRepositoryMock.Verify(s => s.GetAllServices(), Times.Once);
+        _bundlesRepositoryMock.Verify(b => b.GetBundle(bundle.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteBundle_WhenValidRequestPassed_DeleteBundle()
+    {
+        //given
+        var expectedBundle = new Bundle()
+        {
+            Id = 1,
+            Name = "Clean all",
+            Duration = 12,
+            IsDeleted = false
+        };
+
+        _bundlesRepositoryMock.Setup(o => o.GetBundle(expectedBundle.Id)).ReturnsAsync(expectedBundle);
+        _bundlesRepositoryMock.Setup(o => o.DeleteBundle(expectedBundle));
+
+        //when
+        await _sut.DeleteBundle(expectedBundle.Id);
+
+        //then
+        _bundlesRepositoryMock.Verify(c => c.DeleteBundle(expectedBundle), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteBundle_EmptyBundleRequest_ThrowEntityNotFoundException()
+    {
+        //given
+        var testId = 1;
+        var bundle = new Bundle();
+
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.DeleteBundle(testId));
     }
 }

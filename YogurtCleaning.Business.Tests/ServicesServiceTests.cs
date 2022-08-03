@@ -12,7 +12,7 @@ public class ServicesServiceTests
     private ServicesService _sut;
     private Mock<IServicesRepository> _mockServicesRepository;
 
-    private void Setup()
+    public ServicesServiceTests()
     {
         _mockServicesRepository = new Mock<IServicesRepository>();
         _sut = new ServicesService(_mockServicesRepository.Object);
@@ -22,7 +22,6 @@ public class ServicesServiceTests
     public void UpdateService_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
-        Setup();
         var service = new Service
         {
             Id = 10,
@@ -45,9 +44,9 @@ public class ServicesServiceTests
         _sut.UpdateService(updatedService, service.Id);
 
         // then
-        Assert.True(service.Name == updatedService.Name);
-        Assert.True(service.Price == updatedService.Price);
-        Assert.True(service.Unit == updatedService.Unit);
+        Assert.Equal(updatedService.Name, service.Name);
+        Assert.Equal(updatedService.Price, service.Price);
+        Assert.Equal(updatedService.Unit, service.Unit);
         _mockServicesRepository.Verify(s => s.GetService(service.Id), Times.Once);
     }
 }

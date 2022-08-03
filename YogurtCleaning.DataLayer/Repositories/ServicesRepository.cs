@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YogurtCleaning.DataLayer.Entities;
+﻿using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -22,9 +17,8 @@ public class ServicesRepository : IServicesRepository
         return service.Id;
     }
 
-    public void DeleteService(int id)
+    public void DeleteService(Service service)
     {
-        var service = _context.Services.FirstOrDefault(s => s.Id == id);
         service.IsDeleted = true;
         _context.SaveChanges();
     }
@@ -39,4 +33,3 @@ public class ServicesRepository : IServicesRepository
         _context.SaveChanges();
     }
 }
-       

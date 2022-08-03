@@ -19,9 +19,8 @@ public class CommentsRepository : ICommentsRepository
         return comment.Id;
     }
 
-    public void DeleteComment(int id)
+    public void DeleteComment(Comment comment)
     {
-        var comment = _context.Comments.FirstOrDefault(c => c.Id == id);
         comment.IsDeleted = true;
         _context.SaveChanges();
     }

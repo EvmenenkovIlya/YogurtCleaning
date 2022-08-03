@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YogurtCleaning.DataLayer.Entities;
+﻿using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -13,5 +8,5 @@ public interface IServicesRepository
     List<Service> GetAllServices();
     void UpdateService(Service service);
     int AddService(Service service);
-    void DeleteService(int id);
+    void DeleteService(Service service);
 }
