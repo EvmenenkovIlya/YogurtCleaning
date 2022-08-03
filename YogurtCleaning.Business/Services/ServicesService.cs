@@ -36,5 +36,5 @@ public class ServicesService : IServicesService
         _servicesRepository.DeleteService(service);
     }
 
-    public List<Service> GetAllServices() => _servicesRepository.GetAllServices();
+    public async Task<List<Service>> GetAllServices() => await _servicesRepository.GetAllServices();
 }

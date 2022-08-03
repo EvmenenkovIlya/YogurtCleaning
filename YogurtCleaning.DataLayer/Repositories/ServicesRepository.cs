@@ -1,4 +1,5 @@
-﻿using YogurtCleaning.DataLayer.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -23,7 +24,7 @@ public class ServicesRepository : IServicesRepository
         _context.SaveChanges();
     }
 
-    public List<Service> GetAllServices() => _context.Services.Where(s => !s.IsDeleted).ToList();
+    public  async Task<List<Service>> GetAllServices() => await _context.Services.Where(s => !s.IsDeleted).ToListAsync();
 
     public Service GetService(int id) => _context.Services.FirstOrDefault(s => s.Id == id && !s.IsDeleted);
 

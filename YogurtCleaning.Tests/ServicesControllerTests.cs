@@ -98,7 +98,7 @@ public class ServicesControllerTests
     }
 
     [Test]
-    public void GetAllServices_WhenCorrectRequestPassed_ThenOkRecieved()
+    public async Task GetAllServices_WhenCorrectRequestPassed_ThenOkRecieved()
     {
         // given
         var expectedService = new List<Service>()
@@ -134,10 +134,10 @@ public class ServicesControllerTests
                 Orders = new List<Order>()
             }
         };
-        _mockServicesRepository.Setup(o => o.GetAllServices()).Returns(expectedService);
+        _mockServicesRepository.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
 
         // when
-        var actual = _sut.GetAllServices();
+        var actual = await _sut.GetAllServices();
 
         // then
         var actualResult = actual.Result as ObjectResult;

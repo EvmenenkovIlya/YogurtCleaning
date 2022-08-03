@@ -42,10 +42,10 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<ServiceResponse>> GetAllServices()
+    public async Task<ActionResult<List<ServiceResponse>>> GetAllServices()
     {
-        var result = _mapper.Map<List<ServiceResponse>>(_servicesService.GetAllServices());
-        return Ok(result);
+        var result = await _servicesService.GetAllServices();
+        return Ok(_mapper.Map<List<ServiceResponse>>(result));
     }
 
     [HttpPut("{id}")]

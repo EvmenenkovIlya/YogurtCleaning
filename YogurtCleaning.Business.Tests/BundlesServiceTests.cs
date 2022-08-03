@@ -103,7 +103,7 @@ public class BundlesServiceTests
 
         services.Add(service);
 
-        _servicesRepositoryMock.Setup(s => s.GetAllServices()).Returns(services);
+        _servicesRepositoryMock.Setup(s => s.GetAllServices()).ReturnsAsync(services).Verifiable();
 
         var bundle = new Bundle
         {
@@ -148,7 +148,7 @@ public class BundlesServiceTests
 
         services.Add(service);
 
-        _servicesRepositoryMock.Setup(s => s.GetAllServices()).Returns(services);
+        _servicesRepositoryMock.Setup(s => s.GetAllServices()).ReturnsAsync(services).Verifiable(); ;
 
 
         var bundle = new Bundle
