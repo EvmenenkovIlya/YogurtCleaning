@@ -15,7 +15,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void AddCleaner_WhenCleanerAdded_ThenCommentIdMoreThenZero()
+    public async Task AddCleaner_WhenCleanerAdded_ThenCommentIdMoreThenZero()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CleanersRepository(context);
@@ -32,7 +32,7 @@ public class CleanersRepositoryTests
         };
 
         // when
-        var actual = sut.CreateCleaner(cleaner);
+        var actual = await sut.CreateCleaner(cleaner);
 
         //then
         Assert.True(actual > 0);
@@ -40,7 +40,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void DeleteCleaner_WhenCorrectIdPassed_ThenSoftDeleteApplied()
+    public async Task DeleteCleaner_WhenCorrectIdPassed_ThenSoftDeleteApplied()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -61,16 +61,16 @@ public class CleanersRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteCleaner(cleaner);
+        await sut.DeleteCleaner(cleaner);
 
         //then
-        var actual = sut.GetCleaner(cleaner.Id);
+        var actual = await sut.GetCleaner(cleaner.Id);
         Assert.True(actual.IsDeleted);
         context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void GetAllCleaners_WhenCleanersExist_ThenGetCleaners()
+    public async Task GetAllCleaners_WhenCleanersExist_ThenGetCleaners()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CleanersRepository(context);
@@ -104,7 +104,7 @@ public class CleanersRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllCleaners();
+        var result = await sut.GetAllCleaners();
 
         //then
         Assert.NotNull(result);
@@ -120,7 +120,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void GetAllCleaners_WhenCleanerIsDeleted_ThenCleanerDoesNotGet()
+    public async Task GetAllCleaners_WhenCleanerIsDeleted_ThenCleanerDoesNotGet()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CleanersRepository(context);
@@ -154,7 +154,7 @@ public class CleanersRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllCleaners();
+        var result = await sut.GetAllCleaners();
 
         //then
         Assert.NotNull(result);
@@ -169,7 +169,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void GetAllCommentsByCleaner_WhenCommetsGet_ThenCommentsGet()
+    public async Task GetAllCommentsByCleaner_WhenCommetsGet_ThenCommentsGet()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CleanersRepository(context);
@@ -203,7 +203,7 @@ public class CleanersRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllCommentsByCleaner(cleaner.Id);
+        var result = await sut.GetAllCommentsByCleaner(cleaner.Id);
 
         //then
         Assert.NotNull(result);
@@ -216,7 +216,7 @@ public class CleanersRepositoryTests
     }
 
     [Fact]
-    public void UpdateCleaner_WhenCleanerUpdated_ThenCleanerDoesNotHaveOldProperty()
+    public async Task UpdateCleaner_WhenCleanerUpdated_ThenCleanerDoesNotHaveOldProperty()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -240,13 +240,13 @@ public class CleanersRepositoryTests
         cleaner.LastName = "Pupkin";
 
         //when
-        sut.UpdateCleaner(cleaner);
-        var result = sut.GetCleaner(cleaner.Id);
+        await sut.UpdateCleaner(cleaner);
+        var result = await sut.GetCleaner(cleaner.Id);
 
         //then
-        Assert.False(result.FirstName == "Adam");
-        Assert.False(result.LastName == "Smith");
-        Assert.True(result.Email == "ccc@gmail.c");
+        Assert.NotEqual("Adam", result.FirstName);
+        Assert.NotEqual("Smith", result.LastName);
+        Assert.Equal("ccc@gmail.c", result.Email);
         context.Database.EnsureDeleted();
     }
 }

@@ -27,6 +27,8 @@ public class OrdersService : IOrdersService
         throw new NotImplementedException();
     }
 
+    public List<Order> GetAllOrders() => _ordersRepository.GetAllOrders();
+
     public void UpdateOrder(Order modelToUpdate, int id)
     {
         Order order = _ordersRepository.GetOrder(id);

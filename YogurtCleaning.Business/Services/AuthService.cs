@@ -22,11 +22,11 @@ public class AuthService : IAuthService
         _adminsRepository = adminsRepository;
     }
 
-    public UserValues GetUserForLogin(string email, string password)
+    public async Task<UserValues> GetUserForLogin(string email, string password)
     {
         UserValues userValues = new();
 
-        var admin = _adminsRepository.GetAdminByEmail(email);
+        var admin = await _adminsRepository.GetAdminByEmail(email);
 
         if (admin is not null && email == admin.Email && !admin.IsDeleted &&
             PasswordHash.ValidatePassword(password, admin.Password))
@@ -36,8 +36,8 @@ public class AuthService : IAuthService
         }
         else
         {
-            var client = _clientsRepository.GetClientByEmail(email);
-            var cleaner = _cleanersRepository.GetCleanerByEmail(email);
+            var client = await _clientsRepository.GetClientByEmail(email);
+            var cleaner = await _cleanersRepository.GetCleanerByEmail(email);
             CheckUserInBase(client, cleaner);            
             dynamic user = client != null ? client : cleaner;
             if (user.IsDeleted)
@@ -96,6 +96,5 @@ public class AuthService : IAuthService
         {
             throw new EntityNotFoundException("User not found");
         }
-    }
-    
+    }   
 }

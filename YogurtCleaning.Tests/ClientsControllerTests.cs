@@ -32,7 +32,7 @@ public class ClientsControllerTests
     {
         //given
         _clientsServiceMock.Setup(c => c.CreateClient(It.IsAny<Client>()))
-         .Returns(1);
+         .ReturnsAsync(1);
 
         var client = new ClientRegisterRequest()
         {
@@ -45,7 +45,7 @@ public class ClientsControllerTests
             BirthDate = DateTime.Today
         };
         //when
-        var actual = _sut.AddClient(client);
+        var actual = await _sut.AddClient(client);
 
         //then
         var actualResult = actual.Result as CreatedResult;
@@ -63,7 +63,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void GetClient_WhenValidRequestPassed_OkReceived()
+    public async Task GetClient_WhenValidRequestPassed_OkReceived()
     {
         //given
         var expectedClient = new Client()
@@ -77,26 +77,29 @@ public class ClientsControllerTests
             BirthDate = DateTime.Today
         };
         
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient);
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedClient);
 
         //when
-        var actual = _sut.GetClient(expectedClient.Id);
+        var actual = await _sut.GetClient(expectedClient.Id);
 
         //then
         
         var actualResult = actual.Result as ObjectResult;
-        var clientResponce = actualResult.Value as ClientResponse;
+        var clientResponse = actualResult.Value as ClientResponse;
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(expectedClient.FirstName, Is.EqualTo(clientResponce.FirstName));
-        Assert.That(expectedClient.LastName, Is.EqualTo(clientResponce.LastName));
-        Assert.That(expectedClient.Email, Is.EqualTo(clientResponce.Email));
-        Assert.That(expectedClient.Phone, Is.EqualTo(clientResponce.Phone));
-        Assert.That(expectedClient.BirthDate, Is.EqualTo(clientResponce.BirthDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(clientResponse.FirstName, Is.EqualTo(expectedClient.FirstName));
+            Assert.That(clientResponse.LastName, Is.EqualTo(expectedClient.LastName));
+            Assert.That(clientResponse.Email, Is.EqualTo(expectedClient.Email));
+            Assert.That(clientResponse.Phone, Is.EqualTo(expectedClient.Phone));
+            Assert.That(clientResponse.BirthDate, Is.EqualTo(expectedClient.BirthDate));
+        });
         _clientsServiceMock.Verify(x => x.GetClient(expectedClient.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void UpdateClient_WhenValidRequestPassed_NoContentReceived()
+    public async Task UpdateClient_WhenValidRequestPassed_NoContentReceived()
     {
         //given
 
@@ -122,12 +125,12 @@ public class ClientsControllerTests
         _clientsServiceMock.Setup(o => o.UpdateClient(client, client.Id, _userValues));       
 
         //when
-        var actual = _sut.UpdateClient(newClientModel, client.Id);
+        var actual = await _sut.UpdateClient(newClientModel, client.Id);
 
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _clientsServiceMock.Verify(c => c.UpdateClient(It.Is<Client>(c => 
         c.FirstName == newClientModel.FirstName &&
         c.LastName == newClientModel.LastName &&
@@ -138,7 +141,7 @@ public class ClientsControllerTests
     }
 
     [Test]
-    public void GetCommentsByClientId_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetCommentsByClientId_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedClient = new Client()
@@ -163,25 +166,28 @@ public class ClientsControllerTests
             },
 
         };
-        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient.Comments);
+        _clientsServiceMock.Setup(o => o.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedClient.Comments);
 
         //when
-        var actual = _sut.GetAllCommentsByClient(expectedClient.Id);
+        var actual = await _sut.GetAllCommentsByClient(expectedClient.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
         var commentsResponse = actualResult.Value as List<CommentResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(commentsResponse.Count, Is.EqualTo(expectedClient.Comments.Count));
-        Assert.That(commentsResponse[0].Id, Is.EqualTo(expectedClient.Comments[0].Id));
-        Assert.That(commentsResponse[1].Summary, Is.EqualTo(expectedClient.Comments[1].Summary));
-        Assert.That(commentsResponse[0].Rating, Is.EqualTo(expectedClient.Comments[0].Rating));
+        Assert.Multiple(() =>
+        {
+            Assert.That(commentsResponse.Count, Is.EqualTo(expectedClient.Comments.Count));
+            Assert.That(commentsResponse[0].Id, Is.EqualTo(expectedClient.Comments[0].Id));
+            Assert.That(commentsResponse[1].Summary, Is.EqualTo(expectedClient.Comments[1].Summary));
+            Assert.That(commentsResponse[0].Rating, Is.EqualTo(expectedClient.Comments[0].Rating));
+        });
         _clientsServiceMock.Verify(c => c.GetCommentsByClient(expectedClient.Id, It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void GetOrdersByClient_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetOrdersByClient_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedClient = new Client()
@@ -206,25 +212,28 @@ public class ClientsControllerTests
             },
         };
 
-        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, It.IsAny<UserValues>())).Returns(expectedClient.Orders);
+        _clientsServiceMock.Setup(o => o.GetOrdersByClient(expectedClient.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedClient.Orders);
 
         //when
-        var actual = _sut.GetAllOrdersByClient(expectedClient.Id);
+        var actual = await _sut.GetAllOrdersByClient(expectedClient.Id);
 
         //then
         var actualResult = actual.Result as ObjectResult;
         var ordersResponse = actualResult.Value as List<OrderResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(ordersResponse.Count, Is.EqualTo(expectedClient.Orders.Count));
-        Assert.That(ordersResponse[0].Id, Is.EqualTo(expectedClient.Orders[0].Id));
-        Assert.That(ordersResponse[1].Price, Is.EqualTo(expectedClient.Orders[1].Price));
-        Assert.That(ordersResponse[0].Status, Is.EqualTo(expectedClient.Orders[0].Status));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ordersResponse.Count, Is.EqualTo(expectedClient.Orders.Count));
+            Assert.That(ordersResponse[0].Id, Is.EqualTo(expectedClient.Orders[0].Id));
+            Assert.That(ordersResponse[1].Price, Is.EqualTo(expectedClient.Orders[1].Price));
+            Assert.That(ordersResponse[0].Status, Is.EqualTo(expectedClient.Orders[0].Status));
+        });
         _clientsServiceMock.Verify(c => c.GetOrdersByClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void DeleteClientById_WhenValidRequestPassed_NoContentReceived()
+    public async Task DeleteClientById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedClient = new Client()
@@ -239,20 +248,20 @@ public class ClientsControllerTests
             IsDeleted = false
         };
 
-        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).Returns(expectedClient);
+        _clientsServiceMock.Setup(o => o.GetClient(expectedClient.Id, _userValues)).ReturnsAsync(expectedClient);
 
         //when
-        var actual = _sut.DeleteClient(expectedClient.Id);
+        var actual = await _sut.DeleteClient(expectedClient.Id);
 
         //then
         var actualResult = actual as NoContentResult;
 
-        Assert.AreEqual(StatusCodes.Status204NoContent, actualResult.StatusCode);
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _clientsServiceMock.Verify(c => c.DeleteClient(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
     }
 
     [Test]
-    public void GetAllClients_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetAllClients_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var clients = new List<Client>
@@ -286,10 +295,10 @@ public class ClientsControllerTests
             }
         };
 
-        _clientsServiceMock.Setup(o => o.GetAllClients()).Returns(clients).Verifiable();
+        _clientsServiceMock.Setup(o => o.GetAllClients()).ReturnsAsync(clients).Verifiable();
 
         //when
-        var actual = _sut.GetAllClients();
+        var actual = await _sut.GetAllClients();
 
         //then
         var actualResult = actual.Result as ObjectResult;
@@ -297,12 +306,15 @@ public class ClientsControllerTests
 
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(clients.Count, Is.EqualTo(clientsResponse.Count));
-        Assert.That(clients[0].FirstName, Is.EqualTo(clientsResponse[0].FirstName));
-        Assert.That(clients[1].LastName, Is.EqualTo(clientsResponse[1].LastName));
-        Assert.That(clients[2].Email, Is.EqualTo(clientsResponse[2].Email));
-        Assert.That(clients[1].Phone, Is.EqualTo(clientsResponse[1].Phone));
-        Assert.That(clients[0].BirthDate, Is.EqualTo(clientsResponse[0].BirthDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(clientsResponse.Count, Is.EqualTo(clients.Count));
+            Assert.That(clientsResponse[0].FirstName, Is.EqualTo(clients[0].FirstName));
+            Assert.That(clientsResponse[1].LastName, Is.EqualTo(clients[1].LastName));
+            Assert.That(clientsResponse[2].Email, Is.EqualTo(clients[2].Email));
+            Assert.That(clientsResponse[1].Phone, Is.EqualTo(clients[1].Phone));
+            Assert.That(clients[0].BirthDate, Is.EqualTo(clients[0].BirthDate));
+        });
         _clientsServiceMock.Verify(x => x.GetAllClients(), Times.Once);
     }
 }
