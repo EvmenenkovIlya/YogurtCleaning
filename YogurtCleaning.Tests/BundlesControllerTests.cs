@@ -37,7 +37,7 @@ public class BundlesControllerTests
             Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
-            Services = new List<ServiceResponse>()
+            ServicesIds = new List<int>()
         };
 
         // when

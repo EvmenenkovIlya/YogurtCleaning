@@ -9,7 +9,7 @@ namespace YogurtCleaning.Tests;
 public class CleanerModelsRequestTests
 {
     [TestCaseSource(typeof(CleanerRegisterRequestTestSource))]
-    public async Task CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerRegisterRequest cleaner, string errorMessage)
+    public void CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerRegisterRequest cleaner, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();  
@@ -24,7 +24,7 @@ public class CleanerModelsRequestTests
     }
 
     [TestCaseSource(typeof(CleanerUpdateRequestTestSource))]
-    public async Task CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerUpdateRequest cleaner, string errorMessage)
+    public void CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerUpdateRequest cleaner, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();
@@ -39,7 +39,7 @@ public class CleanerModelsRequestTests
     }
 
     [Test]
-    public async Task CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public void CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given eaner
         CleanerRegisterRequest cleaner = new CleanerRegisterRequest();
@@ -67,7 +67,7 @@ public class CleanerModelsRequestTests
     }
 
     [Test]
-    public async Task CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public void CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
         CleanerUpdateRequest cleaner = new CleanerUpdateRequest();
@@ -91,7 +91,7 @@ public class CleanerModelsRequestTests
     }
 
     [TestCase]
-    public async Task CleanerRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void CleanerRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         CleanerRegisterRequest cleaner = new CleanerRegisterRequest()
@@ -119,7 +119,7 @@ public class CleanerModelsRequestTests
     }
 
     [Test]
-    public async Task CleanerUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void CleanerUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         CleanerUpdateRequest cleaner = new CleanerUpdateRequest()
