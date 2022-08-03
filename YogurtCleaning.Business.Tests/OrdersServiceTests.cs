@@ -18,6 +18,7 @@ public class OrdersServiceTests
     private Mock<IOrdersRepository> _mockOrdersRepository;
     private Mock<ICleanersService> _mockCleanersService;
     private Mock<IClientsRepository> _mockClientsRepository;
+    private Mock<IBundlesRepository> _mockBundlesRepository;
     private Mock<IEmailSender> _mockEmailSender;
     private IMapper _mapper;
     private OrdersService _sut;
@@ -28,13 +29,18 @@ public class OrdersServiceTests
         _mockClientsRepository = new Mock<IClientsRepository>();
         _mockCleanersService = new Mock<ICleanersService>();
         _mockOrdersRepository = new Mock<IOrdersRepository>();
+        _mockBundlesRepository = new Mock<IBundlesRepository>();
         _mockEmailSender = new Mock<IEmailSender>();
         var mapper = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(new BusinessMapperConfigStorage());
         });
         _mapper = mapper.CreateMapper();
-        _sut = new OrdersService(_mockOrdersRepository.Object, _mockCleanersService.Object, _mockClientsRepository.Object, _mockEmailSender.Object, _mapper);
+        _sut = new OrdersService(_mockOrdersRepository.Object, 
+            _mockCleanersService.Object, 
+            _mockClientsRepository.Object, 
+            _mockBundlesRepository.Object, 
+            _mockEmailSender.Object, _mapper);
     }
 
     [Fact]
@@ -95,12 +101,6 @@ public class OrdersServiceTests
             new Cleaner()
             {
                 Id = 11,
-                FirstName = "Adam",
-                LastName = "Smith",
-                Password = "12345678",
-                Email = "AdamSmith@gmail.com1",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today,
                 Schedule = Schedule.FullTime,
                 Orders = new List<Order>(),
                 DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
@@ -108,33 +108,31 @@ public class OrdersServiceTests
             new Cleaner()
             {
                 Id = 13,
-                FirstName = "Adam",
-                LastName = "Smith",
-                Password = "12345678",
-                Email = "AdamSmith@gmail.com2",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today,
                 Schedule = Schedule.ShiftWork,
                 Orders = new List<Order>(),
                 DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
             }
         };
+
         var order = new OrderBusinessModel
         {
             Client = new() { Id = 11 },
             CleaningObject = new() { Id = 56 },
             StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
-            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 } },
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2} },
             Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } },
             TotalDuration = 8,
             CleanersCount = 2,
             EndTime = new DateTime(2022, 8, 1, 18, 00, 00)
         };
 
+        var bundle = new Bundle { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 };
+
         decimal expectedPrice = 110;
         var expectedStatus = Status.Created;
 
         _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).Returns(cleaners);
+        _mockBundlesRepository.Setup(b => b.GetBundle(2)).Returns(bundle);
 
         // when
         _sut.AddOrder(order);
@@ -146,6 +144,7 @@ public class OrdersServiceTests
                 && i.Status == expectedStatus)),
             Times.Once);
         _mockCleanersService.Verify(c => c.GetFreeCleanersForOrder(order), Times.Once);
+        _mockBundlesRepository.Verify(b => b.GetBundle(2), Times.Once);
     }
 
     [Fact]
@@ -157,12 +156,6 @@ public class OrdersServiceTests
             new Cleaner()
             {
                 Id = 11,
-                FirstName = "Adam",
-                LastName = "Smith",
-                Password = "12345678",
-                Email = "AdamSmith@gmail.com1",
-                Phone = "85559997264",
-                BirthDate = DateTime.Today,
                 Schedule = Schedule.FullTime,
                 Orders = new List<Order>(),
                 DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
@@ -173,17 +166,20 @@ public class OrdersServiceTests
             Client = new() { Id = 11 },
             CleaningObject = new() { Id = 56 },
             StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
-            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 } },
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2} },
             Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } },
             TotalDuration = 8,
             CleanersCount = 2,
             EndTime = new DateTime(2022, 8, 1, 18, 00, 00)
         };
 
+        var bundle = new Bundle { Id = 2, Duration = 6, Measure = Measure.Apartment, Price = 100 };
+
         decimal expectedPrice = 110;
         var expectedStatus = Status.Moderation;
 
         _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).Returns(cleaners);
+        _mockBundlesRepository.Setup(b => b.GetBundle(2)).Returns(bundle);
 
         // when
         _sut.AddOrder(order);
@@ -196,5 +192,6 @@ public class OrdersServiceTests
             Times.Once);
         _mockCleanersService.Verify(c => c.GetFreeCleanersForOrder(order), Times.Once);
         _mockEmailSender.Verify(e => e.SendEmail(It.IsAny<int>()), Times.Once);
+        _mockBundlesRepository.Verify(b => b.GetBundle(2), Times.Once);
     }
 }

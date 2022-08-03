@@ -11,14 +11,21 @@ public class OrdersService : IOrdersService
     private readonly IOrdersRepository _ordersRepository;
     private readonly ICleanersService _cleanersService;
     private readonly IClientsRepository _clientsRepository;
+    private readonly IBundlesRepository _bundlesRepository;
     private readonly IEmailSender _emailSender;
     private readonly IMapper _mapper;
 
-    public OrdersService(IOrdersRepository ordersRepository, ICleanersService cleanersService, IClientsRepository clientsRepository, IEmailSender emailSender, IMapper mapper)
+    public OrdersService(IOrdersRepository ordersRepository, 
+        ICleanersService cleanersService, 
+        IClientsRepository clientsRepository, 
+        IBundlesRepository bundlesRepository,
+        IEmailSender emailSender, 
+        IMapper mapper)
     {
         _ordersRepository = ordersRepository;
         _cleanersService = cleanersService;
         _clientsRepository = clientsRepository;
+        _bundlesRepository = bundlesRepository;
         _emailSender = emailSender;
         _mapper = mapper;
     }
@@ -38,6 +45,13 @@ public class OrdersService : IOrdersService
     
     public int AddOrder(OrderBusinessModel order)
     {
+        var fullBundles = new List<BundleBusinessModel>();
+        foreach(var b in order.Bundles)
+        {
+            var fullBundle = _mapper.Map<BundleBusinessModel>(_bundlesRepository.GetBundle(b.Id));
+            fullBundles.Add(fullBundle);
+        }
+        order.Bundles = fullBundles;
         order.Price = GetOrderPrice(order);
         order.CleanersBand = GetCleanersForOrder(order); 
         if(order.CleanersBand.Count < order.CleanersCount)

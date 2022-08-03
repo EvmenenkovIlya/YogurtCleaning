@@ -20,11 +20,15 @@ public class OrderBusinessModelTests
             Client = new() { Id = 11 },
             CleaningObject = new() { Id = 56 },
             StartTime = DateTime.Now.AddDays(1),
-            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2, Duration = 2, Measure = Measure.Apartment } },
+            Bundles = new List<BundleBusinessModel> 
+                { 
+                    new BundleBusinessModel { Id = 2, Duration = 2, Measure = Measure.Apartment },
+                    new BundleBusinessModel { Id = 3, Duration = 2, Measure = Measure.Apartment }
+                },
             Services = new List<Service> { new Service { Id = 42, Duration = 2 } }
         };
 
-        var expectedDuration = (decimal)4;
+        var expectedDuration = (decimal)6;
 
         // when
         order.SetTotalDuration();
