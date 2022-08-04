@@ -62,7 +62,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public async Task GetCleaningObject_WhenValidRequestPassed_OkReceived()
+    public void GetCleaningObject_WhenValidRequestPassed_OkReceived()
     {
         //given
         var expectedCleaningObject = new CleaningObject()
@@ -98,7 +98,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public async Task UpdateCleaningObject_WhenValidRequestPassed_NoContentReceived()
+    public void UpdateCleaningObject_WhenValidRequestPassed_NoContentReceived()
     {
         //given
 
@@ -142,7 +142,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public async Task DeleteCleaningObjectById_WhenValidRequestPassed_NoContentReceived()
+    public void DeleteCleaningObjectById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedCleaningObject = new CleaningObject()

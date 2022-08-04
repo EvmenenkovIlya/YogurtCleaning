@@ -20,7 +20,7 @@ public class ClientsService : IClientsService
 
         if (client == null)
         {
-            throw new EntityNotFoundException($"Cleaner {id} not found");
+            throw new EntityNotFoundException($"Client {id} not found");
         }
         AuthorizeEnitiyAccess(userValues, client);
         return client;

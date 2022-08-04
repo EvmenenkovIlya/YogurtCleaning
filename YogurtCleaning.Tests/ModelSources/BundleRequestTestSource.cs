@@ -16,7 +16,7 @@ public class BundleRequestTestSource : IEnumerable
             Type = CleaningType.Regular,
             Price = 1000,
             Measure = Measure.Room,
-            Services = new List<ServiceResponse>()
+            ServicesIds = new List<int>()
         };
     }
 
@@ -39,7 +39,7 @@ public class BundleRequestTestSource : IEnumerable
         };
 
         model = GetBundleRequestModel();
-        model.Services = null;
+        model.ServicesIds = null;
         yield return new object[]
         {
             model,

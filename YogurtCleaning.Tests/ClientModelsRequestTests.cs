@@ -8,7 +8,7 @@ namespace YogurtCleaning.Tests;
 public class ClientModelsRequestTests
 {
     [TestCaseSource(typeof(ClientRegisterRequestTestSource))]
-    public async Task ClientRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(ClientRegisterRequest client, string errorMessage)
+    public void ClientRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(ClientRegisterRequest client, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();  
@@ -23,7 +23,7 @@ public class ClientModelsRequestTests
     }
 
     [TestCaseSource(typeof(ClientUpdateRequestTestSource))]
-    public async Task ClientUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(ClientUpdateRequest client, string errorMessage)
+    public void ClientUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(ClientUpdateRequest client, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();
@@ -37,8 +37,8 @@ public class ClientModelsRequestTests
         Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
-    [TestCase]
-    public async Task ClientRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    [Test]
+    public void ClientRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
         ClientRegisterRequest client = new ClientRegisterRequest();
@@ -64,8 +64,8 @@ public class ClientModelsRequestTests
         }
     }
 
-    [TestCase]
-    public async Task ClientUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    [Test]
+    public void ClientUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
         ClientUpdateRequest client = new ClientUpdateRequest();
@@ -89,7 +89,7 @@ public class ClientModelsRequestTests
     }
 
     [TestCase]
-    public async Task ClientRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void ClientRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         ClientRegisterRequest client = new ClientRegisterRequest()
@@ -113,7 +113,7 @@ public class ClientModelsRequestTests
     }
 
     [TestCase]
-    public async Task ClientUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void ClientUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         ClientUpdateRequest client = new ClientUpdateRequest()

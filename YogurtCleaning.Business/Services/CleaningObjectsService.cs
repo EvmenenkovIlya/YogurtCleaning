@@ -34,10 +34,10 @@ public class CleaningObjectsService : ICleaningObjectsService
 
     public CleaningObject GetCleaningObject(int cleaningObjectId, UserValues userValues)
     {
-        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(cleaningObjectId); ;
+        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(cleaningObjectId);
         if (cleaningObject == null)
         {
-            throw new EntityNotFoundException(ExceptionsErrorMessages.CleaningObjectNotFound);
+            throw new EntityNotFoundException($"Cleaning Object with Id {cleaningObjectId} not found");
         }
         if (!(userValues.Id == cleaningObject.Client.Id || !(userValues.Role == Role.Client)))
         {

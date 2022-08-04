@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 using YogurtCleaning.Tests.ModelSources;
@@ -9,7 +8,7 @@ namespace YogurtCleaning.Tests;
 public class ServiceModelsRequestTests
 {
     [TestCaseSource(typeof(ServiceRequestTestSource))]
-    public async Task ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(ServiceRequest service, string errorMessage)
+    public void ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(ServiceRequest service, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();  
@@ -24,7 +23,7 @@ public class ServiceModelsRequestTests
     }
 
     [Test]
-    public async Task ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public void ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
         ServiceRequest service = new ServiceRequest();
@@ -48,7 +47,7 @@ public class ServiceModelsRequestTests
     }
 
     [Test]
-    public async Task ServiceRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void ServiceRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         ServiceRequest service = new ServiceRequest()

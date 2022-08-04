@@ -46,7 +46,7 @@ public class BundlesController : ControllerBase
         return Ok(result);
     }
 
-    [AuthorizeRoles(Role.Admin)]
+    [AuthorizeRoles]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
@@ -58,7 +58,7 @@ public class BundlesController : ControllerBase
         return NoContent();
     }
 
-    [AuthorizeRoles(Role.Admin)]
+    [AuthorizeRoles]
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
@@ -70,7 +70,7 @@ public class BundlesController : ControllerBase
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
-    [AuthorizeRoles(Role.Admin)]
+    [AuthorizeRoles]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
