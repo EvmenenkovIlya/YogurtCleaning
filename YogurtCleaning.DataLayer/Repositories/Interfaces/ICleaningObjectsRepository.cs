@@ -5,10 +5,10 @@ namespace YogurtCleaning.DataLayer.Repositories;
 
 public interface ICleaningObjectsRepository
 {
-    int CreateCleaningObject(CleaningObject cleaningObject);
-    void DeleteCleaningObject(CleaningObject cleaningObject);
-    List<CleaningObject> GetAllCleaningObjects();
-    CleaningObject? GetCleaningObject(int cleaningObjectId);
-    void UpdateCleaningObject(CleaningObject newProperty);
-    District GetDistrict(DistrictEnum district);
+    Task<int> CreateCleaningObject(CleaningObject cleaningObject);
+    Task DeleteCleaningObject(CleaningObject cleaningObject);
+    Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId);
+    Task<CleaningObject?> GetCleaningObject(int cleaningObjectId);
+    Task UpdateCleaningObject(CleaningObject newProperty);
+    Task<District> GetDistrict(DistrictEnum district);
 }

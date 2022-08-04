@@ -76,10 +76,10 @@ public class CleaningObjectControllerTests
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
         };
 
-        _cleaningObjectsServiceMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>())).Returns(expectedCleaningObject);
+        _cleaningObjectsServiceMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaningObject);
 
         //when
-        var actual = _sut.GetCleaningObject(expectedCleaningObject.Id);
+        var actual = await _sut.GetCleaningObject(expectedCleaningObject.Id);
 
         //then
 
@@ -129,7 +129,7 @@ public class CleaningObjectControllerTests
         _cleaningObjectsServiceMock.Setup(o => o.UpdateCleaningObject(cleaningObject, cleaningObject.Id, _userValues));
 
         //when
-        var actual = _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id);
+        var actual = await _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id);
 
         //then
         var actualResult = actual as NoContentResult;
@@ -159,7 +159,7 @@ public class CleaningObjectControllerTests
         var actual = _sut.DeleteCleaningObject(expectedCleaningObject.Id);
 
         //then
-        var actualResult = actual as NoContentResult;
+        var actualResult = await actual as NoContentResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _cleaningObjectsServiceMock.Verify(c => c.DeleteCleaningObject(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
