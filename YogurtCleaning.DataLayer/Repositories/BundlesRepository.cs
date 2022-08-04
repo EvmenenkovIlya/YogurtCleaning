@@ -35,7 +35,7 @@ public class BundlesRepository : IBundlesRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Service>> GetListServices(List<Service> services)
+    public async Task<List<Service>> GetServices(List<Service> services)
     {
         List<int> servicesIds = services.Select(s => s.Id).ToList();
 

@@ -134,7 +134,7 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = await sut.GetListServices(servicesFromRequest);
+        var result = await sut.GetServices(servicesFromRequest);
 
         //then 
         Assert.Equal(expectedservices.Count, result.Count);
@@ -161,7 +161,7 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = await sut.GetListServices(servicesFromRequest);
+        var result = await sut.GetServices(servicesFromRequest);
 
         //then 
         Assert.True(servicesFromRequest.Count > result.Count);

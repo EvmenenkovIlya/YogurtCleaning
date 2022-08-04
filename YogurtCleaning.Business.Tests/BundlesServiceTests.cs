@@ -226,14 +226,14 @@ public class BundlesServiceTests
             Services = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } },
             IsDeleted = false
         };
-        _bundlesRepositoryMock.Setup(c => c.GetListServices(bundle.Services)).ReturnsAsync(expectedServices);
+        _bundlesRepositoryMock.Setup(c => c.GetServices(bundle.Services)).ReturnsAsync(expectedServices);
 
         //when
         var actual = await _sut.AddBundle(bundle);
 
         //then
         Assert.Equal(expectedId, actual);
-        _bundlesRepositoryMock.Verify(c => c.AddBundle(It.IsAny<Bundle>()), Times.Once);
+        _bundlesRepositoryMock.Verify(c => c.AddBundle(bundle), Times.Once);
     }
 
     [Fact]
@@ -248,7 +248,7 @@ public class BundlesServiceTests
             Services = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } },
             IsDeleted = false
         };
-        _bundlesRepositoryMock.Setup(c => c.GetListServices(bundle.Services)).ReturnsAsync(expectedServices);
+        _bundlesRepositoryMock.Setup(c => c.GetServices(bundle.Services)).ReturnsAsync(expectedServices);
 
         //when
 
