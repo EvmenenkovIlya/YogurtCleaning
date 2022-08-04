@@ -10,7 +10,7 @@ public class CommentsRepositoryTests
     public CommentsRepositoryTests()
     {
         _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase(databaseName: "TestDbForServices")
             .Options;
     }
 

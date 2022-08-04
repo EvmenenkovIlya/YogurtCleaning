@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
@@ -15,14 +14,14 @@ public class BundlesControllerTests
 {
     private BundlesController _sut;
     private Mock<IBundlesService> _mockBundlesService;
-    private Mock<IMapper> _mockMapper;
+    private IMapper _mapper;
 
     [SetUp]
     public void Setup()
     {      
         _mockBundlesService = new Mock<IBundlesService>();
-        _mockMapper = new Mock<IMapper>();
-        _sut = new BundlesController(_mockBundlesService.Object, _mockMapper.Object);
+        _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
+        _sut = new BundlesController(_mockBundlesService.Object, _mapper);
     }
 
     [Test]
@@ -38,7 +37,7 @@ public class BundlesControllerTests
             Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
-            Services = new List<ServiceResponse>()
+            ServicesIds = new List<int>()
         };
 
         // when

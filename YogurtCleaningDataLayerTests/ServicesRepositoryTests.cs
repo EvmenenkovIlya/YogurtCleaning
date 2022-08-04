@@ -34,6 +34,7 @@ public class ServicesRepositoryTests
 
         //then 
         Assert.True(actual > 0);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -58,6 +59,7 @@ public class ServicesRepositoryTests
 
         //then 
         Assert.True(service.IsDeleted);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -82,6 +84,7 @@ public class ServicesRepositoryTests
 
         //then 
         Assert.Contains(service, result);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -106,5 +109,6 @@ public class ServicesRepositoryTests
 
         //then 
         Assert.DoesNotContain(service, result);
+        context.Database.EnsureDeleted();
     }
 }

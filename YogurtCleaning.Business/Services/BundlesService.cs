@@ -18,6 +18,9 @@ public class BundlesService : IBundlesService
 
     public async Task<int> AddBundle(Bundle bundle)
     {
+        List<Service> services = bundle.Services;
+        bundle.Services = await _bundlesRepository.GetServices(bundle.Services);
+        Validator.CheckRequestAndDbList(services, bundle.Services);
         var result = await _bundlesRepository.AddBundle(bundle);
         return result;
     }
