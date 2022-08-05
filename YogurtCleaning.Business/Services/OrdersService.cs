@@ -72,7 +72,7 @@ public class OrdersService : IOrdersService
         var fullBundles = new List<BundleBusinessModel>();
         foreach(var b in order.Bundles)
         {
-            var fullBundle = _mapper.Map<BundleBusinessModel>(_bundlesRepository.GetBundle(b.Id));
+            var fullBundle = _mapper.Map<BundleBusinessModel>(await _bundlesRepository.GetBundle(b.Id));
             fullBundles.Add(fullBundle);
         }
         order.Bundles = fullBundles;
