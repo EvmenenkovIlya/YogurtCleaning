@@ -1,7 +1,4 @@
-using Microsoft.Extensions.Logging;
-using Moq;
 using System.ComponentModel.DataAnnotations;
-using YogurtCleaning.Controllers;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 using YogurtCleaning.Tests.ModelSources;
@@ -11,7 +8,7 @@ namespace YogurtCleaning.Tests;
 public class CommentModelRequestTests
 {
     [TestCaseSource(typeof(CommentsControllerTestSource))]
-    public async Task CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(CommentRequest comment, string errorMessage)
+    public void CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(CommentRequest comment, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();
@@ -26,7 +23,7 @@ public class CommentModelRequestTests
     }
 
     [Test]
-    public async Task CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public void CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
         CommentRequest comment = new CommentRequest();
@@ -48,7 +45,7 @@ public class CommentModelRequestTests
     }
 
     [Test]
-    public async Task CommentRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void CommentRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         CommentRequest comment = new CommentRequest()

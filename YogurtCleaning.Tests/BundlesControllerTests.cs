@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
@@ -38,7 +37,7 @@ public class BundlesControllerTests
             Type = CleaningType.Regular,
             Price = 10000,
             Measure = Measure.Room,
-            Services = new List<ServiceResponse>()
+            ServicesIds = new List<int>()
         };
 
         // when

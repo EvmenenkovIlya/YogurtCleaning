@@ -27,7 +27,7 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
     }
 
     public async Task<CleaningObject?> GetCleaningObject(int cleaningObjectId) => 
-        await _context.CleaningObjects.FirstOrDefaultAsync(o => o.Id == cleaningObjectId);
+        await _context.CleaningObjects.Include(x => x.Client).Include(x => x.District).FirstOrDefaultAsync(o => o.Id == cleaningObjectId);
 
     public async Task<List<CleaningObject>> GetAllCleaningObjects() =>
         await _context.CleaningObjects.Include(c => c.District).Include(c => c.Client).Where(o => o.IsDeleted == false).AsNoTracking().ToListAsync();

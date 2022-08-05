@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.DataLayer.Tests;
@@ -74,6 +75,7 @@ public class CleaningObjectsRepositoryTests
             NumberOfWindows = 1,
             NumberOfBalconies = 0,
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+            District = new District() { Id = DistrictEnum.Vasileostrovskiy, Name = DistrictEnum.Vasileostrovskiy.ToString()},
             IsDeleted = false
         };
 
@@ -115,7 +117,7 @@ public class CleaningObjectsRepositoryTests
                 NumberOfWindows = 1,
                 NumberOfBalconies = 12,
                 Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
-                District = new District(){ Id = Enums.DistrictEnum.Kronstadt, Name = "Кронштадт"},
+                District = new District() { Id = DistrictEnum.Vasileostrovskiy, Name = DistrictEnum.Vasileostrovskiy.ToString()},
                 IsDeleted = true
             },
             new CleaningObject()
@@ -137,7 +139,7 @@ public class CleaningObjectsRepositoryTests
                 NumberOfWindows = 1,
                 NumberOfBalconies = 0,
                 Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
-                District = new District(){ Id = Enums.DistrictEnum.Krasnoselsky, Name = "Красносельский"},
+                District = new District() { Id = DistrictEnum.Admiralteisky, Name = DistrictEnum.Admiralteisky.ToString()},
                 IsDeleted = false
             }
         };
@@ -183,6 +185,7 @@ public class CleaningObjectsRepositoryTests
             NumberOfWindows = 1,
             NumberOfBalconies = 12,
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+            District = new District() { Id = DistrictEnum.Vasileostrovskiy, Name = DistrictEnum.Vasileostrovskiy.ToString() },
             IsDeleted = false
         };        
         context.CleaningObjects.Add(oldCleaningObject);
