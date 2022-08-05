@@ -9,4 +9,5 @@ public interface IBundlesRepository
     Task UpdateBundle(Bundle bundle);
     Task<int> AddBundle(Bundle bundle);
     Task DeleteBundle(Bundle bundle);
+    Task<List<Service>> GetServices(List<Service> servicesIds);
 }

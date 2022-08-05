@@ -211,4 +211,48 @@ public class BundlesServiceTests
         //then
         await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.DeleteBundle(testId));
     }
+    [Fact]
+    public async Task CreateBundle_WhenValidRequestPassed_BundleAdded()
+    {
+        //given        
+        _bundlesRepositoryMock.Setup(c => c.AddBundle(It.IsAny<Bundle>()))
+             .ReturnsAsync(1);
+        var expectedId = 1;
+        var expectedServices = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } };
+        var bundle = new Bundle()
+        {
+            Name = "Clean all",
+            Duration = 12,
+            Services = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } },
+            IsDeleted = false
+        };
+        _bundlesRepositoryMock.Setup(c => c.GetServices(bundle.Services)).ReturnsAsync(expectedServices);
+
+        //when
+        var actual = await _sut.AddBundle(bundle);
+
+        //then
+        Assert.Equal(expectedId, actual);
+        _bundlesRepositoryMock.Verify(c => c.AddBundle(bundle), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateBundle_WhenValidRequestPassed_BundleAdded_ThrowBadRequestException()
+    {
+        //given        
+        var expectedServices = new List<Service>() { new Service() { Id = 1 }};
+        var bundle = new Bundle()
+        {
+            Name = "Clean all",
+            Duration = 12,
+            Services = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } },
+            IsDeleted = false
+        };
+        _bundlesRepositoryMock.Setup(c => c.GetServices(bundle.Services)).ReturnsAsync(expectedServices);
+
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.AddBundle(bundle));
+    }
 }

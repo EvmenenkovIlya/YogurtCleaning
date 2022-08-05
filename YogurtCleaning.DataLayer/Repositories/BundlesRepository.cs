@@ -34,4 +34,11 @@ public class BundlesRepository : IBundlesRepository
         _context.Bundles.Update(bundle);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Service>> GetServices(List<Service> services)
+    {
+        List<int> servicesIds = services.Select(s => s.Id).ToList();
+
+        return await _context.Services.Where(c => servicesIds.Contains(c.Id)).ToListAsync();
+    }
 }

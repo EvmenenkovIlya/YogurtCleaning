@@ -19,7 +19,8 @@ public class MapperConfigStorage : Profile
 			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District}));
 		CreateMap<CleaningObjectUpdateRequest, CleaningObject>()
 			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District }));
-		CreateMap<CleaningObject, CleaningObjectResponse>();
+		CreateMap<CleaningObject, CleaningObjectResponse>()
+			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id));
 
 		CreateMap<Order, OrderResponse>();
 		CreateMap<OrderUpdateRequest, Order>()
@@ -43,8 +44,8 @@ public class MapperConfigStorage : Profile
 
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
-		CreateMap<BundleRequest, Bundle>();
-		CreateMap<BundleBusinessModel, Bundle>();
+		CreateMap<BundleRequest, Bundle>()
+			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
 		CreateMap<Bundle, BundleResponse>();
 
 		CreateMap<CommentRequest, Comment>()
