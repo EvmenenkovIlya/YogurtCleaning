@@ -321,4 +321,137 @@ public class CleaningObjectServiceFacts
         //then
         await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.DeleteCleaningObject(cleaningObject.Id, _userValues));
     }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenClientHasCleaningObjects_GetCleaningObjects()
+    {
+        //given
+        Client client = new Client() { Id = 1 };
+        var cleaningObjectsInDb = new List<CleaningObject>() {
+            new CleaningObject()
+            {
+                Id = 1,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Vasileostrovskiy, Name = "Василеостровский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 2,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Волгоград, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Nevsky, Name = "Невский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 3,
+                Client = new Client() {Id = 2},
+                NumberOfRooms = 10,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 15",
+                District = new District(){ Id = DistrictEnum.Krasnoselsky, Name = "Красносельский"},
+                IsDeleted = false
+            }
+        };
+        _userValues = new UserValues() { Role = Role.Client, Id = 1 };
+        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).ReturnsAsync(client);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetAllCleaningObjectsByClientId(client.Id)).ReturnsAsync(cleaningObjectsInDb);
+
+        //when
+        var result = await _sut.GetAllCleaningObjectsByClientId(client.Id, _userValues);
+
+        //then
+        _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
+        _cleaningObjectsRepositoryMock.Verify(c => c.GetAllCleaningObjectsByClientId(client.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenAdminGetsCleaningObjects_GetCleaningObjects()
+    {
+        //given
+        Client client = new Client() { Id = 1 };
+        var cleaningObjectsInDb = new List<CleaningObject>() {
+            new CleaningObject()
+            {
+                Id = 1,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Vasileostrovskiy, Name = "Василеостровский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 2,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Волгоград, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Nevsky, Name = "Невский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 3,
+                Client = new Client() {Id = 2},
+                NumberOfRooms = 10,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 15",
+                District = new District(){ Id = DistrictEnum.Krasnoselsky, Name = "Красносельский"},
+                IsDeleted = false
+            }
+        };
+        _userValues = new UserValues() { Role = Role.Admin, Id = 8 };
+        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).ReturnsAsync(client);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetAllCleaningObjectsByClientId(client.Id)).ReturnsAsync(cleaningObjectsInDb);
+
+        //when
+        var result = await _sut.GetAllCleaningObjectsByClientId(client.Id, _userValues);
+
+        //then
+        _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
+        _cleaningObjectsRepositoryMock.Verify(c => c.GetAllCleaningObjectsByClientId(client.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenClientNotInDb_ThrowBadRequestException()
+    {
+        //given
+        int clientIdNotInDb = 7;
+        _userValues = new UserValues() { Role = Role.Client, Id = 2 };
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetAllCleaningObjectsByClientId(clientIdNotInDb, _userValues));
+    }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenClientTryGetSomeoneElseCleaningobjects_ThrowBadRequestException()
+    {
+        //given
+        Client clientInDb = new Client() { Id = 7, FirstName = "Вася" };
+        _userValues = new UserValues() { Role = Role.Client, Id = 2 };
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetAllCleaningObjectsByClientId(clientInDb.Id, _userValues));
+    }
 }

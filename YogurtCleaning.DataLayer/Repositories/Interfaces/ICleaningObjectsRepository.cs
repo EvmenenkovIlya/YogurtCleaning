@@ -7,6 +7,7 @@ public interface ICleaningObjectsRepository
 {
     Task<int> CreateCleaningObject(CleaningObject cleaningObject);
     Task DeleteCleaningObject(CleaningObject cleaningObject);
+    Task<List<CleaningObject>> GetAllCleaningObjects();
     Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId);
     Task<CleaningObject?> GetCleaningObject(int cleaningObjectId);
     Task UpdateCleaningObject(CleaningObject newProperty);

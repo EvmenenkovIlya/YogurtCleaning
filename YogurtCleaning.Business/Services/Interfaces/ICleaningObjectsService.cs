@@ -8,6 +8,6 @@ namespace YogurtCleaning.Business.Services
         Task UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues);
         Task DeleteCleaningObject(int id, UserValues userValues);
         Task<CleaningObject> GetCleaningObject(int cleaningObjectId, UserValues userValues);
-        Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId);
+        Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId, UserValues userValues);
     }
 }

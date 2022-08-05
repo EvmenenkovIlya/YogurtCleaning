@@ -18,7 +18,9 @@ public class MapperConfigStorage : Profile
 			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District}));
 		CreateMap<CleaningObjectUpdateRequest, CleaningObject>()
 			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District }));
-		CreateMap<CleaningObject, CleaningObjectResponse>();
+		CreateMap<CleaningObject, CleaningObjectResponse>()
+			.ForMember(o => o.ClientId, opt => opt.MapFrom(src => src.Client.Id ))
+			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id )); ;
 
 		CreateMap<Order, OrderResponse>();
 		CreateMap<OrderUpdateRequest, Order>()

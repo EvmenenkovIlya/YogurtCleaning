@@ -17,14 +17,12 @@ namespace YogurtCleaning.Controllers;
 [Route("cleaning-objects")]
 public class CleaningObjectsController : ControllerBase
 {
-    private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
     private readonly IMapper _mapper;
     private readonly ICleaningObjectsService _cleaningObjectsService;
     private UserValues _userValues;
 
-    public CleaningObjectsController(ICleaningObjectsRepository cleaningObjectsRepository, IMapper mapper, ICleaningObjectsService cleaningObjectsService)
+    public CleaningObjectsController(IMapper mapper, ICleaningObjectsService cleaningObjectsService)
     {
-        _cleaningObjectsRepository = cleaningObjectsRepository;
         _mapper = mapper;
         _cleaningObjectsService = cleaningObjectsService;
     }
@@ -48,7 +46,9 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<List<CleaningObjectResponse>>> GetAllCleaningObjectsByClientId(int clientId)
     {
-        return Ok(await _cleaningObjectsRepository.GetAllCleaningObjects());
+        _userValues = this.GetClaimsValue();
+        var cleaningObjects = await _cleaningObjectsService.GetAllCleaningObjectsByClientId(clientId, _userValues);
+        return Ok(_mapper.Map<List<CleaningObjectResponse>>(cleaningObjects));
     }
 
     [AuthorizeRoles(Role.Client)]

@@ -115,6 +115,7 @@ public class CleaningObjectsRepositoryTests
                 NumberOfWindows = 1,
                 NumberOfBalconies = 12,
                 Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = Enums.DistrictEnum.Kronstadt, Name = "Кронштадт"},
                 IsDeleted = true
             },
             new CleaningObject()
@@ -136,6 +137,7 @@ public class CleaningObjectsRepositoryTests
                 NumberOfWindows = 1,
                 NumberOfBalconies = 0,
                 Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = Enums.DistrictEnum.Krasnoselsky, Name = "Красносельский"},
                 IsDeleted = false
             }
         };
@@ -241,6 +243,7 @@ public class CleaningObjectsRepositoryTests
                 NumberOfWindows = 1,
                 NumberOfBalconies = 12,
                 Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = Enums.DistrictEnum.Kronstadt, Name = "Кронштадт"},
                 IsDeleted = false
             },
             new CleaningObject()
@@ -249,6 +252,7 @@ public class CleaningObjectsRepositoryTests
                 Client = clients[1],
                 NumberOfRooms = 10,
                 Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 15",
+                District = new District(){ Id = Enums.DistrictEnum.Krasnoselsky, Name = "Красносельский"},
                 IsDeleted = false
             },
             new CleaningObject()
@@ -257,6 +261,7 @@ public class CleaningObjectsRepositoryTests
                 Client = clients[0],
                 NumberOfRooms = 10,
                 Address = "г. Питер, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = Enums.DistrictEnum.Vasileostrovskiy, Name = "Василеостровский"},
                 IsDeleted = false
             },
         };

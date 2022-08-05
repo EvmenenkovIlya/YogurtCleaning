@@ -46,7 +46,16 @@ public class CleaningObjectsService : ICleaningObjectsService
         return cleaningObject;
     }
 
-    public async Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId) => await _cleaningObjectsRepository.GetAllCleaningObjects();
+    public async Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId, UserValues userValues)
+    {
+        var client = await _clientsRepository.GetClient(clientId);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
+        if (!(clientId == userValues.Id || userValues.Role == Role.Admin))
+        {
+            throw new AccessException($"Access denied");
+        }
+        return await _cleaningObjectsRepository.GetAllCleaningObjectsByClientId(clientId);
+    } 
 
     public async Task UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues)
     {
