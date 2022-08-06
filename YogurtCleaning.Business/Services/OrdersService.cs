@@ -36,7 +36,7 @@ public class OrdersService : IOrdersService
         var order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
         AuthorizeEnitiyAccess(userValues, order);
-        _ordersRepository.DeleteOrder(order);
+        await _ordersRepository.DeleteOrder(order);
     }
 
     public async Task<Order?> GetOrder(int id, UserValues userValues)
@@ -49,7 +49,7 @@ public class OrdersService : IOrdersService
     public async Task UpdateOrder(Order modelToUpdate, int id)
     {
         Order order = await _ordersRepository.GetOrder(id);
-
+        Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
         order.Status = modelToUpdate.Status;
         order.StartTime = modelToUpdate.StartTime;
         order.UpdateTime = modelToUpdate.UpdateTime;

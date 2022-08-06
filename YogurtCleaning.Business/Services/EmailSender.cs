@@ -1,11 +1,6 @@
 ﻿using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.Business.Services;
 
@@ -13,9 +8,9 @@ public class EmailSender : IEmailSender
 {
     private readonly EmailConfiguration _emailConfig;
 
-    public EmailSender(EmailConfiguration emailConfig)
+    public EmailSender(IOptions<EmailConfiguration> emailConfig)
     {
-        _emailConfig = emailConfig;
+        _emailConfig = emailConfig.Value;
     }
 
     public void SendEmail(int orderId)
