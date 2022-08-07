@@ -292,6 +292,8 @@ public class CleanersRepositoryTests
         context.SaveChanges();
         context.Comments.Add(comment2);
         context.SaveChanges();
+        context.Comments.Add(comment3);
+        context.SaveChanges();
 
         var expectedRating = 4.5m;
 

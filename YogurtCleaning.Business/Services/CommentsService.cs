@@ -38,8 +38,11 @@ public class CommentsService : ICommentsService
     public async Task<int> AddCommentByCleaner(Comment comment, int cleanerId)
     {
         comment.Cleaner = await _cleanersRepository.GetCleaner(cleanerId);
+        Validator.CheckThatObjectNotNull(comment.Cleaner, ExceptionsErrorMessages.CleanerNotFound);
+        comment.Order = await _ordersRepository.GetOrder(comment.Order.Id);
+        Validator.CheckThatObjectNotNull(comment.Order, ExceptionsErrorMessages.OrderNotFound);
         var result = await _commentsRepository.AddComment(comment);
-
+        await _clientsRepository.UpdateClientRating(comment.Order.Client.Id);
         return result;
     }
 

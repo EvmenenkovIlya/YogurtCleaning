@@ -12,4 +12,5 @@ public interface IClientsRepository
     Task<Client?> GetClient(int clientId);
     Task UpdateClient(Client client);
     Task<Client?> GetClientByEmail(string email);
+    Task UpdateClientRating(int id);
 }
