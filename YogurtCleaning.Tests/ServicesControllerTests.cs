@@ -134,7 +134,7 @@ public class ServicesControllerTests
                 Orders = new List<Order>()
             }
         };
-        _mockServicesRepository.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
+        _mockServicesService.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
 
         // when
         var actual = await _sut.GetAllServices();

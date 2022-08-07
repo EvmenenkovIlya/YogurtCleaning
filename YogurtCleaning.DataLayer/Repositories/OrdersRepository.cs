@@ -57,17 +57,4 @@ public class OrdersRepository : IOrdersRepository
         order.Status = statusToUpdate;
         _context.SaveChanges();
     }
-
-    public CleaningObject GetCleaningObject(int orderId)
-    {
-        var order = GetOrder(orderId);
-        if (order == null)
-        {
-            return null;
-        }
-        else
-        {
-            return order.CleaningObject;
-        }
-    }
 }

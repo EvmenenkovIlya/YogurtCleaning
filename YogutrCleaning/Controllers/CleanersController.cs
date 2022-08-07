@@ -65,7 +65,7 @@ public class CleanersController : ControllerBase
     [AllowAnonymous]
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<int>> AddCleaner([FromBody] CleanerRegisterRequest cleaner)
     {
         int id = await _cleanersService.CreateCleaner(_mapper.Map<Cleaner>(cleaner));

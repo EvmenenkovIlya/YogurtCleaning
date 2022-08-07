@@ -116,4 +116,40 @@ public class OrdersControllerTests
         });
         _ordersServiceMock.Verify(x => x.GetAllOrders(), Times.Once);
     }
+
+    [Test]
+    public void GetCleaningObject_WhenValidRequestPassed_OkReceived()
+    {
+        //given
+        var expectedCleaningObject = new CleaningObject()
+        {
+            Id = 1,
+            NumberOfRooms = 1000,
+            NumberOfBathrooms = 1,
+            Square = 1,
+            NumberOfWindows = 1,
+            NumberOfBalconies = 0,
+            Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+        };
+
+        _ordersServiceMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>())).Returns(expectedCleaningObject);
+
+        //when
+        var actual = _sut.GetCleaningObject(expectedCleaningObject.Id);
+
+        //then
+
+        var actualResult = actual.Result as ObjectResult;
+        var cleaningObjectResponse = actualResult.Value as CleaningObjectResponse;
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cleaningObjectResponse.NumberOfRooms, Is.EqualTo(expectedCleaningObject.NumberOfRooms));
+            Assert.That(cleaningObjectResponse.NumberOfBathrooms, Is.EqualTo(expectedCleaningObject.NumberOfBathrooms));
+            Assert.That(cleaningObjectResponse.Square, Is.EqualTo(expectedCleaningObject.Square));
+            Assert.That(cleaningObjectResponse.NumberOfWindows, Is.EqualTo(expectedCleaningObject.NumberOfWindows));
+            Assert.That(cleaningObjectResponse.Address, Is.EqualTo(expectedCleaningObject.Address));
+        });
+        _ordersServiceMock.Verify(x => x.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>()), Times.Once);
+    }
 }

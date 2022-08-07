@@ -49,10 +49,9 @@ public class ServicesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult UpdateService([FromBody] ServiceRequest service, int id)
     {
         _servicesService.UpdateService(_mapper.Map<Service>(service), id);
@@ -61,9 +60,9 @@ public class ServicesController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public ActionResult<int> AddService([FromBody] ServiceRequest service)
     {
         var result = _servicesService.AddService(_mapper.Map<Service>(service));
@@ -72,8 +71,8 @@ public class ServicesController : ControllerBase
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public ActionResult DeleteService(int id)
     {
         UserValues userValues = this.GetClaimsValue();

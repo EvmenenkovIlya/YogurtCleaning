@@ -12,5 +12,4 @@ public interface IOrdersRepository
     void UpdateOrder(Order order);
     List<Service> GetServices(int orderId);
     void UpdateOrderStatus(int orderId, Status statusEnam);
-    CleaningObject GetCleaningObject(int orderId);
 }

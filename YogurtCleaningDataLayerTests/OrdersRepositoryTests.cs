@@ -206,38 +206,5 @@ public class OrdersRepositoryTests
         Assert.NotEqual(Enums.Status.Created, result.Status);
         Assert.Equal(Enums.Status.Done, result.Status);
         context.Database.EnsureDeleted();
-    }
-
-    [Fact]
-    public void GetCleaningObject()
-    {
-        // given
-        var context = new YogurtCleaningContext(_dbContextOptions);
-        var sut = new OrdersRepository(context);
-        var oldOrder = new Order()
-        {
-            Id = 1,
-            Price = 15,
-            EndTime = DateTime.Now,
-            CleaningObject = new CleaningObject()
-            {
-                Id = 1,
-                Address = "Улица Пушкина, 10",
-                Square = 800,
-                IsDeleted = false
-            },
-            Status = Enums.Status.Created,
-            IsDeleted = false
-        };
-        context.Orders.Add(oldOrder);
-        context.SaveChanges();
-
-        // when
-        var result = sut.GetCleaningObject(oldOrder.Id);
-
-        //then
-        Assert.Equal(800, result.Square);
-        Assert.Equal("Улица Пушкина, 10", result.Address);
-        context.Database.EnsureDeleted();
-    }
+    }   
 }

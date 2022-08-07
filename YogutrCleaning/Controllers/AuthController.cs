@@ -16,7 +16,7 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public async Task<string> Login([FromBody] UserLoginRequest request)
     {
         var user = await _authService.GetUserForLogin(request.Email, request.Password);
