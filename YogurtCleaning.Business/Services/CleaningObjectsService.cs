@@ -26,15 +26,15 @@ public class CleaningObjectsService : ICleaningObjectsService
         {
             cleaningObject.Client = await _clientsRepository.GetClient(userValues.Id);
         }
-        cleaningObject.District = _cleaningObjectsRepository.GetDistrict(cleaningObject.District.Id);
+        cleaningObject.District = await _cleaningObjectsRepository.GetDistrict(cleaningObject.District.Id);
         Validator.CheckThatObjectNotNull(cleaningObject.Client, ExceptionsErrorMessages.ClientNotFound);
         Validator.CheckThatObjectNotNull(cleaningObject.District, ExceptionsErrorMessages.DistrictNotFound);
-        return _cleaningObjectsRepository.CreateCleaningObject(cleaningObject);
+        return await _cleaningObjectsRepository.CreateCleaningObject(cleaningObject);
     }
 
-    public CleaningObject GetCleaningObject(int cleaningObjectId, UserValues userValues)
+    public async Task<CleaningObject> GetCleaningObject(int cleaningObjectId, UserValues userValues)
     {
-        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(cleaningObjectId);
+        var cleaningObject = await _cleaningObjectsRepository.GetCleaningObject(cleaningObjectId); ;
         if (cleaningObject == null)
         {
             throw new EntityNotFoundException($"Cleaning Object with Id {cleaningObjectId} not found");
@@ -44,12 +44,22 @@ public class CleaningObjectsService : ICleaningObjectsService
             throw new AccessException($"Access denied");
         }
         return cleaningObject;
-
     }
 
-    public void UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues)
+    public async Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId, UserValues userValues)
     {
-        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
+        var client = await _clientsRepository.GetClient(clientId);
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
+        if (!(clientId == userValues.Id || userValues.Role == Role.Admin))
+        {
+            throw new AccessException($"Access denied");
+        }
+        return await _cleaningObjectsRepository.GetAllCleaningObjectsByClientId(clientId);
+    } 
+
+    public async Task UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues)
+    {
+        var cleaningObject = await _cleaningObjectsRepository.GetCleaningObject(id);
         if (cleaningObject == null)
         {
             throw new BadRequestException($"Cleaninig object {id} not found");
@@ -63,15 +73,15 @@ public class CleaningObjectsService : ICleaningObjectsService
         cleaningObject.Address = modelToUpdate.Address;
         cleaningObject.Square = modelToUpdate.Square;
 
-        _cleaningObjectsRepository.UpdateCleaningObject(cleaningObject);
+        await _cleaningObjectsRepository.UpdateCleaningObject(cleaningObject);
     }
 
-    public void DeleteCleaningObject(int id, UserValues userValues)
+    public async Task DeleteCleaningObject(int id, UserValues userValues)
     {
-        var cleaningObject = _cleaningObjectsRepository.GetCleaningObject(id);
+        var cleaningObject = await _cleaningObjectsRepository.GetCleaningObject(id);
         Validator.CheckThatObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
         AuthorizeEnitiyAccess(cleaningObject, userValues);
-        _cleaningObjectsRepository.DeleteCleaningObject(cleaningObject);
+        await _cleaningObjectsRepository.DeleteCleaningObject(cleaningObject);
     }
 
     private void AuthorizeEnitiyAccess(CleaningObject cleaningObject, UserValues userValues)

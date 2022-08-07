@@ -20,7 +20,8 @@ public class MapperConfigStorage : Profile
 		CreateMap<CleaningObjectUpdateRequest, CleaningObject>()
 			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District }));
 		CreateMap<CleaningObject, CleaningObjectResponse>()
-			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id));
+			.ForMember(o => o.ClientId, opt => opt.MapFrom(src => src.Client.Id ))
+			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id )); ;
 
 		CreateMap<Order, OrderResponse>();
 		CreateMap<OrderUpdateRequest, Order>()

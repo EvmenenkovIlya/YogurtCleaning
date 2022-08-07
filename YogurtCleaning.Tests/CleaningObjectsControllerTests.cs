@@ -16,7 +16,6 @@ public class CleaningObjectControllerTests
 {
     private CleaningObjectsController _sut;
     private Mock<ICleaningObjectsService> _cleaningObjectsServiceMock;
-    private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
     private IMapper _mapper;
     private UserValues _userValues;
 
@@ -25,7 +24,7 @@ public class CleaningObjectControllerTests
     {
         _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
         _cleaningObjectsServiceMock = new Mock<ICleaningObjectsService>();
-        _sut = new CleaningObjectsController(_cleaningObjectsRepository, _mapper, _cleaningObjectsServiceMock.Object);
+        _sut = new CleaningObjectsController(_mapper, _cleaningObjectsServiceMock.Object);
         _userValues = new UserValues();
     }
 
@@ -62,7 +61,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public void GetCleaningObject_WhenValidRequestPassed_OkReceived()
+    public async Task GetCleaningObject_WhenValidRequestPassed_OkReceived()
     {
         //given
         var expectedCleaningObject = new CleaningObject()
@@ -76,10 +75,10 @@ public class CleaningObjectControllerTests
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
         };
 
-        _cleaningObjectsServiceMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>())).Returns(expectedCleaningObject);
+        _cleaningObjectsServiceMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaningObject);
 
         //when
-        var actual = _sut.GetCleaningObject(expectedCleaningObject.Id);
+        var actual = await _sut.GetCleaningObject(expectedCleaningObject.Id);
 
         //then
 
@@ -98,7 +97,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public void UpdateCleaningObject_WhenValidRequestPassed_NoContentReceived()
+    public async Task UpdateCleaningObject_WhenValidRequestPassed_NoContentReceived()
     {
         //given
 
@@ -129,7 +128,7 @@ public class CleaningObjectControllerTests
         _cleaningObjectsServiceMock.Setup(o => o.UpdateCleaningObject(cleaningObject, cleaningObject.Id, _userValues));
 
         //when
-        var actual = _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id);
+        var actual = await _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id);
 
         //then
         var actualResult = actual as NoContentResult;
@@ -142,7 +141,7 @@ public class CleaningObjectControllerTests
     }
 
     [Test]
-    public void DeleteCleaningObjectById_WhenValidRequestPassed_NoContentReceived()
+    public async Task DeleteCleaningObjectById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedCleaningObject = new CleaningObject()
@@ -156,12 +155,71 @@ public class CleaningObjectControllerTests
         };
 
         //when
-        var actual = _sut.DeleteCleaningObject(expectedCleaningObject.Id);
+        var actual = await _sut.DeleteCleaningObject(expectedCleaningObject.Id);
 
         //then
         var actualResult = actual as NoContentResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _cleaningObjectsServiceMock.Verify(c => c.DeleteCleaningObject(It.IsAny<int>(), It.IsAny<UserValues>()), Times.Once);
+    }
+
+    [Test]
+    public async Task GetAllCleaningObject_WhenValidRequestPassed_RequestedTypeReceived()
+    {
+        //given
+        var client = new Client() { Id = 1 };
+        var cleaningObjects = new List<CleaningObject>
+        {
+            new CleaningObject()
+            {
+                Id = 1,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                Client = client,
+                District = new District() { Id = DistrictEnum.Kalininsky}
+            },
+            new CleaningObject()
+            {
+                Id = 2,
+                NumberOfRooms = 10,
+                NumberOfBathrooms = 9,
+                Square = 2,
+                NumberOfWindows = 5,
+                NumberOfBalconies = 5,
+                Address = "г. Смоленск, ул. Льва Толстого, д. 16, кв. 10",
+                Client = client,
+                District = new District() { Id = DistrictEnum.Admiralteisky}
+            },
+        };
+
+        _cleaningObjectsServiceMock.Setup(o => o.GetAllCleaningObjectsByClientId(client.Id, It.IsAny<UserValues>())).ReturnsAsync(cleaningObjects).Verifiable();
+
+        //when
+        var actual = await _sut.GetAllCleaningObjectsByClientId(client.Id);
+
+        //then
+        var actualResult = actual.Result as ObjectResult;
+        var cleaningObjectResponse = actualResult.Value as List<CleaningObjectResponse>;
+
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cleaningObjectResponse.Count, Is.EqualTo(cleaningObjects.Count));
+            Assert.That(cleaningObjectResponse[0].NumberOfRooms, Is.EqualTo(cleaningObjects[0].NumberOfRooms));
+            Assert.That(cleaningObjectResponse[1].NumberOfBathrooms, Is.EqualTo(cleaningObjects[1].NumberOfBathrooms));
+            Assert.That(cleaningObjectResponse[0].Square, Is.EqualTo(cleaningObjects[0].Square));
+            Assert.That(cleaningObjectResponse[1].NumberOfWindows, Is.EqualTo(cleaningObjects[1].NumberOfWindows));
+            Assert.That(cleaningObjectResponse[0].NumberOfBalconies, Is.EqualTo(cleaningObjects[0].NumberOfBalconies));
+            Assert.That(cleaningObjectResponse[1].Address, Is.EqualTo(cleaningObjects[1].Address));
+            Assert.That(cleaningObjectResponse[0].ClientId, Is.EqualTo(cleaningObjects[0].Client.Id));
+            Assert.That(cleaningObjectResponse[0].District, Is.EqualTo(cleaningObjects[0].District.Id));
+        });
+        _cleaningObjectsServiceMock.Verify(x => x.GetAllCleaningObjectsByClientId(client.Id, It.IsAny<UserValues>()), Times.Once);
     }
 }
