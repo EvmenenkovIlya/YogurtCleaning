@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Models;
@@ -26,10 +27,11 @@ public class MapperConfigStorage : Profile
 			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => src.CleanersBandIds.Select(t => new Cleaner { Id = t }).ToList()))
 			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new Bundle { Id = t }).ToList()))
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
-		CreateMap<OrderRequest, Order>()
+		CreateMap<OrderRequest, OrderBusinessModel>()
 			.ForMember(o => o.CleaningObject, opt => opt.MapFrom(src => new CleaningObject() { Id = src.CleaningObjectId }))
-			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new Bundle { Id = t }).ToList()))
-			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
+			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new BundleBusinessModel { Id = t }).ToList()))
+			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()))
+			.AfterMap((src, dest) => { dest.SetTotalDuration(); dest.SetCleanersCount(); dest.SetEndTime(); });
 
 		CreateMap<CleanerRegisterRequest, Cleaner>()
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));

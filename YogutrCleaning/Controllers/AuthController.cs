@@ -9,10 +9,12 @@ namespace YogurtCleaning.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
+    private readonly IEmailSender _sender;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IEmailSender sender)
     {
         _authService = authService;
+        _sender = sender;
     }
 
     [HttpPost]
