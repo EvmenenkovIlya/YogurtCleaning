@@ -4,9 +4,9 @@ namespace YogurtCleaning.Business.Services;
 
 public interface IServicesService
 {
-    void UpdateService(Service service, int id);
-    Service GetService(int id);
-    int AddService(Service service);
-    void DeleteService(int id, UserValues userValues);
+    Task UpdateService(Service service, int id);
+    Task<Service> GetService(int id);
+    Task<int> AddService(Service service);
+    Task DeleteService(int id, UserValues userValues);
     Task<List<Service>> GetAllServices();
 }
