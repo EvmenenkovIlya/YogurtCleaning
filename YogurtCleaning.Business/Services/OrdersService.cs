@@ -14,9 +14,9 @@ public class OrdersService : IOrdersService
         _ordersRepository = ordersRepository;
     }
 
-    public void DeleteOrder(int id, UserValues userValues)
+    public async Task DeleteOrder(int id, UserValues userValues)
     {
-        var order = _ordersRepository.GetOrder(id);
+        var order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
         AuthorizeEnitiyAccess(userValues, order);
         _ordersRepository.DeleteOrder(order);
@@ -29,9 +29,9 @@ public class OrdersService : IOrdersService
 
     public List<Order> GetAllOrders() => _ordersRepository.GetAllOrders();
 
-    public void UpdateOrder(Order modelToUpdate, int id)
+    public async Task UpdateOrder(Order modelToUpdate, int id)
     {
-        Order order = _ordersRepository.GetOrder(id);
+        Order order = await _ordersRepository.GetOrder(id);
 
         order.Status = modelToUpdate.Status;
         order.StartTime = modelToUpdate.StartTime;

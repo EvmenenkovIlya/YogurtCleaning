@@ -20,7 +20,7 @@ public class OrdersServiceFacts
     }
 
     [Fact]
-    public void DeleteOrder_WhenValidRequestPassed_DeleteOrder()
+    public async Task DeleteOrder_WhenValidRequestPassed_DeleteOrder()
     {
         //given
         var expectedOrder = new Order()
@@ -30,7 +30,7 @@ public class OrdersServiceFacts
             IsDeleted = false
         };
 
-        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).Returns(expectedOrder);
+        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
         _ordersRepositoryMock.Setup(o => o.DeleteOrder(expectedOrder));
         userValue = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Admin, Id = 1 };
 
@@ -42,7 +42,7 @@ public class OrdersServiceFacts
     }
 
     [Fact]
-    public void DeleteOrder_EmptyOrderRequest_ThrowEntityNotFoundException()
+    public async Task DeleteOrder_EmptyOrderRequest_ThrowEntityNotFoundException()
     {
         //given
         var testId = 1;
@@ -53,7 +53,7 @@ public class OrdersServiceFacts
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.DeleteOrder(testId, userValue));
+        Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.DeleteOrder(testId, userValue));
     }
 
     [Fact]

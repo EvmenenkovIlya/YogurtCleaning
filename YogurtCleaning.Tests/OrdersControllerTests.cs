@@ -31,7 +31,7 @@ public class OrdersControllerTests
     }
 
     [Test]
-    public void DeleteOrderById_WhenValidRequestPassed_NoContentReceived()
+    public async Task DeleteOrderById_WhenValidRequestPassed_NoContentReceived()
     {
         //given
         var expectedOrder = new Order()
@@ -41,7 +41,7 @@ public class OrdersControllerTests
             IsDeleted = false
         };
 
-        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).Returns(expectedOrder);
+        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
 
         //when
         var actual = _sut.DeleteOrder(expectedOrder.Id);

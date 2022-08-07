@@ -14,17 +14,22 @@ public class CommentsService : ICommentsService
     private readonly ICommentsRepository _commentsRepository;
     private readonly IClientsRepository _clientsRepository;
     private readonly ICleanersRepository _cleanersRepository;
+    private readonly IOrdersRepository _ordersRepository;
 
-    public CommentsService(ICommentsRepository commentsRepository, IClientsRepository clientsRepository, ICleanersRepository cleanersRepository)
+    public CommentsService(ICommentsRepository commentsRepository, IClientsRepository clientsRepository, ICleanersRepository cleanersRepository, IOrdersRepository ordersRepository)
     {
         _commentsRepository = commentsRepository;
         _clientsRepository = clientsRepository;
         _cleanersRepository = cleanersRepository;
+        _ordersRepository = ordersRepository;
     }
 
     public async Task<int> AddCommentByClient(Comment comment, int clientId)
     {
         comment.Client = await _clientsRepository.GetClient(clientId);
+        Validator.CheckThatObjectNotNull(comment.Client, ExceptionsErrorMessages.ClientNotFound);
+        comment.Order = await _ordersRepository.GetOrder(comment.Order.Id);
+        Validator.CheckThatObjectNotNull(comment.Order, ExceptionsErrorMessages.OrderNotFound);
         var result = await _commentsRepository.AddComment(comment);
 
         return result;
