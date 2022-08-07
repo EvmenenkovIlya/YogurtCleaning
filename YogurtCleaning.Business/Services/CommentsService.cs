@@ -25,7 +25,7 @@ public class CommentsService : ICommentsService
     public async Task<int> AddCommentByClient(Comment comment, int clientId)
     {
         comment.Client = await _clientsRepository.GetClient(clientId);
-        var result = _commentsRepository.AddComment(comment);
+        var result = await _commentsRepository.AddComment(comment);
 
         return result;
     }
@@ -33,21 +33,21 @@ public class CommentsService : ICommentsService
     public async Task<int> AddCommentByCleaner(Comment comment, int cleanerId)
     {
         comment.Cleaner = await _cleanersRepository.GetCleaner(cleanerId);
-        var result = _commentsRepository.AddComment(comment);
+        var result = await _commentsRepository.AddComment(comment);
 
         return result;
     }
 
-    public List<Comment> GetComments()
+    public async Task<List<Comment>> GetComments()
     {
-        var result = _commentsRepository.GetAllComments();
+        var result = await _commentsRepository.GetAllComments();
         return result;
     }
 
-    public void DeleteComment(int id)
+    public async Task DeleteComment(int id)
     {
-        var comment = _commentsRepository.GetCommentById(id);
+        var comment = await _commentsRepository.GetCommentById(id);
         Validator.CheckThatObjectNotNull(comment, ExceptionsErrorMessages.CommentNotFound);
-        _commentsRepository.DeleteComment(comment);
+        await _commentsRepository.DeleteComment(comment);
     }
 }

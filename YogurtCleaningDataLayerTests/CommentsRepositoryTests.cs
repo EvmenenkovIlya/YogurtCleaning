@@ -15,7 +15,7 @@ public class CommentsRepositoryTests
     }
 
     [Fact]
-    public void AddComment_WhenCommentAdded_ThenCommentIdMoreThenZero()
+    public async Task AddComment_WhenCommentAdded_ThenCommentIdMoreThenZero()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CommentsRepository(context);
@@ -36,14 +36,14 @@ public class CommentsRepositoryTests
         };
 
         // when
-        var actual = sut.AddComment(comment);
+        var actual = await sut.AddComment(comment);
 
         //then
         Assert.True(actual > 0);
     }
 
     [Fact]
-    public void DeleteComment_WhenCorrectIdPassed_ThenSoftDeleteApplied()
+    public async Task DeleteComment_WhenCorrectIdPassed_ThenSoftDeleteApplied()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -68,15 +68,15 @@ public class CommentsRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteComment(comment);
+        await sut.DeleteComment(comment);
 
         //then
-        var actual = sut.GetCommentById(comment.Id);
+        var actual = await sut.GetCommentById(comment.Id);
         Assert.True(actual.IsDeleted);
     }
 
     [Fact]
-    public void GetAllComments_WhenCommentsExist_ThenGetComments()
+    public async Task GetAllComments_WhenCommentsExist_ThenGetComments()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CommentsRepository(context);
@@ -100,14 +100,14 @@ public class CommentsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllComments();
+        var result = await sut.GetAllComments();
 
         //then
         Assert.Contains(comment, result);
     }
 
     [Fact]
-    public void GetAllComments_WhenCommentIsDeleted_ThenCommentDoesNotGet()
+    public async Task GetAllComments_WhenCommentIsDeleted_ThenCommentDoesNotGet()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new CommentsRepository(context);
@@ -131,7 +131,7 @@ public class CommentsRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllComments();
+        var result = await sut.GetAllComments();
 
         //then
         Assert.DoesNotContain(comment, result);

@@ -11,6 +11,6 @@ public interface ICommentsService
 {
     Task<int> AddCommentByClient(Comment comment, int clientId);
     Task<int> AddCommentByCleaner(Comment comment, int cleanerId);
-    List<Comment> GetComments();
-    void DeleteComment(int id);
+    Task <List<Comment>> GetComments();
+    Task DeleteComment(int id);
 }

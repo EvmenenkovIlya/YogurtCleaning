@@ -24,7 +24,7 @@ public class CommentsServiceTests
     public async Task AddCommentByClient_WhenValidRequestPassed_CommentAdded()
     {
         // given
-        _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
+        _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).ReturnsAsync(1);
         
         var expectedId = 1;
 
@@ -49,7 +49,7 @@ public class CommentsServiceTests
     public async Task AddCommentByCleaner_WhenValidRequestPassed_CommentAdded()
     {
         // given
-        _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).Returns(1);
+        _mockCommentsRepository.Setup(c => c.AddComment(It.IsAny<Comment>())).ReturnsAsync(1);
 
         var expectedId = 1;
 

@@ -74,9 +74,9 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult DeleteComment(int id)
+    public async Task<ActionResult> DeleteComment(int id)
     {
-        _commentsService.DeleteComment(id);
+        await _commentsService.DeleteComment(id);
         return NoContent();
     }
 }
