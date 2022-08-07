@@ -33,11 +33,11 @@ public class ServicesControllerTests
     }
 
     [Test]
-    public void AddServices_WhenValidRequestPassed_ThenCreatedResultRecived()
+    public async Task AddServices_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
         // given
         int expectedId = 1;
-        _mockServicesService.Setup(o => o.AddService(It.IsAny<Service>())).Returns(expectedId);
+        _mockServicesService.Setup(o => o.AddService(It.IsAny<Service>())).ReturnsAsync(expectedId);
         var service = new ServiceRequest()
         {
             Name = "Service name",
@@ -46,7 +46,7 @@ public class ServicesControllerTests
         };
 
         // when
-        var actual = _sut.AddService(service);
+        var actual = await _sut.AddService(service);
 
         // then
         var actualResult = actual.Result as CreatedResult;
@@ -62,7 +62,7 @@ public class ServicesControllerTests
     }
 
     [Test]
-    public void GetService_WhenCorrectIdPassed_ThenOkRecieved()
+    public async Task GetService_WhenCorrectIdPassed_ThenOkRecieved()
     {
         // given
 
@@ -76,10 +76,10 @@ public class ServicesControllerTests
             IsDeleted = false,
             Orders = new List<Order>()
         };
-        _mockServicesService.Setup(o => o.GetService(service.Id)).Returns(service);
+        _mockServicesService.Setup(o => o.GetService(service.Id)).ReturnsAsync(service);
 
         // when
-        var actual = _sut.GetService(service.Id);
+        var  actual = await _sut.GetService(service.Id);
 
         // then
         var actualResult = actual.Result as ObjectResult;
@@ -134,7 +134,7 @@ public class ServicesControllerTests
                 Orders = new List<Order>()
             }
         };
-        _mockServicesRepository.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
+        _mockServicesService.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
 
         // when
         var actual = await _sut.GetAllServices();
@@ -156,7 +156,7 @@ public class ServicesControllerTests
     }
 
     [Test]
-    public void UpdateService_WhenCorrectRequestPassed_ThenNoContentRecieved()
+    public async Task UpdateService_WhenCorrectRequestPassed_ThenNoContentRecieved()
     {
         // given
         var service = new Service()
@@ -179,7 +179,7 @@ public class ServicesControllerTests
         _mockServicesService.Setup(o => o.UpdateService(service, service.Id));
 
         // when
-        var actual = _sut.UpdateService(newProperty, service.Id);
+        var actual = await _sut.UpdateService(newProperty, service.Id);
 
         // then
         var actualResult = actual as NoContentResult;
@@ -193,7 +193,7 @@ public class ServicesControllerTests
     }
 
     [Test]
-    public void DeleteService_WhenCorrectRequestPassed_ThenOkRecieved()
+    public async Task DeleteService_WhenCorrectRequestPassed_ThenOkRecieved()
     {
         // given
         var service = new Service()
@@ -207,12 +207,12 @@ public class ServicesControllerTests
         };
 
         // when
-        var actual = _sut.DeleteService(service.Id);
+        var actual = await _sut.DeleteService(service.Id);
 
         // then
-        var actualResult = actual as OkResult;
+        var actualResult = actual as NoContentResult;
 
-        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _mockServicesService.Verify(o => o.DeleteService(service.Id, It.IsAny<UserValues>()), Times.Once);
     }
 }

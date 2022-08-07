@@ -4,9 +4,9 @@ namespace YogurtCleaning.DataLayer.Repositories;
 
 public interface IServicesRepository
 {
-    Service GetService(int id);
+    Task<Service> GetService(int id);
     Task<List<Service>> GetAllServices();
-    void UpdateService(Service service);
-    int AddService(Service service);
-    void DeleteService(Service service);
+    Task UpdateService(Service service);
+    Task<int> AddService(Service service);
+    Task DeleteService(Service service);
 }

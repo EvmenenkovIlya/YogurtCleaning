@@ -17,23 +17,23 @@ public class ServicesService : IServicesService
         _servicesRepository = servicesRepository;
     }
 
-    public void UpdateService(Service service, int id)
+    public async Task UpdateService(Service service, int id)
     {
-        var oldService = _servicesRepository.GetService(id);
+        var oldService = await _servicesRepository.GetService(id);
         oldService.Name = service.Name;
         oldService.Price = service.Price;
         oldService.Unit = service.Unit;
         oldService.Duration = service.Duration;
-        _servicesRepository.UpdateService(oldService); 
+        await _servicesRepository.UpdateService(oldService); 
     }
-    public Service GetService(int id) => _servicesRepository.GetService(id);
+    public async Task<Service> GetService(int id) => await _servicesRepository.GetService(id);
 
-    public int AddService(Service service) => _servicesRepository.AddService(service);
-    public void DeleteService(int id, UserValues userValues)
+    public async Task<int> AddService(Service service) => await _servicesRepository.AddService(service);
+    public async Task DeleteService(int id, UserValues userValues)
     {
-        var service = _servicesRepository.GetService(id);
+        var service = await _servicesRepository.GetService(id);
         Validator.CheckThatObjectNotNull(service, ExceptionsErrorMessages.ServiceNotFound);
-        _servicesRepository.DeleteService(service);
+       await _servicesRepository.DeleteService(service);
     }
 
     public async Task<List<Service>> GetAllServices() => await _servicesRepository.GetAllServices();
