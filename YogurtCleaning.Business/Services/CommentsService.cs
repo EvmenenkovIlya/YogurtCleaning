@@ -31,7 +31,7 @@ public class CommentsService : ICommentsService
         comment.Order = await _ordersRepository.GetOrder(comment.Order.Id);
         Validator.CheckThatObjectNotNull(comment.Order, ExceptionsErrorMessages.OrderNotFound);
         var result = await _commentsRepository.AddComment(comment);
-
+        comment.Order.CleanersBand.ForEach(async c => await _cleanersRepository.UpdateCleanerRating(c.Id));
         return result;
     }
 
@@ -55,4 +55,6 @@ public class CommentsService : ICommentsService
         Validator.CheckThatObjectNotNull(comment, ExceptionsErrorMessages.CommentNotFound);
         await _commentsRepository.DeleteComment(comment);
     }
+
+    
 }

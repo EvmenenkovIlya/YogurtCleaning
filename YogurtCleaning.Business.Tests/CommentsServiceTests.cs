@@ -71,6 +71,7 @@ public class CommentsServiceTests
         _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
         _mockClientsRepository.Verify(c => c.GetClient(comment.Client.Id), Times.Once);
         _mockOrdersRepository.Verify(o => o.GetOrder(comment.Order.Id), Times.Once);
+        _mockCleanersRepository.Verify(c => c.UpdateCleanerRating(It.IsAny<int>()), Times.Exactly(2));
 
     }
 

@@ -44,4 +44,20 @@ public class CleanersRepository : ICleanersRepository
     public async Task<List<Order>> GetAllOrdersByCleaner(int id) => await _context.Orders.Where(o => o.CleanersBand.Any(c => c.Id == id)).ToListAsync();
 
     public async Task<Cleaner?> GetCleanerByEmail(string email) => await _context.Cleaners.FirstOrDefaultAsync(o => o.Email == email);
+
+    public async Task UpdateCleanerRating(int id)
+    {
+        var orders = await GetAllOrdersByCleaner(id);
+        var comments = new List<Comment>();
+        foreach (var order in orders)
+        {
+            comments.Add(await _context.Comments.FirstOrDefaultAsync(c => c.Order.Id == order.Id && c.Client != null));
+        }
+        var cleanerRating = (decimal)(comments.Select(c => c.Rating).Sum())/(decimal)comments.Count();
+
+        var cleaner = await _context.Cleaners.FirstOrDefaultAsync(c => c.Id == id);
+        cleaner.Rating = cleanerRating;
+        await UpdateCleaner(cleaner);
+        await _context.SaveChangesAsync();
+    }
 }

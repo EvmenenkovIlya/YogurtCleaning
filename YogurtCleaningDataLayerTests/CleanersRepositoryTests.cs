@@ -249,4 +249,58 @@ public class CleanersRepositoryTests
         Assert.Equal("ccc@gmail.c", result.Email);
         context.Database.EnsureDeleted();
     }
+
+    [Fact]
+    public async Task UpdateCleanerRatingTest_WhenValidRequestPassed_ThenRatingUpdated()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new CleanersRepository(context);
+
+        var cleaner = new Cleaner
+        {
+            Id = 8,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Passport = "0000654321",
+            Phone = "89998887766",
+            Rating = 0,
+            IsDeleted = false
+        };
+
+        var cleanersBand = new List<Cleaner>();
+        cleanersBand.Add(cleaner);
+
+        var client = new Client { Id = 7, Email = "a@b.c", FirstName = "asdfg", LastName = "dfdfdfd", Password = "kjha", Phone = "1234567890" };
+        var order1 = new Order { Id = 1, CleanersBand = cleanersBand };
+        var order2 = new Order { Id = 2, CleanersBand = cleanersBand };
+        var comment1 = new Comment { Id = 1, Order = order1, Client = client, Rating = 5};
+        var comment2 = new Comment { Id = 2, Order = order2, Client = client, Rating = 4 };
+        var comment3 = new Comment { Id = 3, Order = order2, Cleaner = cleaner, Rating = 5 };
+
+        context.Cleaners.Add(cleaner);
+        context.SaveChanges();
+        context.Clients.Add(client);
+        context.SaveChanges();
+        context.Orders.Add(order1);
+        context.SaveChanges();
+        context.Orders.Add(order2);
+        context.SaveChanges();
+        context.Comments.Add(comment1);
+        context.SaveChanges();
+        context.Comments.Add(comment2);
+        context.SaveChanges();
+
+        var expectedRating = 4.5m;
+
+        // when
+        await sut.UpdateCleanerRating(cleaner.Id);
+        var result = await sut.GetCleaner(cleaner.Id);
+
+        // then
+        Assert.Equal(expectedRating, result.Rating);
+        context.Database.EnsureDeleted();
+    }
 }
