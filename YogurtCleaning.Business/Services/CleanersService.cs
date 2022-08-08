@@ -66,6 +66,7 @@ public class CleanersService : ICleanersService
         cleaner.Districts = await _cleanersRepository.GetDistricts(cleaner.Districts);
         Validator.CheckRequestAndDbList(services, cleaner.Services);
         Validator.CheckRequestAndDbList(districts, cleaner.Districts);
+        cleaner.DateOfStartWork = DateTime.Now;
         return await _cleanersRepository.CreateCleaner(cleaner);
 
     }
