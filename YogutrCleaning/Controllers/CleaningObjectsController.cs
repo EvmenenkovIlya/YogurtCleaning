@@ -5,7 +5,6 @@ using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -17,14 +16,12 @@ namespace YogurtCleaning.Controllers;
 [Route("cleaning-objects")]
 public class CleaningObjectsController : ControllerBase
 {
-    private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
     private readonly IMapper _mapper;
     private readonly ICleaningObjectsService _cleaningObjectsService;
     private UserValues _userValues;
 
-    public CleaningObjectsController(ICleaningObjectsRepository cleaningObjectsRepository, IMapper mapper, ICleaningObjectsService cleaningObjectsService)
+    public CleaningObjectsController(IMapper mapper, ICleaningObjectsService cleaningObjectsService)
     {
-        _cleaningObjectsRepository = cleaningObjectsRepository;
         _mapper = mapper;
         _cleaningObjectsService = cleaningObjectsService;
     }
@@ -34,10 +31,10 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<CleaningObjectResponse> GetCleaningObject(int id)
+    public async Task<ActionResult<CleaningObjectResponse>> GetCleaningObject(int id)
     {
         _userValues = this.GetClaimsValue();
-        var cleaningObject = _cleaningObjectsService.GetCleaningObject(id, _userValues);
+        var cleaningObject = await _cleaningObjectsService.GetCleaningObject(id, _userValues);
         return Ok(_mapper.Map<CleaningObjectResponse>(cleaningObject));
     }
 
@@ -46,9 +43,11 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(List<CleaningObjectResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<CleaningObjectResponse>> GetAllCleaningObjectsByClientId(int clientId)
+    public async Task<ActionResult<List<CleaningObjectResponse>>> GetAllCleaningObjectsByClientId(int clientId)
     {
-        return Ok(_cleaningObjectsRepository.GetAllCleaningObjects());
+        _userValues = this.GetClaimsValue();
+        var cleaningObjects = await _cleaningObjectsService.GetAllCleaningObjectsByClientId(clientId, _userValues);
+        return Ok(_mapper.Map<List<CleaningObjectResponse>>(cleaningObjects));
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -56,10 +55,10 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult UpdateCleaningObject([FromBody] CleaningObjectUpdateRequest model, int id)
+    public async Task<ActionResult> UpdateCleaningObject([FromBody] CleaningObjectUpdateRequest model, int id)
     {
         _userValues = this.GetClaimsValue();
-        _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id, _userValues);
+        await _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id, _userValues);
         return NoContent();
     }
 
@@ -81,10 +80,10 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult DeleteCleaningObject(int id)
+    public async Task<ActionResult> DeleteCleaningObject(int id)
     {
         _userValues = this.GetClaimsValue();
-        _cleaningObjectsService.DeleteCleaningObject(id, _userValues);
+        await _cleaningObjectsService.DeleteCleaningObject(id, _userValues);
         return NoContent();
     }
 }

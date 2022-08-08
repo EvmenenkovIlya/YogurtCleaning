@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using YogurtCleaning.API;
+using YogurtCleaning.Business;
 using YogurtCleaning.Business.Infrastrucure;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer;
@@ -14,6 +15,10 @@ using YogurtCleaning.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+ConfigurationManager configuration = builder.Configuration;
+IWebHostEnvironment environment = builder.Environment;
+
+builder.Services.AddControllers();
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -78,9 +83,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             SaveSigninToken = true,
         };
     });
+
+var b = new ServerOptions();
+builder.Configuration.Bind(b);
+
 builder.Services.AddDbContext<YogurtCleaningContext>(o =>
 {
-    o.UseSqlServer(ServerOptions.ConnectionOption);
+    o.UseSqlServer(b.MAIN_DB_CONNECTION_STRING);
 });
 
 builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
@@ -103,6 +112,9 @@ builder.Services.AddScoped<ICleaningObjectsService, CleaningObjectsService>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 builder.Services.AddScoped<IServicesService, ServicesService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.Configure<EmailConfiguration>(builder.Configuration);
 
 var app = builder.Build();
 

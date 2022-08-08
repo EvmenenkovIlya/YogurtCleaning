@@ -13,34 +13,34 @@ public class OrdersRepository : IOrdersRepository
         _context = context;
     }
 
-    public Order? GetOrder(int orderId) => _context.Orders.FirstOrDefault(o => o.Id == orderId);
+    public async Task <Order?> GetOrder(int orderId) => await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 
-    public List<Order> GetAllOrders() => _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToList();
+    public async Task <List<Order>> GetAllOrders() => await _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
 
-    public int CreateOrder(Order order)
+    public async Task <int> CreateOrder(Order order)
     {
         _context.Orders.Add(order);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         
         return order.Id;
     }
 
-    public void DeleteOrder(Order order)
+    public async Task DeleteOrder(Order order)
     {
         order.IsDeleted = true;
         order.UpdateTime = DateTime.Now;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void UpdateOrder(Order modelToUpdate)
+    public async Task UpdateOrder(Order modelToUpdate)
     {
         _context.Orders.Update(modelToUpdate);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public List<Service> GetServices(int orderId)
+    public async Task <List<Service>> GetServices(int orderId)
     {
-        var order = GetOrder(orderId);
+        var order = await GetOrder(orderId);
         if (order == null)
         {
             return null;
@@ -51,10 +51,10 @@ public class OrdersRepository : IOrdersRepository
         }
     }
 
-    public void UpdateOrderStatus(int orderId, Status statusToUpdate)
+    public async Task UpdateOrderStatus(int orderId, Status statusToUpdate)
     {
-        var order = GetOrder(orderId);
+        var order = await GetOrder(orderId);
         order.Status = statusToUpdate;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 }

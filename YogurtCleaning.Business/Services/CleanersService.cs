@@ -1,4 +1,5 @@
 ﻿using YogurtCleaning.Business.Exceptions;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
@@ -8,10 +9,12 @@ namespace YogurtCleaning.Business.Services;
 public class CleanersService : ICleanersService
 {
     private readonly ICleanersRepository _cleanersRepository;
+    private readonly IOrdersRepository _ordersRepository;
 
-    public CleanersService(ICleanersRepository cleanersRepository)
+    public CleanersService(ICleanersRepository cleanersRepository, IOrdersRepository ordersRepository)
     {
         _cleanersRepository = cleanersRepository;
+        _ordersRepository = ordersRepository;
     }
 
     public async Task<Cleaner?> GetCleaner(int id, UserValues userValues)
@@ -87,5 +90,43 @@ public class CleanersService : ICleanersService
         {
             throw new AccessException($"Access denied");
         }
+    }
+
+    public async Task<List<Cleaner>> GetFreeCleanersForOrder(OrderBusinessModel order)
+    {
+        var freeCleaners = new List<Cleaner>();
+        var workingCleaners = await _cleanersRepository.GetWorkingCleanersForDate(order.StartTime);
+
+        foreach (var cleaner in workingCleaners)
+        {
+            bool isMatch = true;
+            var filteredOrders = cleaner.Orders.Where(o => o.StartTime.Date == order.StartTime.Date).ToList();
+
+            if(filteredOrders.Count == 0)
+            {
+                isMatch = true;
+            }
+            else
+            {
+                foreach (var o in cleaner.Orders)
+                {
+                    if (o.StartTime.Date != order.StartTime.Date || ((o.StartTime >= order.EndTime.AddHours(1) || o.EndTime.AddHours(1) <= order.StartTime)))
+                    {
+                        isMatch = true;
+                    }
+                    else
+                    {
+                        isMatch = false;
+                        break;
+                    }
+                }
+            }
+
+            if (isMatch is true)
+            {
+                freeCleaners.Add(cleaner);
+            }
+        }
+        return freeCleaners;
     }
 }
