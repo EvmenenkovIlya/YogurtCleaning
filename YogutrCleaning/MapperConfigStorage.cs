@@ -21,7 +21,7 @@ public class MapperConfigStorage : Profile
 			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District }));
 		CreateMap<CleaningObject, CleaningObjectResponse>()
 			.ForMember(o => o.ClientId, opt => opt.MapFrom(src => src.Client.Id ))
-			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id )); ;
+			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id ));
 
 		CreateMap<Order, OrderResponse>();
 		CreateMap<OrderUpdateRequest, Order>()
@@ -35,9 +35,11 @@ public class MapperConfigStorage : Profile
 			.AfterMap((src, dest) => { dest.SetTotalDuration(); dest.SetCleanersCount(); dest.SetEndTime(); });
 
 		CreateMap<CleanerRegisterRequest, Cleaner>()
-			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
+			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()))
+			.ForMember(o => o.Districts, opt => opt.MapFrom(src => src.Districts.Select(t => new District { Id = t}).ToList()));
 		CreateMap<CleanerUpdateRequest, Cleaner>()
-			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
+			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()))
+			.ForMember(o => o.Districts, opt => opt.MapFrom(src => src.Districts.Select(t => new District { Id = t }).ToList())); ;
 		CreateMap<Cleaner, CleanerResponse>();
 
 		CreateMap<CommentRequest, Comment>();

@@ -60,6 +60,7 @@ public class YogurtCleaningContext : DbContext
             entity.HasMany(e => e.Districts).WithMany(co => co.Cleaners);
             entity.HasMany(e => e.Comments).WithOne(com => com.Cleaner);
             entity.HasMany(e => e.Orders).WithMany(o => o.CleanersBand);
+            entity.HasMany(e => e.Services).WithMany(o => o.Cleaners);
         });
 
         modelBuilder.Entity<CleaningObject>(entity =>
@@ -82,7 +83,7 @@ public class YogurtCleaningContext : DbContext
         modelBuilder.Entity<Bundle>(entity =>
         {
             entity.ToTable(nameof(Bundle));
-            entity.HasMany(e => e.Services);
+            entity.HasMany(e => e.Services).WithMany(o => o.Bundles);
         });
 
         modelBuilder.Entity<Service>(entity =>

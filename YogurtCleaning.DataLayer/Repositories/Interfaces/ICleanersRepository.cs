@@ -13,4 +13,6 @@ public interface ICleanersRepository
     Task<List<Order>> GetAllOrdersByCleaner(int id);
     Task<Cleaner?> GetCleanerByEmail(string email);
     Task<List<Cleaner>> GetWorkingCleanersForDate(DateTime orderDate);
+    Task<List<Service>> GetServices(List<Service> services);
+    Task<List<District>> GetDistricts(List<District> districts);
 }

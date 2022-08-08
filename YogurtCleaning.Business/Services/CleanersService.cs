@@ -37,7 +37,7 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
         AuthorizeEnitiyAccess(cleaner, userValues);
-        _cleanersRepository.DeleteCleaner(cleaner);
+        await _cleanersRepository.DeleteCleaner(cleaner);
     }
 
     public async Task UpdateCleaner(Cleaner modelToUpdate, int id, UserValues userValues)
@@ -60,6 +60,12 @@ public class CleanersService : ICleanersService
         {
             throw new UniquenessException($"That email is registred");
         }
+        List<Service> services = cleaner.Services;
+        List<District> districts = cleaner.Districts;
+        cleaner.Services = await _cleanersRepository.GetServices(cleaner.Services);
+        cleaner.Districts = await _cleanersRepository.GetDistricts(cleaner.Districts);
+        Validator.CheckRequestAndDbList(services, cleaner.Services);
+        Validator.CheckRequestAndDbList(districts, cleaner.Districts);
         return await _cleanersRepository.CreateCleaner(cleaner);
 
     }
