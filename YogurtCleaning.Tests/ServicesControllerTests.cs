@@ -133,7 +133,7 @@ public class ServicesControllerTests
                 IsDeleted = false,
             }
         };
-        _mockServicesService.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
+        _mockServicesService.Setup(o => o.GetAllServices()).ReturnsAsync(expectedServices).Verifiable();
 
         // when
         var actual = await _sut.GetAllServices();
