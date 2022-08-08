@@ -15,7 +15,7 @@ public class OrdersRepositoryTests
     }
 
     [Fact]
-    public void AddOrder_WhenOrderAdded_ThenOrderIdMoreThenZero()
+    public async Task AddOrder_WhenOrderAdded_ThenOrderIdMoreThenZero()
     {
         var context = new YogurtCleaningContext(_dbContextOptions);
         var sut = new OrdersRepository(context);
@@ -27,7 +27,7 @@ public class OrdersRepositoryTests
         };
 
         // when
-        var actual = sut.CreateOrder(order);
+        var actual = await sut.CreateOrder(order);
 
         //then
         Assert.True(actual > 0);
@@ -51,7 +51,7 @@ public class OrdersRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.DeleteOrder(order);
+        await sut.DeleteOrder(order);
 
         //then
         var actual = await sut.GetOrder(order.Id);
@@ -60,7 +60,7 @@ public class OrdersRepositoryTests
     }
 
     [Fact]
-    public void GetAllOrders_WhenOrdersExist_ThenGetOrders()
+    public async Task GetAllOrders_WhenOrdersExist_ThenGetOrders()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -83,7 +83,7 @@ public class OrdersRepositoryTests
         context.SaveChanges();
 
         // when
-        var result = sut.GetAllOrders();
+        var result = await sut.GetAllOrders();
 
         //then
         Assert.NotNull(result);
@@ -112,7 +112,7 @@ public class OrdersRepositoryTests
         oldOrder.EndTime = DateTime.MinValue;
 
         // when
-        sut.UpdateOrder(oldOrder);
+        await sut.UpdateOrder(oldOrder);
         var result = await sut.GetOrder(oldOrder.Id);
 
         //then
@@ -199,7 +199,7 @@ public class OrdersRepositoryTests
         context.SaveChanges();
 
         // when
-        sut.UpdateOrderStatus(oldOrder.Id, Enums.Status.Done);
+        await sut.UpdateOrderStatus(oldOrder.Id, Enums.Status.Done);
         var result = await sut.GetOrder(oldOrder.Id);
 
         //then

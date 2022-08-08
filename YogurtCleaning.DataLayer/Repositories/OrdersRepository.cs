@@ -13,32 +13,32 @@ public class OrdersRepository : IOrdersRepository
         _context = context;
     }
 
-    public async Task<Order?> GetOrder(int orderId) => await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+    public async Task <Order?> GetOrder(int orderId) => await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 
-    public List<Order> GetAllOrders() => _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToList();
+    public async Task <List<Order>> GetAllOrders() => await _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
 
-    public int CreateOrder(Order order)
+    public async Task <int> CreateOrder(Order order)
     {
         _context.Orders.Add(order);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         
         return order.Id;
     }
 
-    public void DeleteOrder(Order order)
+    public async Task DeleteOrder(Order order)
     {
         order.IsDeleted = true;
         order.UpdateTime = DateTime.Now;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void UpdateOrder(Order modelToUpdate)
+    public async Task UpdateOrder(Order modelToUpdate)
     {
         _context.Orders.Update(modelToUpdate);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Service>> GetServices(int orderId)
+    public async Task <List<Service>> GetServices(int orderId)
     {
         var order = await GetOrder(orderId);
         if (order == null)
@@ -55,7 +55,7 @@ public class OrdersRepository : IOrdersRepository
     {
         var order = await GetOrder(orderId);
         order.Status = statusToUpdate;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<CleaningObject> GetCleaningObject(int orderId)

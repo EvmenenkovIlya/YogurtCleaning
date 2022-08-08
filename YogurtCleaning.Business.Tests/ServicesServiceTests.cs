@@ -3,6 +3,7 @@ using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.Business.Tests;
@@ -11,6 +12,7 @@ public class ServicesServiceTests
 {
     private ServicesService _sut;
     private Mock<IServicesRepository> _mockServicesRepository;
+    private UserValues userValue;
 
     public ServicesServiceTests()
     {
@@ -19,7 +21,7 @@ public class ServicesServiceTests
     }
 
     [Fact]
-    public void UpdateService_WhenUpdatePassed_ThenPropertiesValuesChandged()
+    public async Task UpdateService_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
         var service = new Service
@@ -30,7 +32,7 @@ public class ServicesServiceTests
             Unit = "Unit",
             IsDeleted = false
         };
-        _mockServicesRepository.Setup(s => s.GetService(service.Id)).Returns(service);
+        _mockServicesRepository.Setup(s => s.GetService(service.Id)).ReturnsAsync(service);
 
         var updatedService = new Service
         {
@@ -41,7 +43,7 @@ public class ServicesServiceTests
         };
 
         // when
-        _sut.UpdateService(updatedService, service.Id);
+        await _sut.UpdateService(updatedService, service.Id);
 
         // then
         Assert.Equal(updatedService.Name, service.Name);
@@ -88,5 +90,33 @@ public class ServicesServiceTests
         Assert.NotNull(actual);
         Assert.Equal(services.Count, actual.Count);
         _mockServicesRepository.Verify(c => c.GetAllServices(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteService_WhenValidRequestPassed_DeleteCleaner()
+    {
+        //given        
+        var expectedService = new Service()
+        {
+            Id = 2,
+            Name = "Service name2",
+            Price = 10500,
+            Unit = "Hour",
+            Duration = 1,
+            IsDeleted = false,
+            Orders = new List<Order>()
+
+        };
+
+        _mockServicesRepository.Setup(o => o.GetService(expectedService.Id)).ReturnsAsync(expectedService);
+        _mockServicesRepository.Setup(o => o.DeleteService(expectedService));
+        userValue = new UserValues() { Email = "AdamSmith@gmail.com", Role = Role.Cleaner, Id = 1 };
+
+        //when
+        await _sut.DeleteService(expectedService.Id, userValue);
+
+        //then
+        _mockServicesRepository.Verify(c => c.DeleteService(expectedService), Times.Once);
+        _mockServicesRepository.Verify(c => c.GetService(It.IsAny<int>()), Times.Once);
     }
 }

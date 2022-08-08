@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -44,6 +45,15 @@ public class CleanersRepository : ICleanersRepository
     public async Task<List<Order>> GetAllOrdersByCleaner(int id) => await _context.Orders.Where(o => o.CleanersBand.Any(c => c.Id == id)).ToListAsync();
 
     public async Task<Cleaner?> GetCleanerByEmail(string email) => await _context.Cleaners.FirstOrDefaultAsync(o => o.Email == email);
+
+    public async Task<List<Cleaner>> GetWorkingCleanersForDate(DateTime orderDate)
+    {
+        var workingCleaners = (await GetAllCleaners())
+            .Where(c => (c.Schedule is Schedule.ShiftWork && Convert.ToInt32((orderDate - c.DateOfStartWork).TotalDays % 4) < 2) ||
+            (c.Schedule is Schedule.FullTime && orderDate.DayOfWeek != DayOfWeek.Sunday && orderDate.DayOfWeek != DayOfWeek.Saturday))
+            .ToList();
+        return workingCleaners;
+    }
 
     public async Task UpdateCleanerRating(int id)
     {

@@ -44,7 +44,7 @@ public class OrdersControllerTests
         _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
 
         //when
-        var actual = _sut.DeleteOrder(expectedOrder.Id);
+        var actual = await _sut.DeleteOrder(expectedOrder.Id);
 
         //then
         var actualResult = actual as NoContentResult;
@@ -54,7 +54,7 @@ public class OrdersControllerTests
     }
 
     [Test]
-    public void GetAllOrders_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetAllOrders_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var orders = new List<Order>
@@ -88,10 +88,10 @@ public class OrdersControllerTests
             },
         };
 
-        _ordersServiceMock.Setup(o => o.GetAllOrders()).Returns(orders).Verifiable();
+        _ordersServiceMock.Setup(o => o.GetAllOrders()).ReturnsAsync(orders).Verifiable();
 
         //when
-        var actual = _sut.GetAllOrders();
+        var actual = await _sut.GetAllOrders();
 
         //then
         var actualResult = actual.Result as ObjectResult;

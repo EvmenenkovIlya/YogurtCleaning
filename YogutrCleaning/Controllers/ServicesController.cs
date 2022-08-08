@@ -20,21 +20,23 @@ public class ServicesController : ControllerBase
     private readonly IServicesRepository _servicesRepository;
     private readonly IServicesService _servicesService;
     private readonly IMapper _mapper;
+    private readonly IEmailSender _emailSender;
 
-    public ServicesController(ILogger<ServicesController> logger, IServicesRepository servicesRepository, IServicesService servicesService, IMapper mapper)
+    public ServicesController(ILogger<ServicesController> logger, IServicesRepository servicesRepository, IServicesService servicesService, IMapper mapper, IEmailSender emailSender)
     {
         _logger = logger;
         _servicesRepository = servicesRepository;
         _servicesService = servicesService;
         _mapper = mapper;
+        _emailSender = emailSender;
     }
 
     [AllowAnonymous]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
-    public ActionResult<ServiceResponse> GetService(int id)
+    public async Task<ActionResult<ServiceResponse>> GetService(int id)
     {
-        var result = _mapper.Map<ServiceResponse>(_servicesService.GetService(id));
+        var result =  _mapper.Map<ServiceResponse>(await _servicesService.GetService(id));
         return Ok(result);
     }
 
@@ -53,9 +55,9 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateService([FromBody] ServiceRequest service, int id)
+    public async Task<ActionResult> UpdateService([FromBody] ServiceRequest service, int id)
     {
-        _servicesService.UpdateService(_mapper.Map<Service>(service), id);
+        await _servicesService.UpdateService(_mapper.Map<Service>(service), id);
         return NoContent();
     }
 
@@ -64,20 +66,20 @@ public class ServicesController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddService([FromBody] ServiceRequest service)
+    public async Task<ActionResult<int>> AddService([FromBody] ServiceRequest service)
     {
-        var result = _servicesService.AddService(_mapper.Map<Service>(service));
+        var result = await _servicesService.AddService(_mapper.Map<Service>(service));
         return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
-    public ActionResult DeleteService(int id)
+    public async Task<ActionResult> DeleteService(int id)
     {
         UserValues userValues = this.GetClaimsValue();
-        _servicesService.DeleteService(id, userValues);
-        return Ok();
+       await _servicesService.DeleteService(id, userValues);
+        return NoContent();
     }
 }

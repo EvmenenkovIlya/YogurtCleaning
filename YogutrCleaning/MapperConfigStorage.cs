@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Models;
@@ -19,17 +20,19 @@ public class MapperConfigStorage : Profile
 		CreateMap<CleaningObjectUpdateRequest, CleaningObject>()
 			.ForMember(o => o.District, opt => opt.MapFrom(src => new District() { Id = src.District }));
 		CreateMap<CleaningObject, CleaningObjectResponse>()
-			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id));
+			.ForMember(o => o.ClientId, opt => opt.MapFrom(src => src.Client.Id ))
+			.ForMember(o => o.District, opt => opt.MapFrom(src => src.District.Id )); ;
 
 		CreateMap<Order, OrderResponse>();
 		CreateMap<OrderUpdateRequest, Order>()
 			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => src.CleanersBandIds.Select(t => new Cleaner { Id = t }).ToList()))
 			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new Bundle { Id = t }).ToList()))
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
-		CreateMap<OrderRequest, Order>()
+		CreateMap<OrderRequest, OrderBusinessModel>()
 			.ForMember(o => o.CleaningObject, opt => opt.MapFrom(src => new CleaningObject() { Id = src.CleaningObjectId }))
-			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new Bundle { Id = t }).ToList()))
-			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
+			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new BundleBusinessModel { Id = t }).ToList()))
+			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()))
+			.AfterMap((src, dest) => { dest.SetTotalDuration(); dest.SetCleanersCount(); dest.SetEndTime(); });
 
 		CreateMap<CleanerRegisterRequest, Cleaner>()
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));

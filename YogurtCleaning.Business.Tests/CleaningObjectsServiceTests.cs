@@ -26,7 +26,7 @@ public class CleaningObjectServiceFacts
         //given   
         int expectedId = 1;
         _cleaningObjectsRepositoryMock.Setup(c => c.CreateCleaningObject(It.IsAny<CleaningObject>()))
-             .Returns(expectedId);
+             .ReturnsAsync(expectedId);
         var expectedClient = new Client() { Id = 1 };
         var expectedDistrict = new District() { Id = DistrictEnum.Vasileostrovskiy };
         var cleaningObject = new CleaningObject()
@@ -42,7 +42,7 @@ public class CleaningObjectServiceFacts
             IsDeleted = false
         };
         _clientsRepositoryMock.Setup(c => c.GetClient(cleaningObject.Client.Id)).ReturnsAsync(expectedClient);
-        _cleaningObjectsRepositoryMock.Setup(c => c.GetDistrict(cleaningObject.District.Id)).Returns(expectedDistrict);
+        _cleaningObjectsRepositoryMock.Setup(c => c.GetDistrict(cleaningObject.District.Id)).ReturnsAsync(expectedDistrict);
         UserValues userValues = new UserValues() { Id = expectedId };
 
         //when
@@ -73,10 +73,10 @@ public class CleaningObjectServiceFacts
         };
 
         _userValues = new UserValues() { Email = "AdamSmith@gmail.com1", Role = Role.Admin, Id = 1 };
-        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).Returns(cleaningObjectInDb);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).ReturnsAsync(cleaningObjectInDb);
 
         //when
-        var actual = _sut.GetCleaningObject(cleaningObjectInDb.Id, _userValues);
+        var actual = await _sut.GetCleaningObject(cleaningObjectInDb.Id, _userValues);
 
         //then
         _cleaningObjectsRepositoryMock.Verify(c => c.GetCleaningObject(cleaningObjectInDb.Id), Times.Once);
@@ -92,7 +92,7 @@ public class CleaningObjectServiceFacts
         //when
 
         //then
-        Assert.Throws<Exceptions.EntityNotFoundException>(() => _sut.GetCleaningObject(testId, _userValues));
+        await Assert.ThrowsAsync<Exceptions.EntityNotFoundException>(() => _sut.GetCleaningObject(testId, _userValues));
     }
 
     [Fact]
@@ -112,12 +112,12 @@ public class CleaningObjectServiceFacts
             IsDeleted = false
         };
         _userValues = new UserValues() { Role = Role.Client, Id = 2 };
-        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).Returns(cleaningObjectInDb);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObjectInDb.Id)).ReturnsAsync(cleaningObjectInDb);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.GetCleaningObject(cleaningObjectInDb.Id, _userValues));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCleaningObject(cleaningObjectInDb.Id, _userValues));
     }
 
 
@@ -147,11 +147,11 @@ public class CleaningObjectServiceFacts
             Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
         };
         _userValues = new UserValues() { Id = cleaningObject.Client.Id };
-        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).Returns(cleaningObject);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).ReturnsAsync(cleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
 
         //when
-        _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues);
+        await _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues);
 
         //then
         _cleaningObjectsRepositoryMock.Verify(c => c.GetCleaningObject(cleaningObject.Id), Times.Once);
@@ -188,11 +188,11 @@ public class CleaningObjectServiceFacts
             Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
         };
         _userValues = new UserValues() { Role = Role.Admin };
-        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).Returns(cleaningObject);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).ReturnsAsync(cleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
 
         //when
-        _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues);
+        await _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues);
 
         //then
         _cleaningObjectsRepositoryMock.Verify(c => c.GetCleaningObject(cleaningObject.Id), Times.Once);
@@ -222,7 +222,7 @@ public class CleaningObjectServiceFacts
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues));
     }
 
     [Fact]
@@ -243,13 +243,13 @@ public class CleaningObjectServiceFacts
             NumberOfRooms = 10
         };
         _userValues = new UserValues() { Id = 2 };
-        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).Returns(cleaningObject);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).ReturnsAsync(cleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues));
     }
 
     [Fact]
@@ -269,12 +269,12 @@ public class CleaningObjectServiceFacts
             IsDeleted = false
         };
 
-        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id)).Returns(expectedCleaningObject);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(expectedCleaningObject.Id)).ReturnsAsync(expectedCleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.DeleteCleaningObject(expectedCleaningObject));
         _userValues = new UserValues() { Email = "AdamSmith@gmail.com3", Role = Role.Client, Id = 1 };
 
         //when
-        _sut.DeleteCleaningObject(expectedCleaningObject.Id, _userValues);
+        await _sut.DeleteCleaningObject(expectedCleaningObject.Id, _userValues);
 
         //then
         _cleaningObjectsRepositoryMock.Verify(c => c.DeleteCleaningObject(expectedCleaningObject), Times.Once);
@@ -292,7 +292,7 @@ public class CleaningObjectServiceFacts
         //when
 
         //then
-        Assert.Throws<Exceptions.BadRequestException>(() => _sut.DeleteCleaningObject(testId, _userValues));
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.DeleteCleaningObject(testId, _userValues));
     }
 
     [Fact]
@@ -314,11 +314,144 @@ public class CleaningObjectServiceFacts
 
         };
         _userValues = new UserValues() { Email = cleaningObject.Client.Email, Role = Role.Client };
-        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).Returns(cleaningObject);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).ReturnsAsync(cleaningObject);
 
         //when
 
         //then
-        Assert.Throws<Exceptions.AccessException>(() => _sut.DeleteCleaningObject(cleaningObject.Id, _userValues));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.DeleteCleaningObject(cleaningObject.Id, _userValues));
+    }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenClientHasCleaningObjects_GetCleaningObjects()
+    {
+        //given
+        Client client = new Client() { Id = 1 };
+        var cleaningObjectsInDb = new List<CleaningObject>() {
+            new CleaningObject()
+            {
+                Id = 1,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Vasileostrovskiy, Name = "Василеостровский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 2,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Волгоград, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Nevsky, Name = "Невский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 3,
+                Client = new Client() {Id = 2},
+                NumberOfRooms = 10,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 15",
+                District = new District(){ Id = DistrictEnum.Krasnoselsky, Name = "Красносельский"},
+                IsDeleted = false
+            }
+        };
+        _userValues = new UserValues() { Role = Role.Client, Id = 1 };
+        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).ReturnsAsync(client);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetAllCleaningObjectsByClientId(client.Id)).ReturnsAsync(cleaningObjectsInDb);
+
+        //when
+        var result = await _sut.GetAllCleaningObjectsByClientId(client.Id, _userValues);
+
+        //then
+        _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
+        _cleaningObjectsRepositoryMock.Verify(c => c.GetAllCleaningObjectsByClientId(client.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenAdminGetsCleaningObjects_GetCleaningObjects()
+    {
+        //given
+        Client client = new Client() { Id = 1 };
+        var cleaningObjectsInDb = new List<CleaningObject>() {
+            new CleaningObject()
+            {
+                Id = 1,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Vasileostrovskiy, Name = "Василеостровский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 2,
+                Client = client,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Волгоград, ул. Льва Толстого, д. 16, кв. 10",
+                District = new District(){ Id = DistrictEnum.Nevsky, Name = "Невский"},
+                IsDeleted = false
+            },
+            new CleaningObject()
+            {
+                Id = 3,
+                Client = new Client() {Id = 2},
+                NumberOfRooms = 10,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 15",
+                District = new District(){ Id = DistrictEnum.Krasnoselsky, Name = "Красносельский"},
+                IsDeleted = false
+            }
+        };
+        _userValues = new UserValues() { Role = Role.Admin, Id = 8 };
+        _clientsRepositoryMock.Setup(o => o.GetClient(client.Id)).ReturnsAsync(client);
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetAllCleaningObjectsByClientId(client.Id)).ReturnsAsync(cleaningObjectsInDb);
+
+        //when
+        var result = await _sut.GetAllCleaningObjectsByClientId(client.Id, _userValues);
+
+        //then
+        _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
+        _cleaningObjectsRepositoryMock.Verify(c => c.GetAllCleaningObjectsByClientId(client.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenClientNotInDb_ThrowBadRequestException()
+    {
+        //given
+        int clientIdNotInDb = 7;
+        _userValues = new UserValues() { Role = Role.Client, Id = 2 };
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetAllCleaningObjectsByClientId(clientIdNotInDb, _userValues));
+    }
+
+    [Fact]
+    public async Task GetCleaningObjectsByClient_WhenClientTryGetSomeoneElseCleaningobjects_ThrowBadRequestException()
+    {
+        //given
+        Client clientInDb = new Client() { Id = 7, FirstName = "Вася" };
+        _userValues = new UserValues() { Role = Role.Client, Id = 2 };
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetAllCleaningObjectsByClientId(clientInDb.Id, _userValues));
     }
 }

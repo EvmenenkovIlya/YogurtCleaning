@@ -16,7 +16,7 @@ public class ServicesRepositoryTests
     }
 
     [Fact]
-    public void AddService_WhenServiceAdded_ThenServiceIdMoreThanZero()
+    public async Task AddService_WhenServiceAdded_ThenServiceIdMoreThanZero()
     {
         //given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -30,7 +30,7 @@ public class ServicesRepositoryTests
         };
 
         // when 
-        var actual = sut.AddService(service);
+        var actual = await sut.AddService(service);
 
         //then 
         Assert.True(actual > 0);
@@ -38,7 +38,7 @@ public class ServicesRepositoryTests
     }
 
     [Fact]
-    public void DeleteService_WhenCorrectIdPassed_ThenSoftDeleteApplied()
+    public async Task DeleteService_WhenCorrectIdPassed_ThenSoftDeleteApplied()
     {
         // given 
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -55,7 +55,7 @@ public class ServicesRepositoryTests
         context.SaveChanges();
 
         // when 
-        sut.DeleteService(service);
+        await sut.DeleteService(service);
 
         //then 
         Assert.True(service.IsDeleted);
