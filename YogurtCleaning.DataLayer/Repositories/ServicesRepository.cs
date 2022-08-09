@@ -13,7 +13,7 @@ public class ServicesRepository : IServicesRepository
     public async Task<int> AddService(Service service)
     {
         _context.Services.Add(service);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return service.Id;
     }
@@ -21,7 +21,7 @@ public class ServicesRepository : IServicesRepository
     public async Task DeleteService(Service service)
     {
         service.IsDeleted = true;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
     public  async Task<List<Service>> GetAllServices() => await _context.Services.Where(s => !s.IsDeleted).ToListAsync();

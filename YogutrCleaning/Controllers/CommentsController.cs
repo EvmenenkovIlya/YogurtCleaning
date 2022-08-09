@@ -17,14 +17,12 @@ namespace YogurtCleaning.Controllers;
 
 public class CommentsController : Controller
 {
-    private readonly ILogger<CommentsController> _logger;
     private readonly ICommentsService _commentsService;
     private readonly IMapper _mapper;
     public UserValues? userValues;
 
-    public CommentsController(ILogger<CommentsController> logger, ICommentsService commentsService, IMapper mapper)
+    public CommentsController(ICommentsService commentsService, IMapper mapper)
     {
-        _logger = logger;
         _commentsService = commentsService;
         _mapper = mapper;
     }

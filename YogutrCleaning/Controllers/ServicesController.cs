@@ -16,19 +16,13 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class ServicesController : ControllerBase
 {
-    private readonly ILogger<ServicesController> _logger;
-    private readonly IServicesRepository _servicesRepository;
     private readonly IServicesService _servicesService;
     private readonly IMapper _mapper;
-    private readonly IEmailSender _emailSender;
 
-    public ServicesController(ILogger<ServicesController> logger, IServicesRepository servicesRepository, IServicesService servicesService, IMapper mapper, IEmailSender emailSender)
+    public ServicesController(IServicesService servicesService, IMapper mapper)
     {
-        _logger = logger;
-        _servicesRepository = servicesRepository;
         _servicesService = servicesService;
         _mapper = mapper;
-        _emailSender = emailSender;
     }
 
     [AllowAnonymous]
