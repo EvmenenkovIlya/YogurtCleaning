@@ -300,9 +300,7 @@ public class CleanersRepositoryTests
             Passport = "0000654321"
         };
         context.Cleaners.Add(cleaner1);
-        context.SaveChanges();
         context.Cleaners.Add(cleaner2);
-        context.SaveChanges();
         context.Cleaners.Add(cleaner3);
         context.SaveChanges();
 
@@ -351,7 +349,6 @@ public class CleanersRepositoryTests
             Passport = "0000654321"
         };
         context.Cleaners.Add(cleaner1);
-        context.SaveChanges();
         context.Cleaners.Add(cleaner2);
         context.SaveChanges();
 
@@ -362,6 +359,102 @@ public class CleanersRepositoryTests
 
         //then
         Assert.Equal(expectedCount, actual.Count);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public async Task GetCommentsAboutCleanerTest_WhenCommentsExist_ThenGotIts()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new CleanersRepository(context);
+
+        var cleaner = new Cleaner
+        {
+            Id = 8,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Passport = "0000654321",
+            Phone = "89998887766",
+            Rating = 0,
+            IsDeleted = false
+        };
+
+        var cleanersBand = new List<Cleaner>();
+        cleanersBand.Add(cleaner);
+
+        var client = new Client { Id = 7, Email = "a@b.c", FirstName = "asdfg", LastName = "dfdfdfd", Password = "kjha", Phone = "1234567890" };
+        var order1 = new Order { Id = 1, CleanersBand = cleanersBand };
+        var order2 = new Order { Id = 2, CleanersBand = cleanersBand };
+        var comment1 = new Comment { Id = 1, Order = order1, Client = client, Rating = 5};
+        var comment2 = new Comment { Id = 2, Order = order2, Client = client, Rating = 4 };
+        var comment3 = new Comment { Id = 3, Order = order2, Cleaner = cleaner, Rating = 5 };
+        var comment4 = new Comment { Id = 4, Order = order1, Cleaner = cleaner, Rating = 2 };
+
+        context.Cleaners.Add(cleaner);
+        context.Clients.Add(client);
+        context.Orders.Add(order1);
+        context.Orders.Add(order2);
+        context.Comments.Add(comment1);
+        context.Comments.Add(comment2);
+        context.Comments.Add(comment3);
+        context.Comments.Add(comment4);
+        context.SaveChanges();
+
+        var expectedCount = 2;
+
+        // when
+        var result = await sut.GetCommentsAboutCleaner(cleaner.Id);
+
+        // then
+        Assert.Equal(expectedCount, result.Count);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public async Task GetCommentsAboutCleanerTest_WhenCommentsDoNotExist_ThenListIsEmpty()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new CleanersRepository(context);
+
+        var cleaner = new Cleaner
+        {
+            Id = 8,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Passport = "0000654321",
+            Phone = "89998887766",
+            Rating = 0,
+            IsDeleted = false
+        };
+
+        var cleanersBand = new List<Cleaner>();
+        cleanersBand.Add(cleaner);
+
+        var order1 = new Order { Id = 1, CleanersBand = cleanersBand };
+        var order2 = new Order { Id = 2, CleanersBand = cleanersBand };
+        var comment1 = new Comment { Id = 1, Order = order1, Cleaner = cleaner, Rating = 5 };
+        var comment2 = new Comment { Id = 2, Order = order2, Cleaner = cleaner, Rating = 4 };
+
+        context.Cleaners.Add(cleaner);
+        context.Orders.Add(order1);
+        context.Orders.Add(order2);
+        context.Comments.Add(comment1);
+        context.Comments.Add(comment2);
+        context.SaveChanges();
+
+        var expectedCount = 0;
+
+        // when
+        var result = await sut.GetCommentsAboutCleaner(cleaner.Id);
+
+        // then
+        Assert.Equal(expectedCount, result.Count);
         context.Database.EnsureDeleted();
     }
 }

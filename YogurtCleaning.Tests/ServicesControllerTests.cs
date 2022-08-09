@@ -103,7 +103,7 @@ public class ServicesControllerTests
     public async Task GetAllServices_WhenCorrectRequestPassed_ThenOkRecieved()
     {
         // given
-        var expectedService = new List<Service>()
+        var expectedServices = new List<Service>()
         {
             new Service()
             {
@@ -133,7 +133,7 @@ public class ServicesControllerTests
                 IsDeleted = false,
             }
         };
-        _mockServicesService.Setup(o => o.GetAllServices()).ReturnsAsync(expectedService).Verifiable();
+        _mockServicesService.Setup(o => o.GetAllServices()).ReturnsAsync(expectedServices).Verifiable();
 
         // when
         var actual = await _sut.GetAllServices();
@@ -143,14 +143,14 @@ public class ServicesControllerTests
         var servicesResponse = actualResult.Value as List<ServiceResponse>;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
-        Assert.That(servicesResponse.Count, Is.EqualTo(expectedService.Count));
+        Assert.That(servicesResponse.Count, Is.EqualTo(expectedServices.Count));
         Assert.Multiple(() =>
         {
-            Assert.That(servicesResponse[0].Id, Is.EqualTo(expectedService[0].Id));
-            Assert.That(servicesResponse[1].Name, Is.EqualTo(expectedService[1].Name));
-            Assert.That(servicesResponse[2].Price, Is.EqualTo(expectedService[2].Price));
-            Assert.That(servicesResponse[0].Unit, Is.EqualTo(expectedService[0].Unit));
-            Assert.That(servicesResponse[1].Duration, Is.EqualTo(expectedService[1].Duration));
+            Assert.That(servicesResponse[0].Id, Is.EqualTo(expectedServices[0].Id));
+            Assert.That(servicesResponse[1].Name, Is.EqualTo(expectedServices[1].Name));
+            Assert.That(servicesResponse[2].Price, Is.EqualTo(expectedServices[2].Price));
+            Assert.That(servicesResponse[0].Unit, Is.EqualTo(expectedServices[0].Unit));
+            Assert.That(servicesResponse[1].Duration, Is.EqualTo(expectedServices[1].Duration));
         });
     }
 

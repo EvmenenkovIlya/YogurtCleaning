@@ -50,4 +50,15 @@ public class ClientsRepository : IClientsRepository
         var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
         return lastOrder;
     }
+
+    public async Task<List<Comment>> GetCommentsAboutClient(int id)
+    {
+        var orders = await GetAllOrdersByClient(id);
+        var comments = new List<Comment>();
+        foreach (var order in orders)
+        {
+            comments.AddRange(await _context.Comments.Where(c => c.Order.Id == order.Id && c.Cleaner != null).ToListAsync());
+        }
+        return comments;
+    }
 }

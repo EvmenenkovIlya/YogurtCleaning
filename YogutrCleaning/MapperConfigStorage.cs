@@ -40,9 +40,6 @@ public class MapperConfigStorage : Profile
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
 		CreateMap<Cleaner, CleanerResponse>();
 
-		CreateMap<CommentRequest, Comment>();
-		CreateMap<Comment, CommentResponse>();
-
 		CreateMap<ServiceRequest, Service>();
 		CreateMap<Service, ServiceResponse>();
 		CreateMap<BundleRequest, Bundle>()
@@ -51,6 +48,9 @@ public class MapperConfigStorage : Profile
 
 		CreateMap<CommentRequest, Comment>()
 			.ForMember(c => c.Order, opt => opt.MapFrom(src => new Order() { Id = src.OrderId}));
-		CreateMap<Comment, CommentResponse>();
+		CreateMap<Comment, CommentResponse>()
+			.ForMember(c => c.OrderId, opt => opt.MapFrom(src => src.Order.Id))
+			.ForMember(c => c.CleanerId, opt => opt.MapFrom(src => src.Cleaner.Id))
+			.ForMember(c => c.ClientId, opt => opt.MapFrom(src => src.Client.Id));
 	}
 }
