@@ -15,4 +15,5 @@ public interface ICleanersRepository
     Task<List<Cleaner>> GetWorkingCleanersForDate(DateTime orderDate);
     Task<List<Service>> GetServices(List<Service> services);
     Task<List<District>> GetDistricts(List<District> districts);
+    Task<List<Comment>> GetCommentsAboutCleaner(int id);
 }

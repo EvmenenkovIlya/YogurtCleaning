@@ -24,7 +24,7 @@ public class ServicesRepository : IServicesRepository
         await _context.SaveChangesAsync();
     }
 
-    public  async Task<List<Service>> GetAllServices() => await _context.Services.Where(s => !s.IsDeleted).ToListAsync();
+    public async Task<List<Service>> GetAllServices() => await _context.Services.Where(s => !s.IsDeleted).ToListAsync();
 
     public async Task<Service> GetService(int id) => await _context.Services.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
 

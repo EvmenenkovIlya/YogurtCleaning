@@ -136,4 +136,13 @@ public class CleanersService : ICleanersService
         }
         return freeCleaners;
     }
+    
+    public async Task UpdateCleanerRating(int id)
+    {
+        var cleaner = await _cleanersRepository.GetCleaner(id);
+        var comments = await _cleanersRepository.GetCommentsAboutCleaner(id);
+        var cleanerRating = (decimal)(comments.Select(c => c.Rating).Sum()) / (decimal)comments.Count();
+        cleaner.Rating = cleanerRating;
+        await _cleanersRepository.UpdateCleaner(cleaner);
+    }
 }

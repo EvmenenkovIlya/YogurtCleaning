@@ -11,5 +11,6 @@ namespace YogurtCleaning.Business.Services
         Task<int> CreateClient(Client client);
         Task<List<Comment>> GetCommentsByClient(int id, UserValues userValues);
         Task<List<Order>> GetOrdersByClient(int id, UserValues userValues);
+        Task UpdateClientRating(int id);
     }
 }

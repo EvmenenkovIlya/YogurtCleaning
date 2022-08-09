@@ -4,8 +4,8 @@ namespace YogurtCleaning.DataLayer.Repositories;
 
 public interface ICommentsRepository
 {
-    List<Comment> GetAllComments();
-    int AddComment(Comment comment);
-    void DeleteComment(Comment comment);
-    Comment? GetCommentById(int id);
+    Task<List<Comment>> GetAllComments();
+    Task<int> AddComment(Comment comment);
+    Task DeleteComment(Comment comment);
+    Task<Comment?> GetCommentById(int id);
 }

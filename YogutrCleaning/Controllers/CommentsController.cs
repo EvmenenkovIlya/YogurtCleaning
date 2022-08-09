@@ -32,9 +32,9 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<CommentResponse>> GetAllComments()
+    public async Task<ActionResult<List<CommentResponse>>> GetAllComments()
     {
-        var result = _commentsService.GetComments();
+        var result = _mapper.Map<List<CommentResponse>>(await _commentsService.GetComments());
         return Ok(result);
     }
 
@@ -72,9 +72,9 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult DeleteComment(int id)
+    public async Task<ActionResult> DeleteComment(int id)
     {
-        _commentsService.DeleteComment(id);
+        await _commentsService.DeleteComment(id);
         return NoContent();
     }
 }

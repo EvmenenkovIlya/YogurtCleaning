@@ -93,5 +93,14 @@ public class ClientsService : IClientsService
         {
             throw new AccessException($"Access denied");
         }
-    }  
+    }
+    public async Task UpdateClientRating(int id)
+    {
+        var client = await _clientsRepository.GetClient(id);
+        var comments = await _clientsRepository.GetCommentsAboutClient(id);
+        var clientRating = (decimal)(comments.Select(c => c.Rating).Sum()) / (decimal)comments.Count();
+        client.Rating = clientRating;
+        await _clientsRepository.UpdateClient(client);
+    }
+
 }

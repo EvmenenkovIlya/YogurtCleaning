@@ -68,4 +68,15 @@ public class CleanersRepository : ICleanersRepository
 
         return await _context.Districts.Where(c => districtsIds.Contains(c.Id)).ToListAsync();
     }
+    
+    public async Task<List<Comment>> GetCommentsAboutCleaner(int id)
+    {
+        var orders = await GetAllOrdersByCleaner(id);
+        var comments = new List<Comment>();
+        foreach (var order in orders)
+        {
+            comments.AddRange(await _context.Comments.Where(c => c.Order.Id == order.Id && c.Client != null).ToListAsync());
+        }
+        return comments;
+    }
 }

@@ -568,4 +568,34 @@ public class ClientsServiceFacts
         //then
         await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.DeleteClient(clientSecond.Id, userValue));
     }
+
+    [Fact]
+    public async Task UpdateClientRatingTest_WhenValidRequestGet_ThenRatingUpdated()
+    {
+        // given
+        var client = new Client { Id = 7, Email = "a@b.c", FirstName = "asdfg", LastName = "dfdfdfd", Password = "kjha", Phone = "1234567890" };
+        var comments = new List<Comment>()
+        {
+            new Comment { Id = 1, Order = new(){Id = 1}, Cleaner = new(){Id = 1}, Rating = 2 },
+            new Comment { Id = 3, Order = new(){Id = 2}, Cleaner = new(){Id = 2}, Rating = 5 }
+        };
+
+        _clientsRepositoryMock.Setup(c => c.GetClient(client.Id)).ReturnsAsync(client);
+        _clientsRepositoryMock.Setup(c => c.GetCommentsAboutClient(client.Id)).ReturnsAsync(comments);
+
+        var expectedRating = 3.5m;
+
+        // when
+        await _sut.UpdateClientRating(client.Id);
+
+        // then
+
+        _clientsRepositoryMock.Verify(c => c.UpdateClient(
+            It.Is<Client>(
+                i => i.Id == client.Id
+                && i.Rating == expectedRating)),
+            Times.Once);
+        _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
+        _clientsRepositoryMock.Verify(c => c.GetCommentsAboutClient(client.Id), Times.Once);
+    }
 }

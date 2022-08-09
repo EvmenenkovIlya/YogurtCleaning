@@ -16,14 +16,14 @@ public class CommentsControllerTests
 {
     private CommentsController _sut;
     private Mock<ICommentsService> _mockCommentsService;
-    private Mock<IMapper> _mockMapper;
+    private IMapper _mapper;
 
     [SetUp]
     public void Setup()
     {
         _mockCommentsService = new Mock<ICommentsService>();
-        _mockMapper = new Mock<IMapper>();
-        _sut = new CommentsController(_mockCommentsService.Object, _mockMapper.Object);
+        _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
+        _sut = new CommentsController(_mockLogger.Object, _mockCommentsService.Object, _mapper);
     }
 
     [Test]
@@ -72,5 +72,47 @@ public class CommentsControllerTests
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
         Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
         _mockCommentsService.Verify(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
+    }
+
+    [Test]
+    public async Task GetAllCommentsTest_WhenValidRequestPassed_ThenOkResultRecieved()
+    {
+        // given
+        var comments = new List<Comment>
+        {
+            new() 
+            {
+                Rating = 1,
+                Client = new() {Id = 1},
+                Order = new() {Id = 3},
+                IsDeleted = false
+            },
+            new()
+            {
+                Rating = 5,
+                Summary = "asjhdagldhsjg",
+                Cleaner = new() {Id = 3},
+                Order = new() {Id = 43},
+                IsDeleted = false
+            }
+
+        };
+        _mockCommentsService.Setup(c => c.GetComments()).ReturnsAsync(comments);
+
+        // when
+        var actual = await _sut.GetAllComments();
+
+        // then
+        var actualResult = actual.Result as ObjectResult;
+        var commentsResponse = actualResult.Value as List<CommentResponse>;
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(commentsResponse.Count, Is.EqualTo(comments.Count));
+            Assert.That(commentsResponse[0].Summary, Is.EqualTo(comments[0].Summary));
+            Assert.That(commentsResponse[0].ClientId, Is.EqualTo(comments[0].Client.Id));
+            Assert.That(commentsResponse[1].Rating, Is.EqualTo(comments[1].Rating));
+        });
+        _mockCommentsService.Verify(c => c.GetComments(), Times.Once);
     }
 }

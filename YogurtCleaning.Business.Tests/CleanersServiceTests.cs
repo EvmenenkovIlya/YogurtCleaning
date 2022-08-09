@@ -705,4 +705,44 @@ public class CleanersServiceFacts
         Assert.Equal(expectedCount, actual.Count);
         _cleanersRepositoryMock.Verify(c => c.GetWorkingCleanersForDate(order.StartTime), Times.Once);
     }
+
+    [Fact]
+    public async Task UpdateCleanerRatingTest_WhenValidRequestGet_ThenRatingUpdated()
+    {
+        // given
+        var cleaner = new Cleaner
+        {
+            Id = 1,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Passport = "0000654321",
+            Phone = "89998887766",
+            IsDeleted = false
+        };
+        var comments = new List<Comment>()
+        {
+            new Comment { Id = 1, Order = new(){Id = 1}, Client = new(){Id = 1}, Rating = 1 },
+            new Comment { Id = 3, Order = new(){Id = 2}, Client = new(){Id = 2}, Rating = 2 }
+        };
+
+        _cleanersRepositoryMock.Setup(c => c.GetCleaner(cleaner.Id)).ReturnsAsync(cleaner);
+        _cleanersRepositoryMock.Setup(c => c.GetCommentsAboutCleaner(cleaner.Id)).ReturnsAsync(comments);
+
+        var expectedRating = 1.5m;
+
+        // when
+        await _sut.UpdateCleanerRating(cleaner.Id);
+
+        // then
+
+        _cleanersRepositoryMock.Verify(c => c.UpdateCleaner(
+            It.Is<Cleaner>(
+                i => i.Id == cleaner.Id
+                && i.Rating == expectedRating)),
+            Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleaner.Id), Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.GetCommentsAboutCleaner(cleaner.Id), Times.Once);
+    }
 }
