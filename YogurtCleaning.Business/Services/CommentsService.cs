@@ -15,13 +15,24 @@ public class CommentsService : ICommentsService
     private readonly IClientsRepository _clientsRepository;
     private readonly ICleanersRepository _cleanersRepository;
     private readonly IOrdersRepository _ordersRepository;
+    private readonly IClientsService _clientsService;
+    private readonly ICleanersService _cleanersService;
 
-    public CommentsService(ICommentsRepository commentsRepository, IClientsRepository clientsRepository, ICleanersRepository cleanersRepository, IOrdersRepository ordersRepository)
+    public CommentsService(
+        ICommentsRepository commentsRepository, 
+        IClientsRepository clientsRepository,
+        ICleanersRepository cleanersRepository,
+        IOrdersRepository ordersRepository,
+        IClientsService clientsService,
+        ICleanersService cleanersService
+        )
     {
         _commentsRepository = commentsRepository;
         _clientsRepository = clientsRepository;
         _cleanersRepository = cleanersRepository;
         _ordersRepository = ordersRepository;
+        _clientsService = clientsService;
+        _cleanersService = cleanersService;
     }
 
     public async Task<int> AddCommentByClient(Comment comment, int clientId)
@@ -31,7 +42,7 @@ public class CommentsService : ICommentsService
         comment.Order = await _ordersRepository.GetOrder(comment.Order.Id);
         Validator.CheckThatObjectNotNull(comment.Order, ExceptionsErrorMessages.OrderNotFound);
         var result = await _commentsRepository.AddComment(comment);
-        comment.Order.CleanersBand.ForEach(async c => await _cleanersRepository.UpdateCleanerRating(c.Id));
+        comment.Order.CleanersBand.ForEach(async c => await _cleanersService.UpdateCleanerRating(c.Id));
         return result;
     }
 
@@ -42,7 +53,7 @@ public class CommentsService : ICommentsService
         comment.Order = await _ordersRepository.GetOrder(comment.Order.Id);
         Validator.CheckThatObjectNotNull(comment.Order, ExceptionsErrorMessages.OrderNotFound);
         var result = await _commentsRepository.AddComment(comment);
-        await _clientsRepository.UpdateClientRating(comment.Order.Client.Id);
+        await _clientsService.UpdateClientRating(comment.Order.Client.Id);
         return result;
     }
 

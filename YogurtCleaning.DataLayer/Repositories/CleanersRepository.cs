@@ -55,19 +55,14 @@ public class CleanersRepository : ICleanersRepository
         return workingCleaners;
     }
 
-    public async Task UpdateCleanerRating(int id)
+    public async Task<List<Comment>> GetCommentsAboutCleaner(int id)
     {
         var orders = await GetAllOrdersByCleaner(id);
         var comments = new List<Comment>();
         foreach (var order in orders)
         {
-            comments.Add(await _context.Comments.FirstOrDefaultAsync(c => c.Order.Id == order.Id && c.Client != null));
+            comments.AddRange(await _context.Comments.Where(c => c.Order.Id == order.Id && c.Client != null).ToListAsync());
         }
-        var cleanerRating = (decimal)(comments.Select(c => c.Rating).Sum())/(decimal)comments.Count();
-
-        var cleaner = await _context.Cleaners.FirstOrDefaultAsync(c => c.Id == id);
-        cleaner.Rating = cleanerRating;
-        await UpdateCleaner(cleaner);
-        await _context.SaveChangesAsync();
+        return comments;
     }
 }

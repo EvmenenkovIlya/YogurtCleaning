@@ -51,19 +51,14 @@ public class ClientsRepository : IClientsRepository
         return lastOrder;
     }
 
-    public async Task UpdateClientRating(int id)
+    public async Task<List<Comment>> GetCommentsAboutClient(int id)
     {
         var orders = await GetAllOrdersByClient(id);
         var comments = new List<Comment>();
         foreach (var order in orders)
         {
-            comments.Add(await _context.Comments.FirstOrDefaultAsync(c => c.Order.Id == order.Id && c.Cleaner != null));
+            comments.AddRange(await _context.Comments.Where(c => c.Order.Id == order.Id && c.Cleaner != null).ToListAsync());
         }
-        var clientRating = (decimal)(comments.Select(c => c.Rating).Sum()) / (decimal)comments.Count();
-
-        var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == id);
-        client.Rating = clientRating;
-        await UpdateClient(client);
-        await _context.SaveChangesAsync();
+        return comments;
     }
 }

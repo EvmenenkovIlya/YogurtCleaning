@@ -13,5 +13,5 @@ public interface ICleanersRepository
     Task<List<Order>> GetAllOrdersByCleaner(int id);
     Task<Cleaner?> GetCleanerByEmail(string email);
     Task<List<Cleaner>> GetWorkingCleanersForDate(DateTime orderDate);
-    Task UpdateCleanerRating(int id);
+    Task<List<Comment>> GetCommentsAboutCleaner(int id);
 }

@@ -364,7 +364,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public async Task UpdateClientRatingTest_WhenValidRequestPassed_ThenRatingUpdated()
+    public async Task GetCommentsAboutCientTest_WhenCommentsExist_ThenWeGotIts()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -394,28 +394,70 @@ public class ClientsRepositoryTests
         var comment3 = new Comment { Id = 3, Order = order2, Cleaner = cleaner, Rating = 5 };
 
         context.Cleaners.Add(cleaner);
-        context.SaveChanges();
         context.Clients.Add(client);
-        context.SaveChanges();
         context.Orders.Add(order1);
-        context.SaveChanges();
         context.Orders.Add(order2);
-        context.SaveChanges();
         context.Comments.Add(comment1);
-        context.SaveChanges();
         context.Comments.Add(comment2);
-        context.SaveChanges();
         context.Comments.Add(comment3);
         context.SaveChanges();
 
-        var expectedRating = 3.5m;
+        var expectedCount = 2;
 
         // when
-        await sut.UpdateClientRating(client.Id);
-        var result = await sut.GetClient(client.Id);
+        
+        var result = await sut.GetCommentsAboutClient(client.Id);
 
         // then
-        Assert.Equal(expectedRating, result.Rating);
+        Assert.Equal(expectedCount, result.Count);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public async Task GetCommentsAboutCientTest_WhenCommentsDoNotExist_ThenListIsEmpty()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new ClientsRepository(context);
+
+        var cleaner = new Cleaner
+        {
+            Id = 8,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Email = "ccc@gmail.c",
+            Password = "1234qwerty",
+            Passport = "0000654321",
+            Phone = "89998887766",
+            Rating = 0,
+            IsDeleted = false
+        };
+
+        var cleanersBand = new List<Cleaner>();
+        cleanersBand.Add(cleaner);
+
+        var client = new Client { Id = 7, Email = "a@b.c", FirstName = "asdfg", LastName = "dfdfdfd", Password = "kjha", Phone = "1234567890" };
+        var order1 = new Order { Id = 1, CleanersBand = cleanersBand, Client = client };
+        var order2 = new Order { Id = 2, CleanersBand = cleanersBand, Client = client };
+        var comment1 = new Comment { Id = 1, Order = order1, Client = client, Rating = 2 };
+        var comment2 = new Comment { Id = 2, Order = order2, Client = client, Rating = 1 };
+
+        context.Cleaners.Add(cleaner);
+        context.Clients.Add(client);
+        context.Orders.Add(order1);
+        context.Orders.Add(order2);
+        context.Comments.Add(comment1);
+        context.Comments.Add(comment2);
+        context.SaveChanges();
+
+        var expectedCount = 0;
+
+        // when
+
+        var result = await sut.GetCommentsAboutClient(client.Id);
+
+        // then
+        Assert.Equal(expectedCount, result.Count);
         context.Database.EnsureDeleted();
     }
 }

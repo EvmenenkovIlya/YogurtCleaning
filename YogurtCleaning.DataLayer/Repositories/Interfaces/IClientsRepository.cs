@@ -13,5 +13,5 @@ public interface IClientsRepository
     Task UpdateClient(Client client);
     Task<Client?> GetClientByEmail(string email);
     Task <Order?> GetLastOrderForCleaningObject(int clientId, int cleaningObjectId);
-    Task UpdateClientRating(int id);
+    Task<List<Comment>> GetCommentsAboutClient(int id);
 }

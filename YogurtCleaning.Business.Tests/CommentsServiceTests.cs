@@ -12,6 +12,8 @@ public class CommentsServiceTests
     private Mock<IClientsRepository> _mockClientsRepository;
     private Mock<ICleanersRepository> _mockCleanersRepository;
     private Mock<IOrdersRepository> _mockOrdersRepository;
+    private Mock<IClientsService> _mockClientsService;
+    private Mock<ICleanersService> _mockCleanersService;
 
     public CommentsServiceTests()
     {
@@ -19,7 +21,15 @@ public class CommentsServiceTests
         _mockClientsRepository = new Mock<IClientsRepository>();
         _mockCleanersRepository = new Mock<ICleanersRepository>();
         _mockOrdersRepository = new Mock<IOrdersRepository>();
-        _sut = new CommentsService(_mockCommentsRepository.Object, _mockClientsRepository.Object, _mockCleanersRepository.Object, _mockOrdersRepository.Object);
+        _mockClientsService = new Mock<IClientsService>();
+        _mockCleanersService = new Mock<ICleanersService>();
+        _sut = new CommentsService(
+            _mockCommentsRepository.Object, 
+            _mockClientsRepository.Object, 
+            _mockCleanersRepository.Object, 
+            _mockOrdersRepository.Object,
+            _mockClientsService.Object,
+            _mockCleanersService.Object);
     }
 
     [Fact]
@@ -71,7 +81,7 @@ public class CommentsServiceTests
         _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
         _mockClientsRepository.Verify(c => c.GetClient(comment.Client.Id), Times.Once);
         _mockOrdersRepository.Verify(o => o.GetOrder(comment.Order.Id), Times.Once);
-        _mockCleanersRepository.Verify(c => c.UpdateCleanerRating(It.IsAny<int>()), Times.Exactly(2));
+        _mockCleanersService.Verify(c => c.UpdateCleanerRating(It.IsAny<int>()), Times.Exactly(2));
 
     }
 
@@ -175,7 +185,7 @@ public class CommentsServiceTests
         _mockCommentsRepository.Verify(c => c.AddComment(It.IsAny<Comment>()), Times.Once);
         _mockCleanersRepository.Verify(c => c.GetCleaner(comment.Cleaner.Id), Times.Once);
         _mockOrdersRepository.Verify(o => o.GetOrder(comment.Order.Id), Times.Once);
-        _mockClientsRepository.Verify(c => c.UpdateClientRating(comment.Order.Client.Id), Times.Once);
+        _mockClientsService.Verify(c => c.UpdateClientRating(comment.Order.Client.Id), Times.Once);
     }
 
     [Fact]

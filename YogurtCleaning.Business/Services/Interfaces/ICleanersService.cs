@@ -13,5 +13,6 @@ namespace YogurtCleaning.Business.Services
         Task<List<Comment>> GetCommentsByCleaner(int id, UserValues userValies);
         Task<List<Order>> GetOrdersByCleaner(int id, UserValues userValies);
         Task<List<Cleaner>> GetFreeCleanersForOrder(OrderBusinessModel order);
+        Task UpdateCleanerRating(int id);
     }
 }
