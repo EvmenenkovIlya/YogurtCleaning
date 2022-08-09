@@ -1,10 +1,5 @@
 ﻿using AutoMapper;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
@@ -276,5 +271,139 @@ public class OrdersServiceTests
         Assert.NotNull(actual);
         Assert.Equal(orders.Count, actual.Count);
         _mockOrdersRepository.Verify(c => c.GetAllOrders(), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObject_WhenAdminGetCleaningObject_CleaningObjectReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+            StartTime = DateTime.Now,
+            EndTime = DateTime.Now,
+            UpdateTime = DateTime.Now,
+            Price = 20,
+            Status = Status.Created,
+            IsDeleted = false
+        };
+        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
+        userValue = new UserValues() { Id = 7, Role = Role.Admin };
+
+        //when
+        var actual = _sut.GetCleaningObject(order.Id, userValue);
+
+        //then
+        Assert.NotNull(actual);
+        _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObject_WhenClientGetHisCleaningObject_CleaningObjectReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+            StartTime = DateTime.Now,
+            EndTime = DateTime.Now,
+            UpdateTime = DateTime.Now,
+            Price = 20,
+            Status = Status.Created,
+            IsDeleted = false
+        };
+        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
+        userValue = new UserValues() { Id = 1, Role = Role.Client };
+
+        //when
+        var actual = _sut.GetCleaningObject(order.Id, userValue);
+
+        //then
+        Assert.NotNull(actual);
+        _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObject_WhenClientGetSomeoneElseCleaningObject_CleaningObjectReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+            StartTime = DateTime.Now,
+            EndTime = DateTime.Now,
+            UpdateTime = DateTime.Now,
+            Price = 20,
+            Status = Status.Created,
+            IsDeleted = false
+        };
+        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
+        userValue = new UserValues() { Id = 2, Role = Role.Client };
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCleaningObject(order.Id, userValue));
+    }
+
+    [Fact]
+    public async Task GetCleaningObject_WhenCleanerGetHisCleaningObject_CleaningObjectReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+            StartTime = DateTime.Now,
+            EndTime = DateTime.Now,
+            UpdateTime = DateTime.Now,
+            Price = 20,
+            Status = Status.Created,
+            IsDeleted = false
+        };
+        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
+        userValue = new UserValues() { Id = 1, Role = Role.Cleaner };
+
+        //when
+        var actual = _sut.GetCleaningObject(order.Id, userValue);
+
+        //then
+        Assert.NotNull(actual);
+        _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCleaningObject_WhenCleanerGetSomeoneElseCleaningObject_CleaningObjectReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+            StartTime = DateTime.Now,
+            EndTime = DateTime.Now,
+            UpdateTime = DateTime.Now,
+            Price = 20,
+            Status = Status.Created,
+            IsDeleted = false
+        };
+        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
+        userValue = new UserValues() { Id = 7, Role = Role.Cleaner };
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCleaningObject(order.Id, userValue));
     }
 }

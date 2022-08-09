@@ -16,19 +16,13 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class ServicesController : ControllerBase
 {
-    private readonly ILogger<ServicesController> _logger;
-    private readonly IServicesRepository _servicesRepository;
     private readonly IServicesService _servicesService;
     private readonly IMapper _mapper;
-    private readonly IEmailSender _emailSender;
 
-    public ServicesController(ILogger<ServicesController> logger, IServicesRepository servicesRepository, IServicesService servicesService, IMapper mapper, IEmailSender emailSender)
+    public ServicesController(IServicesService servicesService, IMapper mapper)
     {
-        _logger = logger;
-        _servicesRepository = servicesRepository;
         _servicesService = servicesService;
         _mapper = mapper;
-        _emailSender = emailSender;
     }
 
     [AllowAnonymous]
@@ -51,10 +45,9 @@ public class ServicesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> UpdateService([FromBody] ServiceRequest service, int id)
     {
         await _servicesService.UpdateService(_mapper.Map<Service>(service), id);
@@ -63,9 +56,9 @@ public class ServicesController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<int>> AddService([FromBody] ServiceRequest service)
     {
         var result = await _servicesService.AddService(_mapper.Map<Service>(service));
@@ -74,8 +67,8 @@ public class ServicesController : ControllerBase
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> DeleteService(int id)
     {
         UserValues userValues = this.GetClaimsValue();

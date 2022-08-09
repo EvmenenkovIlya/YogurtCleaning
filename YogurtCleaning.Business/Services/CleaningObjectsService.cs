@@ -39,10 +39,7 @@ public class CleaningObjectsService : ICleaningObjectsService
         {
             throw new EntityNotFoundException($"Cleaning Object with Id {cleaningObjectId} not found");
         }
-        if (!(userValues.Id == cleaningObject.Client.Id || !(userValues.Role == Role.Client)))
-        {
-            throw new AccessException($"Access denied");
-        }
+        AuthorizeEnitiyAccess(cleaningObject, userValues);
         return cleaningObject;
     }
 

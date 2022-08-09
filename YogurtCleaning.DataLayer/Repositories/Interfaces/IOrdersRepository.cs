@@ -12,5 +12,4 @@ public interface IOrdersRepository
     Task UpdateOrder(Order order);
     Task <List<Service>> GetServices(int orderId);
     Task UpdateOrderStatus(int orderId, Status statusEnam);
-    Task <CleaningObject> GetCleaningObject(int orderId);
 }

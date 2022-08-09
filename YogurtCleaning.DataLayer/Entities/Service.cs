@@ -9,4 +9,6 @@ public class Service
     public decimal Duration { get; set; } //in hours
     public bool IsDeleted { get; set; }
     public List<Order> Orders { get; set; }
+    public List<Cleaner> Cleaners { get; set; }
+    public List<Bundle> Bundles { get; set; }
 }

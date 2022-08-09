@@ -57,17 +57,4 @@ public class OrdersRepository : IOrdersRepository
         order.Status = statusToUpdate;
         await _context.SaveChangesAsync();
     }
-
-    public async Task<CleaningObject> GetCleaningObject(int orderId)
-    {
-        var order = await GetOrder(orderId);
-        if (order == null)
-        {
-            return null;
-        }
-        else
-        {
-            return order.CleaningObject;
-        }
-    }
 }

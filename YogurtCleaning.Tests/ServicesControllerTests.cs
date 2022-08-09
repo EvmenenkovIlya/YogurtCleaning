@@ -17,21 +17,16 @@ namespace YogurtCleaning.Tests;
 public class ServicesControllerTests
 {
     private ServicesController _sut;
-    private Mock<ILogger<ServicesController>> _mockLogger;
+
     private Mock<IServicesService> _mockServicesService;
-    private Mock<IServicesRepository> _mockServicesRepository;
     private IMapper _mapper;
-    private Mock<IEmailSender> _emailSender;
 
     [SetUp]
     public void Setup()
     {
-        _mockLogger = new Mock<ILogger<ServicesController>>();
-        _mockServicesRepository = new Mock<IServicesRepository>();
         _mockServicesService = new Mock<IServicesService>();
         _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
-        _emailSender = new Mock<IEmailSender>();
-        _sut = new ServicesController(_mockLogger.Object, _mockServicesRepository.Object, _mockServicesService.Object, _mapper, _emailSender.Object);
+        _sut = new ServicesController( _mockServicesService.Object, _mapper);
     }
 
     [Test]

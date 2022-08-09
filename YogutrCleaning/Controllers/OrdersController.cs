@@ -121,8 +121,9 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CleaningObjectResponse>> GetCleaningObject(int orderId)
-    {   
-        var cleaningObject = await _ordersRepository.GetCleaningObject(orderId);
-        return Ok(new CleaningObjectResponse());
+    {
+        _userValues = this.GetClaimsValue();
+        var cleaningObject = await _ordersService.GetCleaningObject(orderId, _userValues);
+        return Ok(_mapper.Map<CleaningObjectResponse>(cleaningObject));
     }
 }

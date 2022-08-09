@@ -15,14 +15,12 @@ namespace YogurtCleaning.API.Tests;
 public class CommentsControllerTests
 {
     private CommentsController _sut;
-    private Mock<ILogger<CommentsController>> _mockLogger;
     private Mock<ICommentsService> _mockCommentsService;
     private IMapper _mapper;
 
     [SetUp]
     public void Setup()
     {
-        _mockLogger = new Mock<ILogger<CommentsController>>();
         _mockCommentsService = new Mock<ICommentsService>();
         _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
         _sut = new CommentsController(_mockLogger.Object, _mockCommentsService.Object, _mapper);

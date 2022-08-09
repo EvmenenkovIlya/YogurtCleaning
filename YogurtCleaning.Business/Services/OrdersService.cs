@@ -41,7 +41,9 @@ public class OrdersService : IOrdersService
 
     public async Task<Order?> GetOrder(int id, UserValues userValues)
     {
-        throw new NotImplementedException();
+        var order = await _ordersRepository.GetOrder(id);
+        Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        return order;
     }
 
     public async Task <List<Order>> GetAllOrders() => await _ordersRepository.GetAllOrders();
@@ -50,13 +52,25 @@ public class OrdersService : IOrdersService
     {
         Order order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
-        order.Status = modelToUpdate.Status;
+        order!.Status = modelToUpdate.Status;
         order.StartTime = modelToUpdate.StartTime;
         order.UpdateTime = modelToUpdate.UpdateTime;
         order.Bundles = modelToUpdate.Bundles;
         order.Services = modelToUpdate.Services;
         order.CleanersBand = modelToUpdate.CleanersBand;
         await _ordersRepository.UpdateOrder(order);
+    }
+
+    public async Task<CleaningObject> GetCleaningObject(int orderId, UserValues userValues)
+    {
+        var order = await GetOrder(orderId, userValues);
+        Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin || 
+            (order.CleanersBand.Find(c => c.Id == userValues.Id) != null) && userValues.Role == Role.Cleaner))
+        {
+            throw new AccessException($"Access denied");
+        }
+        return order.CleaningObject;
     }
 
     private void AuthorizeEnitiyAccess(UserValues userValues, Order order)

@@ -11,4 +11,5 @@ public interface IOrdersService
     Task DeleteOrder(int id, UserValues userValues);
     Task<List<Order>> GetAllOrders();
     Task<int> AddOrder(OrderBusinessModel order);
+    Task<CleaningObject> GetCleaningObject(int orderId, UserValues userValues);
 }

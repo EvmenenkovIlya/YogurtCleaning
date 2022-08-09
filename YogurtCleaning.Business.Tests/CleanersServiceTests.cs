@@ -37,8 +37,13 @@ public class CleanersServiceFacts
             Email = "AdamSmith@gmail.com568",
             Phone = "85559997264",
             BirthDate = DateTime.Today,
+            Services = new List<Service>() { new Service() {  Id = 1} },
+            Districts = new List<District>() { new District() { Id = DistrictEnum.Admiralteisky, Name = DistrictEnum.Admiralteisky.ToString() } }
         };
-
+        _cleanersRepositoryMock.Setup(c => c.GetDistricts(cleaner.Districts))
+             .ReturnsAsync(cleaner.Districts);
+        _cleanersRepositoryMock.Setup(c => c.GetServices(cleaner.Services))
+             .ReturnsAsync(cleaner.Services);
         //when
         var actual = await _sut.CreateCleaner(cleaner);
 

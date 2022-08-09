@@ -44,7 +44,6 @@ public class CustomExeptionHandlerMiddleware
         {
             await HandleExceptionAsync(context, exception, HttpStatusCode.InternalServerError);
         }
-
     }
 
     private Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode code)

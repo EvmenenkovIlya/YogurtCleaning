@@ -5,7 +5,6 @@ using YogurtCleaning.Business;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -27,7 +26,7 @@ public class CleaningObjectsController : ControllerBase
         _cleaningObjectsService = cleaningObjectsService;
     }
 
-    [AuthorizeRoles(Role.Cleaner,Role.Client)]
+    [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
@@ -68,7 +67,7 @@ public class CleaningObjectsController : ControllerBase
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<int>> AddCleaningObject([FromBody] CleaningObjectRequest model)
     {
         _userValues = this.GetClaimsValue();

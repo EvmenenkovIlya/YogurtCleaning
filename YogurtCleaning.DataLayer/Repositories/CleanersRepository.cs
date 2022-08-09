@@ -55,6 +55,20 @@ public class CleanersRepository : ICleanersRepository
         return workingCleaners;
     }
 
+    public async Task<List<Service>> GetServices(List<Service> services)
+    {
+        List<int> servicesIds = services.Select(s => s.Id).ToList();
+
+        return await _context.Services.Where(c => servicesIds.Contains(c.Id)).ToListAsync();
+    }
+
+    public async Task<List<District>> GetDistricts(List<District> districts)
+    {
+        List<DistrictEnum> districtsIds = districts.Select(s => s.Id).ToList();
+
+        return await _context.Districts.Where(c => districtsIds.Contains(c.Id)).ToListAsync();
+    }
+    
     public async Task<List<Comment>> GetCommentsAboutCleaner(int id)
     {
         var orders = await GetAllOrdersByCleaner(id);
