@@ -57,11 +57,7 @@ public class CommentsService : ICommentsService
         return result;
     }
 
-    public async Task<List<Comment>> GetComments()
-    {
-        var result = await _commentsRepository.GetAllComments();
-        return result;
-    }
+    public async Task<List<Comment>> GetComments() => await _commentsRepository.GetAllComments();
 
     public async Task DeleteComment(int id)
     {

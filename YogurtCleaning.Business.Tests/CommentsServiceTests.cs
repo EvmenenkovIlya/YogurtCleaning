@@ -238,4 +238,38 @@ public class CommentsServiceTests
         Assert.ThrowsAsync<Exceptions.EntityNotFoundException>(() => _sut.AddCommentByCleaner(comment, comment.Cleaner.Id));
         _mockCleanersRepository.Verify(c => c.GetCleaner(comment.Cleaner.Id), Times.Once);
     }
+
+    [Fact]
+    public async Task GetCommentsTest_WhenValidRequestPassed_ThenCommentsRecieved()
+    {
+        // given
+        var comments = new List<Comment>
+        {
+            new()
+            {
+                Rating = 1,
+                Client = new() {Id = 1},
+                Order = new() {Id = 3},
+                IsDeleted = false
+            },
+            new()
+            {
+                Rating = 5,
+                Summary = "asjhdagldhsjg",
+                Cleaner = new() {Id = 3},
+                Order = new() {Id = 43},
+                IsDeleted = false
+            }
+
+        };
+        _mockCommentsRepository.Setup(c => c.GetAllComments()).ReturnsAsync(comments);
+
+        // when
+        var actual = await _sut.GetComments();
+
+        // then
+        Assert.NotNull(actual);
+        Assert.Equal(comments.Count, actual.Count);
+        _mockCommentsRepository.Verify(c => c.GetAllComments(), Times.Once);
+    }
 }

@@ -34,9 +34,9 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<CommentResponse>> GetAllComments()
+    public async Task<ActionResult<List<CommentResponse>>> GetAllComments()
     {
-        var result = _commentsService.GetComments();
+        var result = _mapper.Map<List<CommentResponse>>(await _commentsService.GetComments());
         return Ok(result);
     }
 
