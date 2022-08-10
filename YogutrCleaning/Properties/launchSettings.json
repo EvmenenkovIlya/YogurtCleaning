@@ -1,31 +1,60 @@
 ﻿{
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:39974",
-      "sslPort": 44359
-    }
-  },
-  "profiles": {
-    "YogurtCleaning": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7181;http://localhost:5181",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+    "$schema": "https://json.schemastore.org/launchsettings.json",
+    "iisSettings": {
+        "windowsAuthentication": false,
+        "anonymousAuthentication": true,
+        "iisExpress": {
+            "applicationUrl": "http://localhost:39974",
+            "sslPort": 44359
+        }
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+    "profiles": {
+        "YogurtCleaning": {
+            "commandName": "Project",
+            "dotnetRunMessages": true,
+            "launchBrowser": true,
+            "launchUrl": "swagger",
+            "applicationUrl": "https://localhost:7181;http://localhost:5181",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "MAIN_DB_CONNECTION_STRING": "",
+                "From": "",
+                "SmtpServer": "smtp.gmail.com",
+                "Port": "465",
+                "Username": "",
+                "Password": "",
+                "AllowedHosts": "*"
+            }
+        },
+        "IIS Express": {
+            "commandName": "IISExpress",
+            "launchBrowser": true,
+            "launchUrl": "swagger",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "MAIN_DB_CONNECTION_STRING": "",
+                "From": "",
+                "SmtpServer": "smtp.gmail.com",
+                "Port": "465",
+                "Username": "",
+                "Password": "",
+                "AllowedHosts": "*"
+            }
+        },
+        "Local": {
+            "commandName": "IISExpress",
+            "launchBrowser": true,
+            "launchUrl": "swagger",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "MAIN_DB_CONNECTION_STRING": "Server=.;Database=YogurtCleaning.DB;Trusted_Connection=True;",
+                "From": "",
+                "SmtpServer": "smtp.gmail.com",
+                "Port": "465",
+                "Username": "",
+                "Password": "",
+                "AllowedHosts": "*"
+            }
+        }
     }
-  }
 }

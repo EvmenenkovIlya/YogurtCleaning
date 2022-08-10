@@ -1,21 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.Infrastructure;
+
 namespace YogurtCleaning.Models
 { 
-    public class CleaningObjectRequest
+    public class CleaningObjectRequest : CleaningObjectUpdateRequest
     {
-        [Required]
+        [Range(1,int.MaxValue, ErrorMessage = ApiErrorMessages.ClientIdIsPositiveNumber)]
         public int ClientId { get; set; }
-        [Required]
-        public int NumberOfRooms { get; set; }
-        [Required]
-        public int NumberOfBathrooms { get; set; }
-        [Required]
-        public int Square { get; set; }
-        [Required]
-        public int NumberOfWindows { get; set; }
-        [Required]
-        public int NumberOfBalconies { get; set; }
-        [Required]
-        public string Address { get; set; }
     }
 }

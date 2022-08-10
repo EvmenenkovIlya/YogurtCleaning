@@ -1,68 +1,89 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YogurtCleaning.Enams;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("cleaning-objects")]
+public class CleaningObjectsController : ControllerBase
 {
-    [ApiController]
-    [Authorize]
-    [Route("[controller]")]
-    public class CleaningObjectsController : ControllerBase
+    private readonly IMapper _mapper;
+    private readonly ICleaningObjectsService _cleaningObjectsService;
+    private UserValues _userValues;
+
+    public CleaningObjectsController(IMapper mapper, ICleaningObjectsService cleaningObjectsService)
     {
-        private readonly ILogger<CleanersController> _logger;
-        public CleaningObjectsController(ILogger<CleanersController> logger)
-        {
-            _logger = logger;
-        }
+        _mapper = mapper;
+        _cleaningObjectsService = cleaningObjectsService;
+    }
 
-        [AuthorizeRoles(Role.Cleaner,Role.Client)]
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        public ActionResult<CleaningObjectResponse> GetCleaningObject(int id)
-        {
-            return Ok(new CleaningObjectResponse() { Id = id });
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<CleaningObjectResponse>> GetCleaningObject(int id)
+    {
+        _userValues = this.GetClaimsValue();
+        var cleaningObject = await _cleaningObjectsService.GetCleaningObject(id, _userValues);
+        return Ok(_mapper.Map<CleaningObjectResponse>(cleaningObject));
+    }
 
-        [AuthorizeRoles(Role.Client)]
-        [HttpGet]
-        [ProducesResponseType(typeof(List<CleaningObjectResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        public ActionResult<List<CleaningObjectResponse>> GetAllCleaningObjectsByClientId(int clientId)
-        {
-            return Ok(new List<CleaningObjectResponse>());
-        }
-        [AuthorizeRoles(Role.Client)]
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult UpdateCleaningObject(int id, [FromBody] CleaningObjectUpdateRequest model)
-        {
-            return NoContent();
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet]
+    [ProducesResponseType(typeof(List<CleaningObjectResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<List<CleaningObjectResponse>>> GetAllCleaningObjectsByClientId(int clientId)
+    {
+        _userValues = this.GetClaimsValue();
+        var cleaningObjects = await _cleaningObjectsService.GetAllCleaningObjectsByClientId(clientId, _userValues);
+        return Ok(_mapper.Map<List<CleaningObjectResponse>>(cleaningObjects));
+    }
 
-        [AuthorizeRoles(Role.Client)]
-        [HttpPost]
-        [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public ActionResult<int> AddCleaningObject([FromBody] CleaningObject model)
-        {
-            var CleaningObject = new CleaningObjectResponse() { Id = 42 };
-            return Created($"{this.GetRequestFullPath()}/{CleaningObject.Id}", CleaningObject.Id);
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult> UpdateCleaningObject([FromBody] CleaningObjectUpdateRequest model, int id)
+    {
+        _userValues = this.GetClaimsValue();
+        await _cleaningObjectsService.UpdateCleaningObject(_mapper.Map<CleaningObject>(model), id, _userValues);
+        return NoContent();
+    }
 
-        [AuthorizeRoles(Role.Client)]
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-        public ActionResult DeleteCleaningObject(int id)
-        {
-            return NoContent();
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpPost]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<int>> AddCleaningObject([FromBody] CleaningObjectRequest model)
+    {
+        _userValues = this.GetClaimsValue();
+        int id = await _cleaningObjectsService.CreateCleaningObject(_mapper.Map<CleaningObject>(model), _userValues);
+        return Created($"{this.GetRequestFullPath()}/{id}", id);
+    }
+
+    [AuthorizeRoles(Role.Client)]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult> DeleteCleaningObject(int id)
+    {
+        _userValues = this.GetClaimsValue();
+        await _cleaningObjectsService.DeleteCleaningObject(id, _userValues);
+        return NoContent();
     }
 }

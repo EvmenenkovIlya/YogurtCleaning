@@ -1,11 +1,24 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
+using YogurtCleaning.API;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Infrastrucure;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer;
+using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+ConfigurationManager configuration = builder.Configuration;
+IWebHostEnvironment environment = builder.Environment;
+
+builder.Services.AddControllers();
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -17,11 +30,42 @@ builder.Services.AddControllers()
 
             return result;
         };
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "YogurtCleaning", Version = "v1" });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Authorization: Bearer JWT",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer",       
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer",
+                },
+            },
+            Array.Empty<string>()
+        },
+    });
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -29,31 +73,55 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            // указывает, будет ли валидироваться издатель при валидации токена
             ValidateIssuer = true,
-            // строка, представляющая издателя
             ValidIssuer = AuthOptions.ISSUER,
-            // будет ли валидироваться потребитель токена
             ValidateAudience = true,
-            // установка потребителя токена
             ValidAudience = AuthOptions.AUDIENCE,
-            // будет ли валидироваться время существования
             ValidateLifetime = true,
-            // установка ключа безопасности
             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            // валидация ключа безопасности
             ValidateIssuerSigningKey = true,
+            SaveSigninToken = true,
         };
     });
 
+var b = new ServerOptions();
+builder.Configuration.Bind(b);
+
+builder.Services.AddDbContext<YogurtCleaningContext>(o =>
+{
+    o.UseSqlServer(b.MAIN_DB_CONNECTION_STRING);
+});
+
+builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
+builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
+builder.Services.AddScoped<ICleanersRepository, CleanersRepository>();
+builder.Services.AddScoped<ICleaningObjectsRepository, CleaningObjectsRepository>();
+builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
+builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
+builder.Services.AddScoped<IBundlesRepository, BundlesRepository>();
+builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<IBundlesService, BundlesService>();
+builder.Services.AddScoped<ICommentsService, CommentsService>();
+builder.Services.AddScoped<IAdminsRepository, AdminsRepository>();
+
+builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
+
+builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<ICleanersService, CleanersService>();
+builder.Services.AddScoped<ICleaningObjectsService, CleaningObjectsService>();
+builder.Services.AddScoped<IOrdersService, OrdersService>();
+builder.Services.AddScoped<IServicesService, ServicesService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.Configure<EmailConfiguration>(builder.Configuration);
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseCustomExceptionHandler();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

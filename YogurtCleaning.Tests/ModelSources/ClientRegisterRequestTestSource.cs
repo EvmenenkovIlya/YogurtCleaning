@@ -11,7 +11,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
         
         return new ClientRegisterRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",
@@ -24,7 +24,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
     public IEnumerator GetEnumerator()
     {
         ClientRegisterRequest model = GetClientRegisterRequestModel();
-        model.Name = null;
+        model.FirstName = null;
         yield return new object[]
         {
             model,
@@ -72,15 +72,7 @@ public class ClientRegisterRequestTestSource : IEnumerable
         };
 
         model = GetClientRegisterRequestModel();
-        model.BirthDate = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.BirthDateIsRequired
-        };
-
-        model = GetClientRegisterRequestModel();
-        model.Name = "This String has more than fifty chars. i promise123451";
+        model.FirstName = "This String has more than fifty chars. i promise123451";
         yield return new object[]
         {
             model,

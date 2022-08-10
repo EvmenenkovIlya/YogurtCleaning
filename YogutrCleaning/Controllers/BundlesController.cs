@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YogurtCleaning.Enams;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -9,21 +14,25 @@ namespace YogurtCleaning.Controllers;
 [ApiController]
 [Authorize]
 [Route("[controller]")]
-public class BundleController : ControllerBase
+public class BundlesController : ControllerBase
 {
-    private readonly ILogger<BundleController> _logger;
+    private readonly IBundlesService _bundlesService;
+    private readonly IMapper _mapper;
 
-    public BundleController(ILogger<BundleController> logger)
+    public BundlesController( IBundlesService bundlesService, IMapper mapper)
     {
-        _logger = logger;
+        _bundlesService = bundlesService;
+        _mapper = mapper;
     }
+
     [AllowAnonymous]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(BundleResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<BundleResponse> GetBundle(int id)
+    public async Task<ActionResult<BundleResponse>> GetBundle(int id)
     {
-        return Ok(new BundleResponse());
+        var result = await _bundlesService.GetBundle(id);
+        return Ok(_mapper.Map<BundleResponse>(result));
     }
 
     [AuthorizeRoles(Role.Admin)]
@@ -31,42 +40,54 @@ public class BundleController : ControllerBase
     [ProducesResponseType(typeof(List<BundleResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<BundleResponse>> GetAllBundles()
+    public async Task<ActionResult<List<BundleResponse>>> GetAllBundles()
     {
-        return Ok(new List<BundleResponse>());
+        var result = _mapper.Map<List<BundleResponse>>(await _bundlesService.GetAllBundles());
+        return Ok(result);
     }
 
-    [AuthorizeRoles(Role.Admin)]
+    [AuthorizeRoles]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult UpdateBundle([FromBody] BundleRequest bundle, int id)
+    public async Task<ActionResult> UpdateBundle([FromBody] BundleRequest bundle, int id)
     {
+        await _bundlesService.UpdateBundle(_mapper.Map<Bundle>(bundle), id);
         return NoContent();
     }
 
-    [AuthorizeRoles(Role.Admin)]
+    [AuthorizeRoles]
     [HttpPost]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddBundle([FromBody] BundleRequest bundle)
+    public async Task<ActionResult<int>> AddBundle([FromBody] BundleRequest bundle)
     {
-        int bundleId = new BundleResponse().Id;
-        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{bundleId}", bundleId);
+        var result = await _bundlesService.AddBundle(_mapper.Map<Bundle>(bundle));
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
-    [AuthorizeRoles(Role.Admin)]
+    [AuthorizeRoles]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult DeleteBundle(int id)
+    public async Task<ActionResult> DeleteBundle(int id)
     {
-        return Ok();
+        await _bundlesService.DeleteBundle(id);
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}/additional-services")]
+    [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<ServiceResponse>>> GetAdditionalServices(int id)
+    {
+        var result =  _mapper.Map<List<ServiceResponse>>(await _bundlesService.GetAdditionalServices(id));
+        return Ok(result);
     }
 }

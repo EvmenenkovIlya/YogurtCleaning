@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YogurtCleaning.Enams;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
+using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 
@@ -12,22 +17,14 @@ namespace YogurtCleaning.Controllers;
 
 public class CommentsController : Controller
 {
-    private readonly ILogger<CommentsController> _logger;
+    private readonly ICommentsService _commentsService;
+    private readonly IMapper _mapper;
+    public UserValues? userValues;
 
-    public CommentsController(ILogger<CommentsController> logger)
+    public CommentsController(ICommentsService commentsService, IMapper mapper)
     {
-        _logger = logger;
-    }
-
-    [AuthorizeRoles]
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CommentResponse> GetComment(int id)
-    {
-        return Ok(new CommentResponse());
+        _commentsService = commentsService;
+        _mapper = mapper;
     }
 
     [AuthorizeRoles]
@@ -35,21 +32,38 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<CommentResponse>> GetAllComments()
+    public async Task<ActionResult<List<CommentResponse>>> GetAllComments()
     {
-        return Ok(new List<CommentResponse>());
+        var result = _mapper.Map<List<CommentResponse>>(await _commentsService.GetComments());
+        return Ok(result);
     }
 
-    [AuthorizeRoles(Role.Client, Role.Cleaner)]
-    [HttpPost]
+    [AuthorizeRoles(Role.Client)]
+    [HttpPost("by-client")]
     [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddComment([FromBody] CommentRequest comment)
+    public async Task<ActionResult<int>> AddCommentByClient([FromBody] CommentRequest comment)
     {
-        int commentId = new CommentResponse().Id;
-        return Created($"{Request.Scheme}://{Request.Host.Value}{Request.Path.Value}/{commentId}", commentId);
+        var userId = this.GetClaimsValue().Id;
+
+        var result = await _commentsService.AddCommentByClient(_mapper.Map<Comment>(comment), userId);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
+    }
+
+    [AuthorizeRoles(Role.Cleaner)]
+    [HttpPost("by-cleaner")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<int>> AddCommentByCleaner([FromBody] CommentRequest comment)
+    {
+        var userId = this.GetClaimsValue().Id;
+
+        var result = await _commentsService.AddCommentByCleaner(_mapper.Map<Comment>(comment), userId);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
     }
 
     [AuthorizeRoles]
@@ -58,8 +72,9 @@ public class CommentsController : Controller
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult DeleteComment(int id)
+    public async Task<ActionResult> DeleteComment(int id)
     {
-        return Ok();
+        await _commentsService.DeleteComment(id);
+        return NoContent();
     }
 }
