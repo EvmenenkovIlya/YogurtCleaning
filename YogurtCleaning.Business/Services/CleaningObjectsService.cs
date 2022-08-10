@@ -69,7 +69,8 @@ public class CleaningObjectsService : ICleaningObjectsService
         cleaningObject.NumberOfBalconies = modelToUpdate.NumberOfBalconies;
         cleaningObject.Address = modelToUpdate.Address;
         cleaningObject.Square = modelToUpdate.Square;
-
+        cleaningObject.District = await _cleaningObjectsRepository.GetDistrict(modelToUpdate.District.Id);
+        Validator.CheckThatObjectNotNull(cleaningObject.District, ExceptionsErrorMessages.DistrictNotFound);
         await _cleaningObjectsRepository.UpdateCleaningObject(cleaningObject);
     }
 
