@@ -332,12 +332,11 @@ public class ClientsControllerTests
             Phone = "85559997264",
             BirthDate = DateTime.Today,
         };
-
         var comments = new List<Comment>()
         {
             new(){ Id = 1, Summary = "best client", Rating = 5 },
             new(){ Id = 2, Summary = "bad client", Rating = 2 }
-            };
+        };
         _clientsServiceMock.Setup(o => o.GetCommentsAboutClient(client.Id, It.IsAny<UserValues>())).ReturnsAsync(comments);
 
         //when

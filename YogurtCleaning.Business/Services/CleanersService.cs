@@ -89,6 +89,15 @@ public class CleanersService : ICleanersService
         return await _cleanersRepository.GetAllOrdersByCleaner(id);
     }
 
+    public async Task<List<Comment>> GetCommentsAboutCleaner(int id, UserValues userValues)
+    {
+        var cleaner = await _cleanersRepository.GetCleaner(id);
+
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
+        AuthorizeEnitiyAccess(cleaner, userValues);
+        return await _cleanersRepository.GetCommentsAboutCleaner(id);
+    }
+
     private async Task<bool> CheckEmailForUniqueness(string email) => await _cleanersRepository.GetCleanerByEmail(email) == null;
 
     private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
