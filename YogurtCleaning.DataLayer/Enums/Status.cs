@@ -5,7 +5,6 @@ public enum Status
     Moderation,
     Edited,
     InProgress,
-    Paid,
     Done,
     Canceled
 }

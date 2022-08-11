@@ -8,6 +8,7 @@ public class Order
     public Client Client { get; set; }
     public CleaningObject CleaningObject { get; set; }
     public Status Status { get; set; }
+    public PaidStatus PaidStatus { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public DateTime UpdateTime { get; set; }
