@@ -8,7 +8,6 @@ using YogurtCleaning.Models;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.Business;
 using YogurtCleaning.API;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Tests;

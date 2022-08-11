@@ -51,8 +51,8 @@ public class BundlesService : IBundlesService
         oldBundle.Name = bundle.Name;
         oldBundle.Measure = bundle.Measure;
         oldBundle.Price = bundle.Price;
-        oldBundle.Services = bundle.Services;
-
+        oldBundle.Services = await _bundlesRepository.GetServices(bundle.Services);
+        Validator.CheckRequestAndDbList(bundle.Services, oldBundle.Services);
         await _bundlesRepository.UpdateBundle(oldBundle);
     }
 

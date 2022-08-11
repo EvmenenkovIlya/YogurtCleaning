@@ -62,7 +62,8 @@ public class BundlesServiceTests
             Name = "qwe",
             Price = 1000,
             Measure = Measure.Room,
-            IsDeleted = false
+            IsDeleted = false,
+            Services = new() { new() { Id = 1 }, new() { Id = 2 } } 
         };
 
         var updatedBundle = new Bundle
@@ -70,10 +71,12 @@ public class BundlesServiceTests
             Name = "qaz",
             Price = 9999,
             Measure = Measure.Unit,
-            IsDeleted = false
+            IsDeleted = false,
+            Services = new() { new() { Id = 3 }, new() { Id = 4 } }
         };
 
         _bundlesRepositoryMock.Setup(b => b.GetBundle(bundle.Id)).ReturnsAsync(bundle);
+        _bundlesRepositoryMock.Setup(b => b.GetServices(updatedBundle.Services)).ReturnsAsync(updatedBundle.Services);
 
         // when
         await _sut.UpdateBundle(updatedBundle, bundle.Id);

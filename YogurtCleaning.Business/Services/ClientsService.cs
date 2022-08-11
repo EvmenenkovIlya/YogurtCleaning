@@ -22,7 +22,7 @@ public class ClientsService : IClientsService
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        AuthorizeEnitiyAccess(userValues, client);
+        Validator.AuthorizeEnitiyAccess(userValues, client);
         return client;
     }
 
@@ -36,7 +36,7 @@ public class ClientsService : IClientsService
     {
         var client = await _clientsRepository.GetClient(id);
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        AuthorizeEnitiyAccess(userValues, client!);
+        Validator.AuthorizeEnitiyAccess(userValues, client!);
         await _clientsRepository.DeleteClient(client!);
     }
 
@@ -44,7 +44,7 @@ public class ClientsService : IClientsService
     {
         var client = await _clientsRepository.GetClient(id);
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        AuthorizeEnitiyAccess(userValues, client!);
+        Validator.AuthorizeEnitiyAccess(userValues, client!);
 
         client!.FirstName = modelToUpdate.FirstName;
         client.LastName = modelToUpdate.LastName;
@@ -72,7 +72,7 @@ public class ClientsService : IClientsService
         var client = await _clientsRepository.GetClient(id);
 
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
-        AuthorizeEnitiyAccess(userValues, client!);
+        Validator.AuthorizeEnitiyAccess(userValues, client!);
         return await _clientsRepository.GetAllCommentsByClient(id);
     }
 
@@ -80,20 +80,11 @@ public class ClientsService : IClientsService
     {
         var client = await _clientsRepository.GetClient(id);
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
-        AuthorizeEnitiyAccess(userValues, client!);        
+        Validator.AuthorizeEnitiyAccess(userValues, client!);        
         return await _clientsRepository.GetAllOrdersByClient(id);
             
     }
 
-    private async Task<bool> CheckEmailForUniqueness(string email) => await _clientsRepository.GetClientByEmail(email) == null;
-
-    private void AuthorizeEnitiyAccess(UserValues userValues, Client client)
-    {
-        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin))
-        {
-            throw new AccessException($"Access denied");
-        }
-    }
     public async Task UpdateClientRating(int id)
     {
         var client = await _clientsRepository.GetClient(id);
@@ -103,4 +94,5 @@ public class ClientsService : IClientsService
         await _clientsRepository.UpdateClient(client);
     }
 
+    private async Task<bool> CheckEmailForUniqueness(string email) => await _clientsRepository.GetClientByEmail(email) == null;
 }

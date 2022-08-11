@@ -57,7 +57,7 @@ public class ClientsRepository : IClientsRepository
         var comments = new List<Comment>();
         foreach (var order in orders)
         {
-            comments.AddRange(await _context.Comments.Where(c => c.Order.Id == order.Id && c.Cleaner != null).ToListAsync());
+            comments.AddRange(await _context.Comments.Where(c => !c.IsDeleted && c.Order.Id == order.Id && c.Cleaner != null).ToListAsync());
         }
         return comments;
     }

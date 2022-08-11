@@ -1,7 +1,6 @@
 ﻿using YogurtCleaning.Business.Exceptions;
 using YogurtCleaning.Business.Models;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.Business.Services;
@@ -25,7 +24,7 @@ public class CleanersService : ICleanersService
         {
             throw new EntityNotFoundException($"Cleaner {id} not found");
         }
-        AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
         return cleaner;
     }
 
@@ -36,7 +35,7 @@ public class CleanersService : ICleanersService
     {
         var cleaner = await _cleanersRepository.GetCleaner(id);
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
-        AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
         await _cleanersRepository.DeleteCleaner(cleaner);
     }
 
@@ -44,12 +43,17 @@ public class CleanersService : ICleanersService
     {
         Cleaner cleaner = await _cleanersRepository.GetCleaner(id);
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
-        AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
         cleaner.FirstName = modelToUpdate.FirstName;
         cleaner.LastName = modelToUpdate.LastName;
         cleaner.Services = modelToUpdate.Services;
         cleaner.BirthDate = modelToUpdate.BirthDate;
-        cleaner.Phone = modelToUpdate.Phone;
+        cleaner.Phone = modelToUpdate.Phone; 
+
+        cleaner.Services = await _cleanersRepository.GetServices(modelToUpdate.Services);
+        cleaner.Districts = await _cleanersRepository.GetDistricts(modelToUpdate.Districts);
+        Validator.CheckRequestAndDbList(modelToUpdate.Services, cleaner.Services);
+        Validator.CheckRequestAndDbList(modelToUpdate.Districts, cleaner.Districts);
         await _cleanersRepository.UpdateCleaner(cleaner);
     }
 
@@ -66,6 +70,7 @@ public class CleanersService : ICleanersService
         cleaner.Districts = await _cleanersRepository.GetDistricts(cleaner.Districts);
         Validator.CheckRequestAndDbList(services, cleaner.Services);
         Validator.CheckRequestAndDbList(districts, cleaner.Districts);
+        cleaner.Password = PasswordHash.HashPassword(cleaner.Password);
         cleaner.DateOfStartWork = DateTime.Now;
         return await _cleanersRepository.CreateCleaner(cleaner);
 
@@ -76,7 +81,7 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
-        AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
         return await _cleanersRepository.GetAllCommentsByCleaner(id);
     }
 
@@ -85,19 +90,9 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
-        AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
         return await _cleanersRepository.GetAllOrdersByCleaner(id);
-    }
-
-    private async Task<bool> CheckEmailForUniqueness(string email) => await _cleanersRepository.GetCleanerByEmail(email) == null;
-
-    private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
-    {
-        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
-        {
-            throw new AccessException($"Access denied");
-        }
-    }
+    }   
 
     public async Task<List<Cleaner>> GetFreeCleanersForOrder(OrderBusinessModel order)
     {
@@ -145,4 +140,6 @@ public class CleanersService : ICleanersService
         cleaner.Rating = cleanerRating;
         await _cleanersRepository.UpdateCleaner(cleaner);
     }
+
+    private async Task<bool> CheckEmailForUniqueness(string email) => await _cleanersRepository.GetCleanerByEmail(email) == null;
 }

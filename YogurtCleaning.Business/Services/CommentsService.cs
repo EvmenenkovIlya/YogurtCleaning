@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YogurtCleaning.DataLayer.Entities;
+﻿using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.Business.Services;
@@ -64,7 +59,8 @@ public class CommentsService : ICommentsService
         var comment = await _commentsRepository.GetCommentById(id);
         Validator.CheckThatObjectNotNull(comment, ExceptionsErrorMessages.CommentNotFound);
         await _commentsRepository.DeleteComment(comment);
+        await _clientsService.UpdateClientRating(comment.Order.Client.Id);
+        comment.Order.CleanersBand.ForEach(async c => await _cleanersService.UpdateCleanerRating(c.Id));
     }
 
-    
 }
