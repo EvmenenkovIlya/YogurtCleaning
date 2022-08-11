@@ -23,7 +23,7 @@ public class CommentsControllerTests
     {
         _mockCommentsService = new Mock<ICommentsService>();
         _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
-        _sut = new CommentsController(_mockLogger.Object, _mockCommentsService.Object, _mapper);
+        _sut = new CommentsController(_mockCommentsService.Object, _mapper);
     }
 
     [Test]

@@ -84,6 +84,14 @@ public class ClientsService : IClientsService
         return await _clientsRepository.GetAllOrdersByClient(id);
             
     }
+    public async Task<List<Comment>> GetCommentsAboutClient(int id, UserValues userValues)
+    {
+        var client = await _clientsRepository.GetClient(id);
+
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
+        AuthorizeEnitiyAccess(userValues, client!);
+        return await _clientsRepository.GetCommentsAboutClient(id);
+    }
 
     private async Task<bool> CheckEmailForUniqueness(string email) => await _clientsRepository.GetClientByEmail(email) == null;
 

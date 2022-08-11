@@ -85,7 +85,7 @@ public class ClientsController : ControllerBase
     }
 
     [AuthorizeRoles(Role.Client)]
-    [HttpGet("{id}/comments")]
+    [HttpGet("{id}/comments-by-client")]
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -99,14 +99,27 @@ public class ClientsController : ControllerBase
 
     [AuthorizeRoles(Role.Client)]
     [HttpGet("{id}/orders")]
-    [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<OrderResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<CommentResponse>>> GetAllOrdersByClient(int id)
+    public async Task<ActionResult<List<OrderResponse>>> GetAllOrdersByClient(int id)
     {
         userValues = this.GetClaimsValue();
         var orders = await _clientsService.GetOrdersByClient(id, userValues);
         return Ok(_mapper.Map<List<OrderResponse>>(orders));
+    }
+
+    [AuthorizeRoles(Role.Client)]
+    [HttpGet("{id}/comments-about-client")]
+    [ProducesResponseType(typeof(List<CommentAboutResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<CommentAboutResponse>>> GetCommentsAboutClient(int id)
+    {
+        userValues = this.GetClaimsValue();
+        var comments = await _clientsService.GetCommentsAboutClient(id, userValues);
+        return Ok(_mapper.Map<List<CommentAboutResponse>>(comments));
     }
 }
