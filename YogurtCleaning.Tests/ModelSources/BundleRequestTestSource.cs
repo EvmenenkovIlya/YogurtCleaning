@@ -14,6 +14,7 @@ public class BundleRequestTestSource : IEnumerable
         {
             Name = "Kitchen regular cleaning",
             Type = CleaningType.Regular,
+            RoomType = RoomType.Apartment,
             Price = 1000,
             Measure = Measure.Room,
             ServicesIds = new List<int>()
