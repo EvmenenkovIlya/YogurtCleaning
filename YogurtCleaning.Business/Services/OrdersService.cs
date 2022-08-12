@@ -167,4 +167,25 @@ public class OrdersService : IOrdersService
         }
         return cleaners;
     }
+
+    public async Task UpdateOrderStatus(int orderId, Status status)
+    {
+        Order order = await _ordersRepository.GetOrder(orderId);
+        Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        order!.Status = status;
+        await _ordersRepository.UpdateOrder(order);
+    }
+
+    public async Task UpdateOrderPaymentStatus(int orderId, PaymentStatus paymentStatus)
+    {
+        Order order = await _ordersRepository.GetOrder(orderId);
+        Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        order!.PaymentStatus = paymentStatus;
+        await _ordersRepository.UpdateOrder(order);
+    }
+
+    public Task<List<Service>> GetOrderServises(int id, UserValues userValues)
+    {
+        throw new NotImplementedException();
+    }
 }

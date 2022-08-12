@@ -122,66 +122,6 @@ public class OrdersRepositoryTests
     }
 
     [Fact]
-    public async Task GetAllServicesByOrder_WhenOrderHasServices_ThenGetAllServicesByOrder()
-    {
-        // given
-        var context = new YogurtCleaningContext(_dbContextOptions);
-        var sut = new OrdersRepository(context);
-        var orders = new List<Order>()
-        {
-            new Order()
-            {
-                Id = 1,
-                Services = new List<Service>()
-                {
-                    new Service()
-                    {
-                        Id = 1,
-                        Name = "Wash Tables",
-                        Unit = "unit",
-                        IsDeleted = false
-                    },
-                    new Service()
-                    {
-                        Id = 2,
-                        Name = "Wash floor",
-                        Unit = "unit",
-                        IsDeleted = false
-                    }
-                },
-                IsDeleted = false
-            },
-            new Order()
-            {
-                Id = 2,
-                Services = new List<Service>()
-                {
-                    new Service()
-                    {
-                        Id = 3,
-                        Name = "Wash wall",
-                        Unit = "unit",
-                        IsDeleted = false
-                    }
-                },
-                IsDeleted = false
-            }
-        };
-        context.Orders.AddRange(orders);
-        context.SaveChanges();
-
-        // when
-        var result = await sut.GetServices(orders[0].Id);
-
-        //then
-        Assert.NotNull(result);
-        Assert.Equal(typeof(List<Service>), result.GetType());
-        Assert.True(result.Count() == 2);
-        Assert.False(result[0].IsDeleted);
-        context.Database.EnsureDeleted();
-    }
-
-    [Fact]
     public async Task UpdateOrderStatus_WhenOrderSatusChange_ThenOrderHasNotOldStatus()
     {
         // given

@@ -34,21 +34,9 @@ public class OrdersRepository : IOrdersRepository
 
     public async Task UpdateOrder(Order modelToUpdate)
     {
+        modelToUpdate.UpdateTime = DateTime.Now;
         _context.Orders.Update(modelToUpdate);
         await _context.SaveChangesAsync();
-    }
-
-    public async Task <List<Service>> GetServices(int orderId)
-    {
-        var order = await GetOrder(orderId);
-        if (order == null)
-        {
-            return null;
-        }
-        else
-        {
-            return order.Services;
-        }
     }
 
     public async Task UpdateOrderStatus(int orderId, Status statusToUpdate)

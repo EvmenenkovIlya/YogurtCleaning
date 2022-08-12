@@ -98,8 +98,9 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<List<ServiceResponse>>> GetServices(int orderId)
     {
-
-        return Ok(await _ordersRepository.GetServices(orderId));
+        _userValues = this.GetClaimsValue();
+        var services = await _ordersService.GetOrderServises(orderId, _userValues);
+        return Ok(_mapper.Map<List<ServiceResponse>>(services));
     }
 
     [AuthorizeRoles]
@@ -110,7 +111,19 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> UpdateOrderStatus(int orderId, [FromBody] Status statusToUpdate)
     {
-        await _ordersRepository.UpdateOrderStatus(orderId, statusToUpdate);
+        await _ordersService.UpdateOrderStatus(orderId, statusToUpdate);
+        return NoContent();
+    }
+
+    [AuthorizeRoles]
+    [HttpPatch("{orderId}/paymentStatus")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult> UpdateOrderPaymentStatus(int orderId, [FromBody] PaymentStatus statusToUpdate)
+    {
+        await _ordersService.UpdateOrderPaymentStatus(orderId, statusToUpdate);
         return NoContent();
     }
 

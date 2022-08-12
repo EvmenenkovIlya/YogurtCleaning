@@ -37,7 +37,7 @@ public class OrdersControllerTests
         var expectedOrder = new Order()
         {
             Id = 1,
-            
+
             IsDeleted = false
         };
 
@@ -151,5 +151,51 @@ public class OrdersControllerTests
             Assert.That(cleaningObjectResponse.Address, Is.EqualTo(expectedCleaningObject.Address));
         });
         _ordersServiceMock.Verify(x => x.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>()), Times.Once);
+    }
+
+    [Test]
+    public async Task UpdateOrderStatus_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var status = Status.Created;
+        var expectedOrder = new Order()
+        {
+            Id = 1,
+            IsDeleted = false
+        };
+
+        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
+
+        //when
+        var actual = await _sut.UpdateOrderStatus(expectedOrder.Id, status);
+
+        //then
+        var actualResult = actual as NoContentResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _ordersServiceMock.Verify(c => c.UpdateOrderStatus(expectedOrder.Id, status), Times.Once);
+    }
+
+    [Test]
+    public async Task UpdateOrderPaymentStatus_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var paymentStatus = PaymentStatus.Paid;
+        var expectedOrder = new Order()
+        {
+            Id = 1,
+            IsDeleted = false
+        };
+
+        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
+
+        //when
+        var actual = await _sut.UpdateOrderPaymentStatus(expectedOrder.Id, paymentStatus);
+
+        //then
+        var actualResult = actual as NoContentResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _ordersServiceMock.Verify(c => c.UpdateOrderPaymentStatus(expectedOrder.Id, paymentStatus), Times.Once);
     }
 }
