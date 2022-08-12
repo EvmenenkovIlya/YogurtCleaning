@@ -184,8 +184,10 @@ public class OrdersService : IOrdersService
         await _ordersRepository.UpdateOrder(order);
     }
 
-    public Task<List<Service>> GetOrderServises(int id, UserValues userValues)
+    public async Task<List<Service>> GetOrderServises(int orderId, UserValues userValues)
     {
-        throw new NotImplementedException();
+        Order order = await _ordersRepository.GetOrder(orderId);
+        Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        return order.Services;
     }
 }
