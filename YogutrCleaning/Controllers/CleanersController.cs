@@ -85,7 +85,7 @@ public class CleanersController : ControllerBase
     }
 
     [AuthorizeRoles(Role.Cleaner)]
-    [HttpGet("{id}/comments")]
+    [HttpGet("{id}/comments-by-cleaner")]
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
@@ -107,5 +107,16 @@ public class CleanersController : ControllerBase
         var orders = await _cleanersService.GetOrdersByCleaner(id, userValues);
         return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
-}
 
+    [AuthorizeRoles(Role.Cleaner)]
+    [HttpGet("{id}/comments-about-cleaner")]
+    [ProducesResponseType(typeof(List<CommentAboutResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<List<CommentAboutResponse>>> GetCommentsAboutCleaner(int id)
+    {
+        userValues = this.GetClaimsValue();
+        var comments = await _cleanersService.GetCommentsAboutCleaner(id, userValues);
+        return Ok(_mapper.Map<List<CommentAboutResponse>>(comments));
+    }
+}
