@@ -13,6 +13,7 @@ public class ServiceRequestTestSource : IEnumerable
         return new ServiceRequest()
         {
             Name = "This is some service name",
+            RoomType = RoomType.Kitchen,
             Price = 500,
             Unit = "Hour"
         };
