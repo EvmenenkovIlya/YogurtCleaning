@@ -70,7 +70,8 @@ public class CleanersControllerTests
             Password = "12345678",
             Email = "AdamSmith@gmail.com",
             Phone = "85559997264",
-            BirthDate = DateTime.Today
+            BirthDate = DateTime.Today,
+            DateOfStartWork = DateTime.Today
         };
 
         _cleanersServiceMock.Setup(o => o.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedCleaner);
@@ -91,6 +92,7 @@ public class CleanersControllerTests
             Assert.That(cleanerResponse.Email, Is.EqualTo(expectedCleaner.Email));
             Assert.That(cleanerResponse.Phone, Is.EqualTo(expectedCleaner.Phone));
             Assert.That(cleanerResponse.BirthDate, Is.EqualTo(expectedCleaner.BirthDate));
+            Assert.That(cleanerResponse.DateOfStartWork, Is.EqualTo(expectedCleaner.DateOfStartWork));
         });
         _cleanersServiceMock.Verify(x => x.GetCleaner(expectedCleaner.Id, It.IsAny<UserValues>()), Times.Once);
     }

@@ -92,6 +92,7 @@ public class OrdersServiceTests
     public async Task AddOrderTest_WhenCleanersIsEnough_ThenOrderStatusIsCreated()
     {
         // given
+        List<District> districts = new() { new() { Id = DistrictEnum.Vasileostrovskiy, Name = "Vasileostrovskiy" }, new() { Id = DistrictEnum.Kalininsky, Name = "Kalininsky" } };
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -99,21 +100,23 @@ public class OrdersServiceTests
                 Id = 11,
                 Schedule = Schedule.FullTime,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = districts,
             },
             new Cleaner()
             {
                 Id = 13,
                 Schedule = Schedule.ShiftWork,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = new() { new() { Id = DistrictEnum.Admiralteisky, Name = "Admiralteisky" } }
             }
         };
 
         var order = new OrderBusinessModel
         {
             Client = new() { Id = 11 },
-            CleaningObject = new() { Id = 56 },
+            CleaningObject = new() { Id = 56 , District = districts[0] },
             StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
             Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2} },
             Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } },

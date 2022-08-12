@@ -152,7 +152,17 @@ public class OrdersService : IOrdersService
             
             for (int i = 0; i < order.CleanersCount; i++)
             {
-                cleaners.Add(freeCleaners[i]);
+                int cleanersWithSameDistrict = freeCleaners.Count(c => c.Districts.Contains(order.CleaningObject.District));
+                if (freeCleaners.Count(c => c.Districts.Contains(order.CleaningObject.District)) != 0)
+                {
+                    var cleaner = freeCleaners.First(c => c.Districts.Contains(order.CleaningObject.District));
+                    cleaners.Add(cleaner);
+                    freeCleaners.Remove(cleaner);
+                }
+                else
+                {
+                    cleaners.Add(freeCleaners[i - cleanersWithSameDistrict - 1]);
+                }
             }
         }
         return cleaners;

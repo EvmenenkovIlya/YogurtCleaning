@@ -352,3 +352,17 @@ MigrationBackup/
 YogutrCleaning/appsettings.Production.json
 
 YogutrCleaning/Properties/launchSettings.json
+
+YogurtCleaning.Business.Tests/YogurtCleaning.Business.Tests.v3.ncrunchproject
+
+YogurtCleaning.Business/YogurtCleaning.Business.v3.ncrunchproject
+
+YogurtCleaning.Tests/YogurtCleaning.API.Tests.v3.ncrunchproject
+
+YogurtCleaning.v3.ncrunchsolution
+
+YogurtCleaning.DataLayer/YogurtCleaning.DataLayer.v3.ncrunchproject
+
+YogurtCleaningDataLayerTests/YogurtCleaning.DataLayer.Tests.v3.ncrunchproject
+
+YogutrCleaning/YogurtCleaning.API.v3.ncrunchproject
