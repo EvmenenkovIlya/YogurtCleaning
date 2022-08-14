@@ -462,7 +462,7 @@ public class OrdersServiceTests
     }
 
     [Fact]
-    public async Task UpdateOrderStatus_WhenOrderNotInDb_ThroeBadRequestException()
+    public async Task UpdateOrderStatus_WhenOrderNotInDb_ThrowBadRequestException()
     {
         //given
         var orderIdNotInDb = 1;
@@ -475,7 +475,7 @@ public class OrdersServiceTests
     }
 
     [Fact]
-    public async Task UpdateOrderPaymentStatus_WhenOrderNotInDb_ThroeBadRequestException()
+    public async Task UpdateOrderPaymentStatus_WhenOrderNotInDb_ThrowBadRequestException()
     {
         //given
         var orderIdNotInDb = 1;

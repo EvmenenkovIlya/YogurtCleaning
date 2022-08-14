@@ -152,16 +152,17 @@ public class OrdersService : IOrdersService
             
             for (int i = 0; i < order.CleanersCount; i++)
             {
-                int cleanersWithSameDistrict = freeCleaners.Count(c => c.Districts.Contains(order.CleaningObject.District));
+                int cleanersWithSameDistrictCount = freeCleaners.Count(c => c.Districts.Contains(order.CleaningObject.District));
                 if (freeCleaners.Count(c => c.Districts.Contains(order.CleaningObject.District)) != 0)
                 {
+                    freeCleaners = freeCleaners.OrderBy(x => random.Next()).ToList();
                     var cleaner = freeCleaners.First(c => c.Districts.Contains(order.CleaningObject.District));
                     cleaners.Add(cleaner);
                     freeCleaners.Remove(cleaner);
                 }
                 else
                 {
-                    cleaners.Add(freeCleaners[i - cleanersWithSameDistrict - 1]);
+                    cleaners.Add(freeCleaners[i - cleanersWithSameDistrictCount - 1]);
                 }
             }
         }
@@ -184,7 +185,7 @@ public class OrdersService : IOrdersService
         await _ordersRepository.UpdateOrder(order);
     }
 
-    public async Task<List<Service>> GetOrderServises(int orderId, UserValues userValues)
+    public async Task<List<Service>> GetOrderServices(int orderId, UserValues userValues)
     {
         Order order = await _ordersRepository.GetOrder(orderId);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);

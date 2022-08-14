@@ -99,7 +99,7 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<List<ServiceResponse>>> GetServices(int orderId)
     {
         _userValues = this.GetClaimsValue();
-        var services = await _ordersService.GetOrderServises(orderId, _userValues);
+        var services = await _ordersService.GetOrderServices(orderId, _userValues);
         return Ok(_mapper.Map<List<ServiceResponse>>(services));
     }
 
@@ -116,7 +116,7 @@ public class OrdersController : ControllerBase
     }
 
     [AuthorizeRoles]
-    [HttpPatch("{orderId}/paymentStatus")]
+    [HttpPatch("{orderId}/payment-status")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
@@ -128,7 +128,7 @@ public class OrdersController : ControllerBase
     }
 
     [AuthorizeRoles(Role.Client, Role.Cleaner)]
-    [HttpGet("{orderId}/CleaningObject")]
+    [HttpGet("{orderId}/cleaning-object")]
     [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
