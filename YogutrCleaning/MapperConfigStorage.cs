@@ -54,5 +54,6 @@ public class MapperConfigStorage : Profile
 			.ForMember(c => c.OrderId, opt => opt.MapFrom(src => src.Order.Id))
 			.ForMember(c => c.CleanerId, opt => opt.MapFrom(src => src.Cleaner.Id))
 			.ForMember(c => c.ClientId, opt => opt.MapFrom(src => src.Client.Id));
+		CreateMap<Comment, CommentAboutResponse>();
 	}
 }

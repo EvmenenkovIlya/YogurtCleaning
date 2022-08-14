@@ -58,6 +58,7 @@ public class BundlesService : IBundlesService
     {
         var bundle = await _bundlesRepository.GetBundle(id);
         var allServices = await _servicesRepository.GetAllServices();
+        allServices = allServices.Where(t => t.RoomType == bundle.RoomType).ToList();
         var bundleServiceIds = bundle.Services.Select(t => t.Id).ToList();
         var result = allServices.Where(t => !bundleServiceIds.Contains(t.Id)).ToList();
         return result;

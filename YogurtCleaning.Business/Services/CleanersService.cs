@@ -20,7 +20,7 @@ public class CleanersService : ICleanersService
     {
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
-        if (cleaner == null )
+        if (cleaner == null)
         {
             throw new EntityNotFoundException($"Cleaner {id} not found");
         }
@@ -48,7 +48,7 @@ public class CleanersService : ICleanersService
         cleaner.LastName = modelToUpdate.LastName;
         cleaner.Services = modelToUpdate.Services;
         cleaner.BirthDate = modelToUpdate.BirthDate;
-        cleaner.Phone = modelToUpdate.Phone; 
+        cleaner.Phone = modelToUpdate.Phone;
 
         cleaner.Services = await _cleanersRepository.GetServices(modelToUpdate.Services);
         cleaner.Districts = await _cleanersRepository.GetDistricts(modelToUpdate.Districts);
@@ -92,7 +92,26 @@ public class CleanersService : ICleanersService
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
         Validator.AuthorizeEnitiyAccess(cleaner, userValues);
         return await _cleanersRepository.GetAllOrdersByCleaner(id);
-    }   
+    }
+
+    public async Task<List<Comment>> GetCommentsAboutCleaner(int id, UserValues userValues)
+    {
+        var cleaner = await _cleanersRepository.GetCleaner(id);
+
+        Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
+        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
+        return await _cleanersRepository.GetCommentsAboutCleaner(id);
+    }
+
+    private async Task<bool> CheckEmailForUniqueness(string email) => await _cleanersRepository.GetCleanerByEmail(email) == null;
+
+    //private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
+    //{
+    //    if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
+    //    {
+    //        throw new AccessException($"Access denied");
+    //    }
+    //}
 
     public async Task<List<Cleaner>> GetFreeCleanersForOrder(OrderBusinessModel order)
     {
@@ -104,7 +123,7 @@ public class CleanersService : ICleanersService
             bool isMatch = true;
             var filteredOrders = cleaner.Orders.Where(o => o.StartTime.Date == order.StartTime.Date).ToList();
 
-            if(filteredOrders.Count == 0)
+            if (filteredOrders.Count == 0)
             {
                 isMatch = true;
             }
@@ -131,7 +150,7 @@ public class CleanersService : ICleanersService
         }
         return freeCleaners;
     }
-    
+
     public async Task UpdateCleanerRating(int id)
     {
         var cleaner = await _cleanersRepository.GetCleaner(id);
@@ -140,6 +159,4 @@ public class CleanersService : ICleanersService
         cleaner.Rating = cleanerRating;
         await _cleanersRepository.UpdateCleaner(cleaner);
     }
-
-    private async Task<bool> CheckEmailForUniqueness(string email) => await _cleanersRepository.GetCleanerByEmail(email) == null;
 }

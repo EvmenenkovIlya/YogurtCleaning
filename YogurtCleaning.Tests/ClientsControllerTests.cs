@@ -317,4 +317,43 @@ public class ClientsControllerTests
         });
         _clientsServiceMock.Verify(x => x.GetAllClients(), Times.Once);
     }
+
+    [Test]
+    public async Task GetCommentsAboutClientId_WhenValidRequestPassed_RequestedTypeReceived()
+    {
+        //given
+        var client = new Client()
+        {
+            Id = 1,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com",
+            Phone = "85559997264",
+            BirthDate = DateTime.Today,
+        };
+        var comments = new List<Comment>()
+        {
+            new(){ Id = 1, Summary = "best client", Rating = 5 },
+            new(){ Id = 2, Summary = "bad client", Rating = 2 }
+        };
+        _clientsServiceMock.Setup(o => o.GetCommentsAboutClient(client.Id, It.IsAny<UserValues>())).ReturnsAsync(comments);
+
+        //when
+        var actual = await _sut.GetCommentsAboutClient(client.Id);
+
+        //then
+        var actualResult = actual.Result as ObjectResult;
+        var commentsResponse = actualResult.Value as List<CommentAboutResponse>;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(commentsResponse.Count, Is.EqualTo(comments.Count));
+            Assert.That(commentsResponse[0].Id, Is.EqualTo(comments[0].Id));
+            Assert.That(commentsResponse[1].Summary, Is.EqualTo(comments[1].Summary));
+            Assert.That(commentsResponse[0].Rating, Is.EqualTo(comments[0].Rating));
+        });
+        _clientsServiceMock.Verify(c => c.GetCommentsAboutClient(client.Id, It.IsAny<UserValues>()), Times.Once);
+    }
 }

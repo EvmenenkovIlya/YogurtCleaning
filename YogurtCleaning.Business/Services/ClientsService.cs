@@ -84,6 +84,14 @@ public class ClientsService : IClientsService
         return await _clientsRepository.GetAllOrdersByClient(id);
             
     }
+    public async Task<List<Comment>> GetCommentsAboutClient(int id, UserValues userValues)
+    {
+        var client = await _clientsRepository.GetClient(id);
+
+        Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
+        Validator.AuthorizeEnitiyAccess(userValues, client!);
+        return await _clientsRepository.GetCommentsAboutClient(id);
+    }
 
     public async Task UpdateClientRating(int id)
     {

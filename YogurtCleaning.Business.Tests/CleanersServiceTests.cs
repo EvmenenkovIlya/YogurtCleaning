@@ -747,4 +747,81 @@ public class CleanersServiceFacts
         _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleaner.Id), Times.Once);
         _cleanersRepositoryMock.Verify(c => c.GetCommentsAboutCleaner(cleaner.Id), Times.Once);
     }
+
+    [Fact]
+    public async Task GetCommentsAboutCleaner_WhenCommentsExist_CommentsReceived()
+    {
+        //given
+        var cleanerInDb = new Cleaner()
+        {
+
+            Id = 1,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com3",
+            Phone = "5559997264",
+            BirthDate = DateTime.Today
+        };
+        userValue = new UserValues() { Email = cleanerInDb.Email, Role = Role.Cleaner };
+        var comments = new List<Comment>()
+        {
+            new(){ Id = 1, Summary = "best cleaner", Rating = 5 },
+            new(){ Id = 2, Summary = "bad cleaner", Rating = 2 }
+        };
+
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
+        _cleanersRepositoryMock.Setup(o => o.GetCommentsAboutCleaner(cleanerInDb.Id)).ReturnsAsync(comments);
+
+        //when
+        var actual = await _sut.GetCommentsAboutCleaner(cleanerInDb.Id, userValue);
+
+        //then
+
+        Assert.Equal(comments.Count, actual.Count);
+        Assert.Equal(comments[0].Id, actual[0].Id);
+        Assert.Equal(comments[1].Id, actual[1].Id);
+        Assert.Equal(comments[0].Rating, actual[0].Rating);
+        Assert.Equal(comments[1].Rating, actual[1].Rating);
+        _cleanersRepositoryMock.Verify(c => c.GetCleaner(cleanerInDb.Id), Times.Once);
+        _cleanersRepositoryMock.Verify(c => c.GetCommentsAboutCleaner(cleanerInDb.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCommentsAboutCleaner_WhenCleanerGetSomeoneElsesComments_ThrowBadRequestException()
+    {
+        //given
+        var cleanerInDb = new Cleaner();
+        var testEmail = "FakeCleaner@gmail.ru";
+        var comments = new List<Comment>();
+
+        userValue = new UserValues() { Email = testEmail, Role = Role.Cleaner };
+
+        _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleanerInDb.Id)).ReturnsAsync(cleanerInDb);
+        _cleanersRepositoryMock.Setup(o => o.GetCommentsAboutCleaner(cleanerInDb.Id)).ReturnsAsync(comments);
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCommentsAboutCleaner(cleanerInDb.Id, userValue));
+    }
+
+    [Fact]
+    public async Task GetCommentsAboutCleanerId_AdminGetsCommentsWhenCleanerNotInDb_ThrowBadRequestException()
+    {
+        //given
+        var testEmail = "FakeCleaner@gmail.ru";
+        var cleanerInDb = new Cleaner()
+        {
+            Id = 1,
+            FirstName = "Adam"
+        };
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
+        var comments = new List<Comment>();
+
+        _cleanersRepositoryMock.Setup(o => o.GetCommentsAboutCleaner(cleanerInDb.Id)).ReturnsAsync(comments);
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetCommentsAboutCleaner(cleanerInDb.Id, userValue));
+    }
 }
