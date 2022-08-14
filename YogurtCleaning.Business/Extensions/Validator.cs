@@ -30,17 +30,17 @@ public static class Validator
         }
     }
 
-    public static void AuthorizeEnitiyAccess(UserValues userValues, Client client)
-    {
-        if (!(userValues.Email == client.Email || userValues.Role == Role.Admin))
-        {
-            throw new AccessException($"Access denied");
-        }
-    }
+    //public static void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
+    //{
+    //    if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
+    //    {
+    //        throw new AccessException($"Access denied");
+    //    }
+    //}
 
-    public static void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
+    public static void AuthorizeEnitiyAccess(string email, UserValues userValues)
     {
-        if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
+        if (!(userValues.Email == email || userValues.Role == Role.Admin))
         {
             throw new AccessException($"Access denied");
         }

@@ -24,7 +24,7 @@ public class CleanersService : ICleanersService
         {
             throw new EntityNotFoundException($"Cleaner {id} not found");
         }
-        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
         return cleaner;
     }
 
@@ -35,7 +35,7 @@ public class CleanersService : ICleanersService
     {
         var cleaner = await _cleanersRepository.GetCleaner(id);
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
         await _cleanersRepository.DeleteCleaner(cleaner);
     }
 
@@ -43,7 +43,7 @@ public class CleanersService : ICleanersService
     {
         Cleaner cleaner = await _cleanersRepository.GetCleaner(id);
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
         cleaner.FirstName = modelToUpdate.FirstName;
         cleaner.LastName = modelToUpdate.LastName;
         cleaner.Services = modelToUpdate.Services;
@@ -81,7 +81,7 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
         return await _cleanersRepository.GetAllCommentsByCleaner(id);
     }
 
@@ -90,7 +90,7 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerOrdersNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
         return await _cleanersRepository.GetAllOrdersByCleaner(id);
     }
 
@@ -99,19 +99,11 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
         return await _cleanersRepository.GetCommentsAboutCleaner(id);
     }
 
     private async Task<bool> CheckEmailForUniqueness(string email) => await _cleanersRepository.GetCleanerByEmail(email) == null;
-
-    //private void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
-    //{
-    //    if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
-    //    {
-    //        throw new AccessException($"Access denied");
-    //    }
-    //}
 
     public async Task<List<Cleaner>> GetFreeCleanersForOrder(OrderBusinessModel order)
     {

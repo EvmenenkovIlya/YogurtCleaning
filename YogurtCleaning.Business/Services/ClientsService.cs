@@ -1,6 +1,5 @@
 ﻿using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Business.Exceptions;
 
 namespace YogurtCleaning.Business.Services;
@@ -22,7 +21,7 @@ public class ClientsService : IClientsService
         {
             throw new EntityNotFoundException($"Client {id} not found");
         }
-        Validator.AuthorizeEnitiyAccess(userValues, client);
+        Validator.AuthorizeEnitiyAccess(client.Email, userValues);
         return client;
     }
 
@@ -36,7 +35,7 @@ public class ClientsService : IClientsService
     {
         var client = await _clientsRepository.GetClient(id);
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        Validator.AuthorizeEnitiyAccess(userValues, client!);
+        Validator.AuthorizeEnitiyAccess(client.Email, userValues);
         await _clientsRepository.DeleteClient(client!);
     }
 
@@ -44,7 +43,7 @@ public class ClientsService : IClientsService
     {
         var client = await _clientsRepository.GetClient(id);
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientNotFound);
-        Validator.AuthorizeEnitiyAccess(userValues, client!);
+        Validator.AuthorizeEnitiyAccess(client.Email, userValues);
 
         client!.FirstName = modelToUpdate.FirstName;
         client.LastName = modelToUpdate.LastName;
@@ -72,7 +71,7 @@ public class ClientsService : IClientsService
         var client = await _clientsRepository.GetClient(id);
 
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
-        Validator.AuthorizeEnitiyAccess(userValues, client!);
+        Validator.AuthorizeEnitiyAccess(client.Email, userValues);
         return await _clientsRepository.GetAllCommentsByClient(id);
     }
 
@@ -80,7 +79,7 @@ public class ClientsService : IClientsService
     {
         var client = await _clientsRepository.GetClient(id);
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientOrdersNotFound);
-        Validator.AuthorizeEnitiyAccess(userValues, client!);        
+        Validator.AuthorizeEnitiyAccess(client.Email, userValues);
         return await _clientsRepository.GetAllOrdersByClient(id);
             
     }
@@ -89,7 +88,7 @@ public class ClientsService : IClientsService
         var client = await _clientsRepository.GetClient(id);
 
         Validator.CheckThatObjectNotNull(client, ExceptionsErrorMessages.ClientCommentsNotFound);
-        Validator.AuthorizeEnitiyAccess(userValues, client!);
+        Validator.AuthorizeEnitiyAccess(client.Email, userValues);
         return await _clientsRepository.GetCommentsAboutClient(id);
     }
 

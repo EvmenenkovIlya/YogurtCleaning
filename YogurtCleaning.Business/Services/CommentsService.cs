@@ -58,9 +58,7 @@ public class CommentsService : ICommentsService
     {
         var comment = await _commentsRepository.GetCommentById(id);
         Validator.CheckThatObjectNotNull(comment, ExceptionsErrorMessages.CommentNotFound);
-        await _commentsRepository.DeleteComment(comment);
-        await _clientsService.UpdateClientRating(comment.Order.Client.Id);
+        await Task.WhenAll(_commentsRepository.DeleteComment(comment), _clientsService.UpdateClientRating(comment.Order.Client.Id));
         comment.Order.CleanersBand.ForEach(async c => await _cleanersService.UpdateCleanerRating(c.Id));
     }
-
 }
