@@ -13,6 +13,7 @@ public class BundleBusinessModel
     public int Id { get; set; }
     public string Name { get; set; }
     public CleaningType Type { get; set; }
+    public RoomType RoomType { get; set; }
     public decimal Price { get; set; }
     public decimal PriceForCleaningObject { get; set; }
     public Measure Measure { get; set; }

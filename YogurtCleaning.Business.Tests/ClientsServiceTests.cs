@@ -598,4 +598,82 @@ public class ClientsServiceFacts
         _clientsRepositoryMock.Verify(c => c.GetClient(client.Id), Times.Once);
         _clientsRepositoryMock.Verify(c => c.GetCommentsAboutClient(client.Id), Times.Once);
     }
+
+    [Fact]
+    public async Task GetCommentsAboutClient_WhenCommentsExist_CommentsReceived()
+    {
+        //given
+        var clientInDb = new Client()
+        {
+
+            Id = 1,
+            FirstName = "Adam",
+            LastName = "Smith",
+            Password = "12345678",
+            Email = "AdamSmith@gmail.com3",
+            Phone = "5559997264",
+            BirthDate = DateTime.Today
+        };
+        userValue = new UserValues() { Email = clientInDb.Email, Role = Role.Client };
+
+        var comments = new List<Comment>()
+        {
+            new(){ Id = 1, Summary = "best client", Rating = 5 },
+            new(){ Id = 2, Summary = "bad client", Rating = 2 }
+        };
+
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetCommentsAboutClient(clientInDb.Id)).ReturnsAsync(comments);
+
+        //when
+        var actual = await _sut.GetCommentsAboutClient(clientInDb.Id, userValue);
+
+        //then
+
+        Assert.Equal(comments.Count, actual.Count);
+        Assert.Equal(comments[0].Id, actual[0].Id);
+        Assert.Equal(comments[1].Id, actual[1].Id);
+        Assert.Equal(comments[0].Rating, actual[0].Rating);
+        Assert.Equal(comments[1].Rating, actual[1].Rating);
+        _clientsRepositoryMock.Verify(c => c.GetClient(clientInDb.Id), Times.Once);
+        _clientsRepositoryMock.Verify(c => c.GetCommentsAboutClient(clientInDb.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCommentsAboutClient_WhenClientGetSomeoneElsesComments_ThrowBadRequestException()
+    {
+        //given
+        var clientInDb = new Client();
+        var comments = new List<Comment>();
+        var testEmail = "FakeClient@gmail.ru";
+
+        userValue = new UserValues() { Email = testEmail, Role = Role.Client };
+
+        _clientsRepositoryMock.Setup(o => o.GetClient(clientInDb.Id)).ReturnsAsync(clientInDb);
+        _clientsRepositoryMock.Setup(o => o.GetCommentsAboutClient(clientInDb.Id)).ReturnsAsync(comments);
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCommentsAboutClient(clientInDb.Id, userValue));
+    }
+
+    [Fact]
+    public async Task GetCommentsAboutClientId_WhenAdminGetsCommentsAndClientIsNotInDb_ThrowBadRequestException()
+    {
+        //given
+        var testEmail = "FakeClient@gmail.ru";
+        var clientInDb = new Client()
+        {
+            Id = 1,
+            FirstName = "Adam"
+        };
+        var comments = new List<Comment>();
+        userValue = new UserValues() { Email = testEmail, Role = Role.Admin };
+
+        _clientsRepositoryMock.Setup(o => o.GetCommentsAboutClient(clientInDb.Id)).ReturnsAsync(comments);
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.GetCommentsAboutClient(clientInDb.Id, userValue));
+    }
 }

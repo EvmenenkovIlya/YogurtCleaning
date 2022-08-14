@@ -353,6 +353,8 @@ YogutrCleaning/appsettings.Production.json
 
 YogutrCleaning/Properties/launchSettings.json
 
+YogutrCleaning/appsettings.Development.json
+
 YogurtCleaning.Business.Tests/YogurtCleaning.Business.Tests.v3.ncrunchproject
 
 YogurtCleaning.Business/YogurtCleaning.Business.v3.ncrunchproject

@@ -95,6 +95,7 @@ public class BundlesServiceTests
         {
             Id = 11,
             Name = "qwe",
+            RoomType = RoomType.Apartment,
             Price = 1000,
             Unit = "Unit",
             Duration = 1,
@@ -109,10 +110,12 @@ public class BundlesServiceTests
         {
             Id = 7,
             Name = "zzz",
+            RoomType = RoomType.Apartment,
             Services = new List<Service> { new()
                 {
                     Id = 11, 
-                    Name = "qwe", 
+                    Name = "qwe",
+                    RoomType = RoomType.Apartment,
                     Price = 1000,
                     Unit = "Unit",
                     Duration = 1,
@@ -140,6 +143,7 @@ public class BundlesServiceTests
         {
             Id = 5,
             Name = "qwe",
+            RoomType = RoomType.Apartment,
             Price = 1000,
             Unit = "Unit",
             Duration = 1,
@@ -155,9 +159,12 @@ public class BundlesServiceTests
         {
             Id = 7,
             Name = "zzz",
+            RoomType = RoomType.Apartment,
             Services = new List<Service> { new()
                 {
-                    Id = 100, Name = "qwa",
+                    Id = 100,
+                    Name = "qwa",
+                    RoomType = RoomType.Apartment,
                     Price = 1000,
                     Unit = "Unit",
                     Duration = 1,
@@ -173,6 +180,70 @@ public class BundlesServiceTests
 
         // then
         Assert.Contains(service, result);
+        _servicesRepositoryMock.Verify(s => s.GetAllServices(), Times.Once);
+        _bundlesRepositoryMock.Verify(b => b.GetBundle(bundle.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetAdditionalServices_WhenServiceHasAnotherRoomType_ThenResultDoesNotConteinIt()
+    {
+        // given
+        var services = new List<Service>();
+        var service1 = new Service()
+        {
+            Id = 5,
+            Name = "qwe",
+            RoomType = RoomType.Kitchen,
+            Price = 1000,
+            Unit = "Unit",
+            Duration = 1,
+            IsDeleted = false
+        };
+
+        services.Add(service1);
+
+        var service2 = new Service()
+        {
+            Id = 6,
+            Name = "qwe",
+            RoomType = RoomType.Apartment,
+            Price = 1000,
+            Unit = "Unit",
+            Duration = 1,
+            IsDeleted = false
+        };
+
+        services.Add(service2);
+
+        _servicesRepositoryMock.Setup(s => s.GetAllServices()).ReturnsAsync(services).Verifiable(); ;
+
+
+        var bundle = new Bundle
+        {
+            Id = 7,
+            Name = "zzz",
+            RoomType = RoomType.Apartment,
+            Services = new List<Service> { new()
+                {
+                    Id = 100,
+                    Name = "qwa",
+                    RoomType = RoomType.Apartment,
+                    Price = 1000,
+                    Unit = "Unit",
+                    Duration = 1,
+                    IsDeleted = false
+                }
+            }
+        };
+
+        _bundlesRepositoryMock.Setup(b => b.GetBundle(bundle.Id)).ReturnsAsync(bundle);
+
+        // when
+        var result = await _sut.GetAdditionalServices(bundle.Id);
+
+        // then
+        Assert.DoesNotContain(service1, result);
+        Assert.Contains(service2, result);
         _servicesRepositoryMock.Verify(s => s.GetAllServices(), Times.Once);
         _bundlesRepositoryMock.Verify(b => b.GetBundle(bundle.Id), Times.Once);
     }
