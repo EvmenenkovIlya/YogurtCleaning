@@ -136,20 +136,14 @@ public class OrdersService : IOrdersService
         var cleaners = new List<Cleaner>();
         var freeCleaners = await _cleanersService.GetFreeCleanersForOrder(order);
 
-        if (order.EndTime > order.StartTime.Date.AddHours(18))
-        {
-            freeCleaners = freeCleaners.FindAll(c => c.Schedule == Schedule.ShiftWork).ToList();
-        }
-
         if (freeCleaners.Count < order.CleanersCount)
         {
             cleaners.AddRange(freeCleaners);
         }
         else
         {
-            Random random = new Random(); 
+            Random random = new Random();
             freeCleaners = freeCleaners.OrderBy(x => random.Next()).ToList();
-            
             for (int i = 0; i < order.CleanersCount; i++)
             {
                 int cleanersWithSameDistrictCount = freeCleaners.Count(c => c.Districts.Contains(order.CleaningObject.District));
