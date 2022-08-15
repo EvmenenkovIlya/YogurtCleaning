@@ -25,9 +25,9 @@ public class BundlesRepository : IBundlesRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Bundle>> GetAllBundles() => await _context.Bundles.Where(b => !b.IsDeleted).ToListAsync();
+    public async Task<List<Bundle>> GetAllBundles() => await _context.Bundles.Include(b => b.Services).Where(b => !b.IsDeleted).ToListAsync();
 
-    public async Task<Bundle> GetBundle(int id) => await _context.Bundles.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted)!;
+    public async Task<Bundle> GetBundle(int id) => await _context.Bundles.Include(b => b.Services).FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted)!;
 
     public async Task UpdateBundle(Bundle bundle)
     {
