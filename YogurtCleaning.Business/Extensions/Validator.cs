@@ -1,4 +1,5 @@
 ﻿using YogurtCleaning.Business.Exceptions;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.Business;
 
@@ -17,6 +18,14 @@ public static class Validator
         if (fromRequest.Count != fromDb.Count)
         {
             throw new BadRequestException($"One of {typeof(T)} not found in Db");
+        }
+    }
+
+    public static void AuthorizeEnitiyAccess(UserValues userValues, int id)
+    {
+        if (!(userValues.Id == id || userValues.Role == Role.Admin))
+        {
+            throw new AccessException($"Access denied");
         }
     }
 }

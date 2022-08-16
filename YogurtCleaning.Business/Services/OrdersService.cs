@@ -35,7 +35,7 @@ public class OrdersService : IOrdersService
     {
         var order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
-        AuthorizeEnitiyAccess(userValues, order);
+        Validator.AuthorizeEnitiyAccess(userValues, order.Client.Id);
         await _ordersRepository.DeleteOrder(order);
     }
 
@@ -48,16 +48,20 @@ public class OrdersService : IOrdersService
 
     public async Task <List<Order>> GetAllOrders() => await _ordersRepository.GetAllOrders();
 
-    public async Task UpdateOrder(Order modelToUpdate, int id)
+    public async Task UpdateOrder(OrderBusinessModel modelToUpdate, int id, UserValues userValues)
     {
         Order order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        Validator.AuthorizeEnitiyAccess(userValues, order.Client.Id);
         order!.Status = modelToUpdate.Status;
         order.StartTime = modelToUpdate.StartTime;
         order.UpdateTime = modelToUpdate.UpdateTime;
-        order.Bundles = modelToUpdate.Bundles;
+        modelToUpdate.CleaningObject = order.CleaningObject;
+        await FillOrder(modelToUpdate);
+        order.Bundles = _mapper.Map<List<Bundle>>(modelToUpdate.Bundles);
         order.Services = modelToUpdate.Services;
         order.CleanersBand = modelToUpdate.CleanersBand;
+
         await _ordersRepository.UpdateOrder(order);
     }
 
@@ -73,26 +77,29 @@ public class OrdersService : IOrdersService
         return order.CleaningObject;
     }
 
-    private void AuthorizeEnitiyAccess(UserValues userValues, Order order)
-    {
-        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin))
-        {
-            throw new AccessException($"Access denied");
-        }
-    }
     
     public async Task<int> AddOrder(OrderBusinessModel order)
     {
-        var fullBundles = new List<BundleBusinessModel>();
-        foreach(var b in order.Bundles)
+        await FillOrder(order);
+        var result = await _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
+        CheckStatusAndSendMail(order, result);
+        return result;
+    }
+
+    private void CheckStatusAndSendMail(OrderBusinessModel order, int orderId)
+    {
+        if (order.Status == Status.Moderation)
         {
-            var fullBundle = _mapper.Map<BundleBusinessModel>(await _bundlesRepository.GetBundle(b.Id));
-            fullBundles.Add(fullBundle);
+            _emailSender.SendEmail(orderId);
         }
-        order.Bundles = fullBundles;
+    }
+
+    private async Task FillOrder(OrderBusinessModel order)
+    {
+        order.Bundles = await GetBundles(order);
         order.Price = await GetOrderPrice(order);
-        order.CleanersBand = await GetCleanersForOrder(order); 
-        if(order.CleanersBand.Count < order.CleanersCount)
+        order.CleanersBand = await GetCleanersForOrder(order);
+        if (order.CleanersBand.Count < order.CleanersCount)
         {
             order.Status = Status.Moderation;
         }
@@ -100,15 +107,7 @@ public class OrdersService : IOrdersService
         {
             order.Status = Status.Created;
         }
-
-        var result = await _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
-
-        if (order.Status == Status.Moderation)
-        {
-            _emailSender.SendEmail(result);
-        }
-        return result;
-    } 
+    }
 
     private async Task<decimal> GetOrderPrice(OrderBusinessModel order)
     {
@@ -156,5 +155,16 @@ public class OrdersService : IOrdersService
             }
         }
         return cleaners;
+    }
+
+    private async Task<List<BundleBusinessModel>> GetBundles(OrderBusinessModel order)
+    {
+        var fullBundles = new List<BundleBusinessModel>();
+        foreach(var b in order.Bundles)
+        {
+            var fullBundle = _mapper.Map<BundleBusinessModel>(await _bundlesRepository.GetBundle(b.Id));
+            fullBundles.Add(fullBundle);
+        }
+        return fullBundles;
     }
 }

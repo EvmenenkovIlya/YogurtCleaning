@@ -63,7 +63,8 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public async Task<ActionResult> UpdateOrder([FromBody] OrderUpdateRequest order, int orderId)
     {
-        await _ordersService.UpdateOrder(_mapper.Map<Order>(order), orderId);
+        _userValues = this.GetClaimsValue();
+        await _ordersService.UpdateOrder(_mapper.Map<OrderBusinessModel>(order), orderId, _userValues);
         return NoContent();
     }
 
@@ -98,7 +99,6 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<List<ServiceResponse>>> GetServices(int orderId)
     {
-
         return Ok(await _ordersRepository.GetServices(orderId));
     }
 
