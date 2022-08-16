@@ -1,42 +1,93 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
+using YogurtCleaning.Extensions;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("[controller]")]
+public class BundlesController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class PacketController : ControllerBase
+    private readonly IBundlesService _bundlesService;
+    private readonly IMapper _mapper;
+
+    public BundlesController( IBundlesService bundlesService, IMapper mapper)
     {
-        private readonly ILogger<PacketController> _logger;
+        _bundlesService = bundlesService;
+        _mapper = mapper;
+    }
 
-        public PacketController(ILogger<PacketController> logger)
-        {
-            _logger = logger;
-        }
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(BundleResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<BundleResponse>> GetBundle(int id)
+    {
+        var result = await _bundlesService.GetBundle(id);
+        return Ok(_mapper.Map<BundleResponse>(result));
+    }
 
-        [HttpGet("{id}")]
-        public Bundle GetBundle(int id)
-        {
-            return new Bundle();
-        }
-        [HttpGet]
-        public List<Bundle> GetAllBundles()
-        {
-            return new List<Bundle>();
-        }
-        [HttpPut("{id}/{name}/{priceForRoom}/{priceForBathroom}/{priceForSquareMeter}/{services}")]
-        public void UpdateBundle(int id, string name, decimal priceForRoom, decimal priceForBathroom, decimal priceForSquareMeter, List<Service> services)
-        {
-        }
-        [HttpPost("{name}/{priceForRoom}/{priceForBathroom}/{priceForSquareMeter}/{services}")]
-        public int AddBundle(string name, decimal priceForRoom, decimal priceForBathroom, decimal priceForSquareMeter, List<Service> services)
-        {
-            return new Bundle().Id;
-        }
+    [AuthorizeRoles(Role.Admin)]
+    [HttpGet]
+    [ProducesResponseType(typeof(List<BundleResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<List<BundleResponse>>> GetAllBundles()
+    {
+        var result = _mapper.Map<List<BundleResponse>>(await _bundlesService.GetAllBundles());
+        return Ok(result);
+    }
 
-        [HttpDelete("{id}")]
-        public int DeleteBundle(int id)
-        {
-            return new Bundle().Id;
-        }
+    [AuthorizeRoles]
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult> UpdateBundle([FromBody] BundleRequest bundle, int id)
+    {
+        await _bundlesService.UpdateBundle(_mapper.Map<Bundle>(bundle), id);
+        return NoContent();
+    }
+
+    [AuthorizeRoles]
+    [HttpPost]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<int>> AddBundle([FromBody] BundleRequest bundle)
+    {
+        var result = await _bundlesService.AddBundle(_mapper.Map<Bundle>(bundle));
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
+    }
+
+    [AuthorizeRoles]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteBundle(int id)
+    {
+        await _bundlesService.DeleteBundle(id);
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}/additional-services")]
+    [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<ServiceResponse>>> GetAdditionalServices(int id)
+    {
+        var result =  _mapper.Map<List<ServiceResponse>>(await _bundlesService.GetAdditionalServices(id));
+        return Ok(result);
     }
 }

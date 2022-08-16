@@ -1,41 +1,80 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
+using YogurtCleaning.Extensions;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+[Authorize]
+[Route("[controller]")]
+
+public class CommentsController : Controller
 {
-    [ApiController]
-    [Route("[controller]")]
+    private readonly ICommentsService _commentsService;
+    private readonly IMapper _mapper;
+    public UserValues? userValues;
 
-    public class CommentsController : Controller
+    public CommentsController(ICommentsService commentsService, IMapper mapper)
     {
-        private readonly ILogger<CommentsController> _logger;
+        _commentsService = commentsService;
+        _mapper = mapper;
+    }
 
-        public CommentsController(ILogger<CommentsController> logger)
-        {
-            _logger = logger;
-        }
+    [AuthorizeRoles]
+    [HttpGet]
+    [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<List<CommentResponse>>> GetAllComments()
+    {
+        var result = _mapper.Map<List<CommentResponse>>(await _commentsService.GetComments());
+        return Ok(result);
+    }
 
-        [HttpGet("{id}")]
-        public Comment GetComment(int id)
-        {
-            return new Comment();
-        }
+    [AuthorizeRoles(Role.Client)]
+    [HttpPost("by-client")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<int>> AddCommentByClient([FromBody] CommentRequest comment)
+    {
+        var userId = this.GetClaimsValue().Id;
 
-        [HttpGet]
-        public List<Comment> GetAllComments()
-        {
-            return new List<Comment>();
-        }
+        var result = await _commentsService.AddCommentByClient(_mapper.Map<Comment>(comment), userId);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
+    }
 
-        [HttpPost("{summary}/{clientId}/{cleanerId}/{orderId}/{rating}")]
-        public int AddComment(string summary, int clientId, int cleanerId, int orderId, int rating)
-        {
-            return new Comment().Id;
-        }
+    [AuthorizeRoles(Role.Cleaner)]
+    [HttpPost("by-cleaner")]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<int>> AddCommentByCleaner([FromBody] CommentRequest comment)
+    {
+        var userId = this.GetClaimsValue().Id;
 
-        [HttpDelete("{id}")]
-        public int DeleteComment(int id)
-        {
-            return new Comment().Id;
-        }
+        var result = await _commentsService.AddCommentByCleaner(_mapper.Map<Comment>(comment), userId);
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
+    }
+
+    [AuthorizeRoles]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeleteComment(int id)
+    {
+        await _commentsService.DeleteComment(id);
+        return NoContent();
     }
 }

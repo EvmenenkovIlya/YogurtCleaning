@@ -1,45 +1,78 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Services;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Repositories;
+using YogurtCleaning.Extensions;
+using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Models;
 
-namespace YogurtCleaning.Controllers
+namespace YogurtCleaning.Controllers;
+
+[ApiController]
+[AuthorizeRoles]
+[Route("[controller]")]
+public class ServicesController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ServicesController : ControllerBase
+    private readonly IServicesService _servicesService;
+    private readonly IMapper _mapper;
+
+    public ServicesController(IServicesService servicesService, IMapper mapper)
     {
-        private readonly ILogger<ServicesController> _logger;
+        _servicesService = servicesService;
+        _mapper = mapper;
+    }
 
-        public ServicesController(ILogger<ServicesController> logger)
-        {
-            _logger = logger;
-        }
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ServiceResponse>> GetService(int id)
+    {
+        var result =  _mapper.Map<ServiceResponse>(await _servicesService.GetService(id));
+        return Ok(result);
+    }
 
-        [HttpGet("{id}")]
-        public Service GetService(int id)
-        {
-            return new Service();
-        }
+    [HttpGet]
+    [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<List<ServiceResponse>>> GetAllServices()
+    {
+        var result = await _servicesService.GetAllServices();
+        return Ok(_mapper.Map<List<ServiceResponse>>(result));
+    }
 
-        [HttpGet]
-        public List<Service> GetAllServices()
-        {
-            return new List<Service>();
-        }
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult> UpdateService([FromBody] ServiceRequest service, int id)
+    {
+        await _servicesService.UpdateService(_mapper.Map<Service>(service), id);
+        return NoContent();
+    }
 
-        [HttpPut("{id}/{name}/{price}/{unit}")]
-        public void UpdateService(int id, string name, decimal price, string unit)
-        {           
-        }
+    [HttpPost]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<int>> AddService([FromBody] ServiceRequest service)
+    {
+        var result = await _servicesService.AddService(_mapper.Map<Service>(service));
+        return Created($"{this.GetRequestFullPath()}/{result}", result);
+    }
 
-        [HttpPost("{name}/{price}/{unit}")]
-        public int AddService(string name, decimal price, string unit)
-        {
-            return new Service().Id;
-        }
-
-        [HttpDelete("{id}")]
-        public int DeleteService(int id)
-        {
-            return new Service().Id;
-        }
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult> DeleteService(int id)
+    {
+        UserValues userValues = this.GetClaimsValue();
+       await _servicesService.DeleteService(id, userValues);
+        return NoContent();
     }
 }
