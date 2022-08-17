@@ -56,12 +56,15 @@ public class BundlesServiceTests
     public async Task UpdateBundle_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
+        var updateServices = new List<Service>() { new Service() { Id = 1, RoomType = RoomType.Apartment} };
         var bundle = new Bundle
         {
             Id = 10,
             Name = "qwe",
             Price = 1000,
+            RoomType = RoomType.Apartment,
             Measure = Measure.Room,
+            Services = updateServices,
             IsDeleted = false
         };
 
@@ -69,10 +72,12 @@ public class BundlesServiceTests
         {
             Name = "qaz",
             Price = 9999,
+            RoomType = RoomType.Apartment,
             Measure = Measure.Unit,
+            Services = updateServices,
             IsDeleted = false
         };
-
+        _bundlesRepositoryMock.Setup(b => b.GetServices(updateServices)).ReturnsAsync(updateServices);
         _bundlesRepositoryMock.Setup(b => b.GetBundle(bundle.Id)).ReturnsAsync(bundle);
 
         // when

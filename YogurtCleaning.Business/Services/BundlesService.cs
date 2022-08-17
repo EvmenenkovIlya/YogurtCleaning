@@ -21,6 +21,7 @@ public class BundlesService : IBundlesService
         List<Service> services = bundle.Services;
         bundle.Services = await _bundlesRepository.GetServices(bundle.Services);
         Validator.CheckRequestAndDbList(services, bundle.Services);
+        bundle.Services = bundle.Services.Where(c => c.RoomType == bundle.RoomType).ToList();
         var result = await _bundlesRepository.AddBundle(bundle);
         return result;
     }
@@ -51,8 +52,9 @@ public class BundlesService : IBundlesService
         oldBundle.Name = bundle.Name;
         oldBundle.Measure = bundle.Measure;
         oldBundle.Price = bundle.Price;
-        oldBundle.Services = bundle.Services;
-
+        oldBundle.Services = await _bundlesRepository.GetServices(bundle.Services);
+        Validator.CheckRequestAndDbList(bundle.Services, oldBundle.Services);
+        oldBundle.Services = oldBundle.Services.Where(c => c.RoomType == oldBundle.RoomType).ToList();
         await _bundlesRepository.UpdateBundle(oldBundle);
     }
 
