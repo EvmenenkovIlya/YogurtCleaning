@@ -35,6 +35,7 @@ public class OrdersRepository : IOrdersRepository
     public async Task UpdateOrder(Order modelToUpdate)
     {
         _context.Orders.Update(modelToUpdate);
+        modelToUpdate.UpdateTime = DateTime.Now;
         await _context.SaveChangesAsync();
     }
 
@@ -55,6 +56,7 @@ public class OrdersRepository : IOrdersRepository
     {
         var order = await GetOrder(orderId);
         order.Status = statusToUpdate;
+        order.UpdateTime = DateTime.Now;
         await _context.SaveChangesAsync();
     }
 }
