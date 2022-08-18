@@ -29,14 +29,14 @@ public static class Validator
             throw new AccessException($"Access denied");
         }
     }
-
-    //public static void AuthorizeEnitiyAccess(Cleaner cleaner, UserValues userValues)
-    //{
-    //    if (!(userValues.Email == cleaner.Email || userValues.Role == Role.Admin))
-    //    {
-    //        throw new AccessException($"Access denied");
-    //    }
-    //}
+    public static void AuthorizeEnitiyAccess(Order order, UserValues userValues)
+    {
+        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin ||
+            (order.CleanersBand.Find(c => c.Id == userValues.Id) != null) && userValues.Role == Role.Cleaner))
+        {
+            throw new AccessException($"Access denied");
+        }
+    }
 
     public static void AuthorizeEnitiyAccess(string email, UserValues userValues)
     {

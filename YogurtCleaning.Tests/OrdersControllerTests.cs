@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MailKit.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -71,7 +72,6 @@ public class OrdersControllerTests
                 Price = 20,
                 Bundles = new List<Bundle>() { new Bundle(){ Id = 1}, new Bundle(){ Id = 2} },
                 Services = new List<Service>() { new Service(){ Id = 1}, new Service(){ Id = 2} },
-                Comments = new List<Comment>() { new Comment(){ Id = 1}, new Comment(){ Id = 2} },
                 Status = Status.Created,
                 IsDeleted=false
             },
@@ -105,7 +105,6 @@ public class OrdersControllerTests
             Assert.That(ordersResponse[0].CleaningObject.Id, Is.EqualTo(orders[0].CleaningObject.Id));
             Assert.That(ordersResponse[1].Price, Is.EqualTo(orders[1].Price));
             Assert.That(ordersResponse[1].CleanersBand.Count, Is.EqualTo(orders[1].CleanersBand.Count));
-            Assert.That(ordersResponse[0].Comments.Count, Is.EqualTo(orders[0].Comments.Count));
             Assert.That(ordersResponse[0].Bundles.Count, Is.EqualTo(orders[0].Bundles.Count));
             Assert.That(ordersResponse[0].Services.Count, Is.EqualTo(orders[0].Services.Count));
             Assert.That(ordersResponse[0].Price, Is.EqualTo(orders[0].Price));
@@ -151,5 +150,51 @@ public class OrdersControllerTests
             Assert.That(cleaningObjectResponse.Address, Is.EqualTo(expectedCleaningObject.Address));
         });
         _ordersServiceMock.Verify(x => x.GetCleaningObject(expectedCleaningObject.Id, It.IsAny<UserValues>()), Times.Once);
+    }
+
+    [Test]
+    public async Task GetOrder_WhenValidRequestPassed_OkReceived()
+    {
+        //given
+        var expectedOrder = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+            StartTime = DateTime.Now,
+            EndTime = DateTime.Now,
+            UpdateTime = DateTime.Now,
+            Price = 20,
+            Bundles = new List<Bundle>() { new Bundle() { Id = 1 }, new Bundle() { Id = 2 } },
+            Services = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } },
+            Comments = new List<Comment>() { new Comment() { Id = 1 }, new Comment() { Id = 2 } },
+            Status = Status.Created,
+            IsDeleted = false
+        };
+
+        _ordersServiceMock.Setup(o => o.GetOrder(expectedOrder.Id, It.IsAny<UserValues>())).ReturnsAsync(expectedOrder);
+
+        //when
+        var actual = await _sut.GetOrder(expectedOrder.Id);
+
+        //then
+        var actualResult = actual.Result as ObjectResult;
+        var orderResponse = actualResult.Value as OrderResponse;
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(orderResponse.Client.Id, Is.EqualTo(expectedOrder.Client.Id));
+            Assert.That(orderResponse.CleaningObject.Id, Is.EqualTo(expectedOrder.CleaningObject.Id));
+            Assert.That(orderResponse.Bundles.Count, Is.EqualTo(expectedOrder.Bundles.Count));
+            Assert.That(orderResponse.Services.Count, Is.EqualTo(expectedOrder.Services.Count));
+            Assert.That(orderResponse.Price, Is.EqualTo(expectedOrder.Price));
+            Assert.That(orderResponse.StartTime, Is.EqualTo(expectedOrder.StartTime));
+            Assert.That(orderResponse.EndTime, Is.EqualTo(expectedOrder.EndTime));
+            Assert.That(orderResponse.UpdateTime, Is.EqualTo(expectedOrder.UpdateTime));
+            Assert.That(orderResponse.Status, Is.EqualTo(expectedOrder.Status));
+        });
+        _ordersServiceMock.Verify(x => x.GetOrder(expectedOrder.Id, It.IsAny<UserValues>()), Times.Once);
+
     }
 }
