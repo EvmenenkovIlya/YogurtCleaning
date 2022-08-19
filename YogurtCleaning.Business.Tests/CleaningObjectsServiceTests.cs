@@ -134,7 +134,8 @@ public class CleaningObjectServiceFacts
             NumberOfWindows = 1,
             NumberOfBalconies = 0,
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
-            Client = new Client() { Id = 1 }
+            Client = new Client() { Id = 1 },
+            District = new District() { Id = DistrictEnum.Vasileostrovskiy, Name = "Vasileostrovskiy" }
         };
 
         CleaningObject newCleaningObjectModel = new CleaningObject()
@@ -145,10 +146,12 @@ public class CleaningObjectServiceFacts
             NumberOfWindows = 3,
             NumberOfBalconies = 8,
             Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
+            District = new District() { Id = DistrictEnum.Kalininsky, Name = "Kalininsky" }
         };
         _userValues = new UserValues() { Id = cleaningObject.Client.Id };
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).ReturnsAsync(cleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetDistrict(DistrictEnum.Kalininsky)).ReturnsAsync(newCleaningObjectModel.District);
 
         //when
         await _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues);
@@ -175,7 +178,8 @@ public class CleaningObjectServiceFacts
             NumberOfWindows = 1,
             NumberOfBalconies = 0,
             Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
-            Client = new Client() { Id = 1 }
+            Client = new Client() { Id = 1 },
+            District = new District() { Id = DistrictEnum.Kalininsky, Name = "Kalininsky" }
         };
 
         CleaningObject newCleaningObjectModel = new CleaningObject()
@@ -186,10 +190,12 @@ public class CleaningObjectServiceFacts
             NumberOfWindows = 3,
             NumberOfBalconies = 8,
             Address = "г. Санкт-Петербург, ул. Льва Толстого, д. 16, кв. 10",
+            District = new District() { Id = DistrictEnum.Vasileostrovskiy, Name = "Vasileostrovskiy" }
         };
         _userValues = new UserValues() { Role = Role.Admin };
         _cleaningObjectsRepositoryMock.Setup(o => o.GetCleaningObject(cleaningObject.Id)).ReturnsAsync(cleaningObject);
         _cleaningObjectsRepositoryMock.Setup(o => o.UpdateCleaningObject(newCleaningObjectModel));
+        _cleaningObjectsRepositoryMock.Setup(o => o.GetDistrict(DistrictEnum.Vasileostrovskiy)).ReturnsAsync(newCleaningObjectModel.District);
 
         //when
         await _sut.UpdateCleaningObject(newCleaningObjectModel, cleaningObject.Id, _userValues);

@@ -13,7 +13,13 @@ public class OrdersRepository : IOrdersRepository
         _context = context;
     }
 
-    public async Task <Order?> GetOrder(int orderId) => await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+    public async Task <Order?> GetOrder(int orderId) => await _context.Orders
+        .Include(o => o.Client)
+        .Include(o => o.CleaningObject)
+        .Include(o => o.CleanersBand)
+        .Include(o => o.Bundles)
+        .Include(o => o.Services)
+        .FirstOrDefaultAsync(o => o.Id == orderId);
 
     public async Task <List<Order>> GetAllOrders() => await _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
 

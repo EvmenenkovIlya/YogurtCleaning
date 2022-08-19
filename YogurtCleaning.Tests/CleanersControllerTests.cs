@@ -314,7 +314,7 @@ public class CleanersControllerTests
     }
 
     [Test]
-    public async Task GetCommentsBAboutCleanerId_WhenValidRequestPassed_RequestedTypeReceived()
+    public async Task GetCommentsAboutCleanerId_WhenValidRequestPassed_RequestedTypeReceived()
     {
         //given
         var expectedCleaner = new Cleaner()

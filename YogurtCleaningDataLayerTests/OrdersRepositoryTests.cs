@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.DataLayer.Tests;
@@ -12,6 +13,7 @@ public class OrdersRepositoryTests
         _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
             .UseInMemoryDatabase(databaseName: "TestDbForOrders")
             .Options;
+        
     }
 
     [Fact]
@@ -30,8 +32,7 @@ public class OrdersRepositoryTests
         var actual = await sut.CreateOrder(order);
 
         //then
-        Assert.True(actual > 0);
-        context.Database.EnsureDeleted();
+        Assert.True(actual > 0);        
     }
 
     [Fact]
@@ -43,7 +44,53 @@ public class OrdersRepositoryTests
         var order = new Order
         {
             Id = 1,
-
+            Client = new() 
+            { 
+                Id = 1,
+                FirstName = "Madara",
+                LastName = "Smith",
+                Email = "ychiha@gmail.japan",
+                Password = "1234qwerty",
+                Phone = "899988873456",
+                IsDeleted = false
+            },
+            CleaningObject = new() 
+            { 
+                Id = 1,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                IsDeleted = false
+            },
+            CleanersBand = new() { new() 
+            { 
+                Id = 1,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Email = "ccc@gmail.c",
+                Password = "1234qwerty",
+                Passport = "0000654321",
+                Phone = "89998887766",
+                IsDeleted = false
+            } },
+            Bundles = new() { new()
+            {
+                Id = 1,
+                Name = "qweqwe",
+                Price = 2000,
+                Measure = Measure.Room,
+            } },
+            Services = new() { new() 
+            { 
+                Id = 1,
+                Name = "qwe",
+                Price = 1000,
+                Unit = "Unit",
+                IsDeleted = false
+            } },
             IsDeleted = false
         };
 
@@ -69,13 +116,107 @@ public class OrdersRepositoryTests
         {
             new Order()
             {
-                Id = 1,
+                 Id = 4,
+            Client = new()
+            {
+                Id = 4,
+                FirstName = "Madara",
+                LastName = "Smith",
+                Email = "ychiha@gmail.japan",
+                Password = "1234qwerty",
+                Phone = "899988873456",
+                IsDeleted = false
+            },
+            CleaningObject = new()
+            {
+                Id = 4,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                IsDeleted = false
+            },
+            CleanersBand = new() { new()
+            {
+                Id = 4,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Email = "ccc@gmail.c",
+                Password = "1234qwerty",
+                Passport = "0000654321",
+                Phone = "89998887766",
+                IsDeleted = false
+            } },
+            Bundles = new() { new()
+            {
+                Id = 4,
+                Name = "qweqwe",
+                Price = 2000,
+                Measure = Measure.Room,
+            } },
+            Services = new() { new()
+            {
+                Id = 4,
+                Name = "qwe",
+                Price = 1000,
+                Unit = "Unit",
+                IsDeleted = false
+            } },
                 IsDeleted = true
             },
             new Order()
             {
-                Id = 2,
+                 Id = 3,
+            Client = new()
+            {
+                Id = 3,
+                FirstName = "Madara",
+                LastName = "Smith",
+                Email = "ychiha@gmail.japan",
+                Password = "1234qwerty",
+                Phone = "899988873456",
                 IsDeleted = false
+            },
+            CleaningObject = new()
+            {
+                Id = 3,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                IsDeleted = false
+            },
+            CleanersBand = new() { new()
+            {
+                Id = 3,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Email = "ccc@gmail.c",
+                Password = "1234qwerty",
+                Passport = "0000654321",
+                Phone = "89998887766",
+                IsDeleted = false
+            } },
+            Bundles = new() { new()
+            {
+                Id = 3,
+                Name = "qweqwe",
+                Price = 2000,
+                Measure = Measure.Room,
+            } },
+            Services = new() { new()
+            {
+                Id = 3,
+                Name = "qwe",
+                Price = 1000,
+                Unit = "Unit",
+                IsDeleted = false
+            } },
+            IsDeleted = false
             }
         };
 
@@ -101,7 +242,54 @@ public class OrdersRepositoryTests
         var sut = new OrdersRepository(context);
         var oldOrder = new Order()
         {
-            Id = 1,
+            Id = 5,
+            Client = new()
+            {
+                Id = 1,
+                FirstName = "Madara",
+                LastName = "Smith",
+                Email = "ychiha@gmail.japan",
+                Password = "1234qwerty",
+                Phone = "899988873456",
+                IsDeleted = false
+            },
+            CleaningObject = new()
+            {
+                Id = 1,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                IsDeleted = false
+            },
+            CleanersBand = new() { new()
+            {
+                Id = 1,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Email = "ccc@gmail.c",
+                Password = "1234qwerty",
+                Passport = "0000654321",
+                Phone = "89998887766",
+                IsDeleted = false
+            } },
+            Bundles = new() { new()
+            {
+                Id = 1,
+                Name = "qweqwe",
+                Price = 2000,
+                Measure = Measure.Room,
+            } },
+            Services = new() { new()
+            {
+                Id = 1,
+                Name = "qwe",
+                Price = 1000,
+                Unit = "Unit",
+                IsDeleted = false
+            } },
             Price = 15,
             EndTime = DateTime.Now,
             IsDeleted = false
@@ -130,21 +318,66 @@ public class OrdersRepositoryTests
         var oldOrder = new Order()
         {
             Id = 1,
-            Price = 15,
-            EndTime = DateTime.Now,
-            Status = Enums.Status.Created,
+            Client = new()
+            {
+                Id = 1,
+                FirstName = "Madara",
+                LastName = "Smith",
+                Email = "ychiha@gmail.japan",
+                Password = "1234qwerty",
+                Phone = "899988873456",
+                IsDeleted = false
+            },
+            CleaningObject = new()
+            {
+                Id = 1,
+                NumberOfRooms = 1000,
+                NumberOfBathrooms = 1,
+                Square = 1,
+                NumberOfWindows = 1,
+                NumberOfBalconies = 0,
+                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
+                IsDeleted = false
+            },
+            CleanersBand = new() { new()
+            {
+                Id = 1,
+                FirstName = "Adam",
+                LastName = "Smith",
+                Email = "ccc@gmail.c",
+                Password = "1234qwerty",
+                Passport = "0000654321",
+                Phone = "89998887766",
+                IsDeleted = false
+            } },
+            Bundles = new() { new()
+            {
+                Id = 1,
+                Name = "qweqwe",
+                Price = 2000,
+                Measure = Measure.Room,
+            } },
+            Services = new() { new()
+            {
+                Id = 1,
+                Name = "qwe",
+                Price = 1000,
+                Unit = "Unit",
+                IsDeleted = false
+            } },
+            Status = Status.Created,
             IsDeleted = false
         };
         context.Orders.Add(oldOrder);
         context.SaveChanges();
 
         // when
-        await sut.UpdateOrderStatus(oldOrder.Id, Enums.Status.Done);
+        await sut.UpdateOrderStatus(oldOrder.Id, Status.Done);
         var result = await sut.GetOrder(oldOrder.Id);
 
         //then
-        Assert.NotEqual(Enums.Status.Created, result.Status);
-        Assert.Equal(Enums.Status.Done, result.Status);
+        Assert.NotEqual(Status.Created, result.Status);
+        Assert.Equal(Status.Done, result.Status);
         context.Database.EnsureDeleted();
     }   
 }

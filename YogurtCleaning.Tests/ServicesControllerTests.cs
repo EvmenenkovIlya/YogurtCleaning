@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.DataLayer.Entities;
-using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
 using YogurtCleaning.API;
 using YogurtCleaning.Business;

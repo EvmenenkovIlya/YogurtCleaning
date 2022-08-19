@@ -418,11 +418,13 @@ public class CleanersServiceFacts
             LastName = "Else",
             Phone = "+73845277",
             BirthDate = new DateTime(1996, 10, 10),
+            Services = new() { new Service() { Id = 1}, new Service() { Id = 2 } },
+            Districts = new() { new District() { Id = DistrictEnum.Kalininsky, Name = "Kalininsky" } }
         };
         userValue = new UserValues() { Email = cleaner.Email, Role = Role.Cleaner }; ;
         _cleanersRepositoryMock.Setup(o => o.GetCleaner(cleaner.Id)).ReturnsAsync(cleaner);
-        _cleanersRepositoryMock.Setup(o => o.UpdateCleaner(newCleanerModel));
-
+        _cleanersRepositoryMock.Setup(o => o.GetServices(newCleanerModel.Services)).ReturnsAsync(newCleanerModel.Services);
+        _cleanersRepositoryMock.Setup(o => o.GetDistricts(newCleanerModel.Districts)).ReturnsAsync(newCleanerModel.Districts);
         //when
         await _sut.UpdateCleaner(newCleanerModel, cleaner.Id, userValue);
 
