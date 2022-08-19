@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using YogurtCleaning.Business;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.DataLayer.Entities;
@@ -199,48 +200,36 @@ public class OrdersControllerTests
     }
 
     [Test]
-    public async Task UpdateOrderStatus_WhenValidRequestPassed_NoContentReceived()
+    public async Task UpdateOrder_WhenValidRequestPassed_NoContentReceived()
     {
         //given
-        var status = Status.Created;
-        var expectedOrder = new Order()
+        var order = new Order()
         {
             Id = 1,
-            IsDeleted = false
         };
 
-        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
+        var newOrderModel = new OrderUpdateRequest()
+        {
+            StartTime = DateTime.Now,
+            ServicesIds = new List<int>() { 1, 2, 3 },
+            BundlesIds = new List<int>() { 1, 2, 3 },
+            CleanersBandIds = new List<int>() { 1, 2, 3 },
+        };
 
-        //when
-        var actual = await _sut.UpdateOrderStatus(expectedOrder.Id, status);
+
+    //when
+    var actual = await _sut.UpdateOrder(newOrderModel, order.Id);
 
         //then
         var actualResult = actual as NoContentResult;
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
-        _ordersServiceMock.Verify(c => c.UpdateOrderStatus(expectedOrder.Id, status), Times.Once);
-    }
+        _ordersServiceMock.Verify(c => c.UpdateOrder(It.Is<OrderBusinessModel>(c =>
+        c.StartTime == newOrderModel.StartTime &&
+        c.Services.Count == newOrderModel.ServicesIds.Count &&
+        c.Bundles.Count == newOrderModel.BundlesIds.Count &&
+        c.CleanersBand.Count == newOrderModel.CleanersBandIds.Count
+        ), It.Is<int>(i => i == order.Id), It.IsAny<UserValues>()), Times.Once);
 
-    [Test]
-    public async Task UpdateOrderPaymentStatus_WhenValidRequestPassed_NoContentReceived()
-    {
-        //given
-        var paymentStatus = PaymentStatus.Paid;
-        var expectedOrder = new Order()
-        {
-            Id = 1,
-            IsDeleted = false
-        };
-
-        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
-
-        //when
-        var actual = await _sut.UpdateOrderPaymentStatus(expectedOrder.Id, paymentStatus);
-
-        //then
-        var actualResult = actual as NoContentResult;
-
-        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
-        _ordersServiceMock.Verify(c => c.UpdateOrderPaymentStatus(expectedOrder.Id, paymentStatus), Times.Once);
     }
 }

@@ -40,10 +40,27 @@ public class OrdersServiceTests
     }
 
     [Fact]
-    public void UpdateOrder_WhenUpdatePassed_ThenPropertiesValuesChandged()
+    public async Task UpdateOrder_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
-
+        var cleaners = new List<Cleaner>
+        {
+            new Cleaner()
+            {
+                Id = 11,
+                Schedule = Schedule.FullTime,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            },
+            new Cleaner()
+            {
+                Id = 13,
+                Schedule = Schedule.ShiftWork,
+                Orders = new List<Order>(),
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+            }
+        };
+        var bundles = new List<BundleBusinessModel> { new() { Id = 2, Name = "qwe" }, new() { Id = 22, Name = "qwa" } };
         var order = new Order
         {
             Id = 10,
@@ -51,26 +68,28 @@ public class OrdersServiceTests
             CleaningObject = new() { Id = 56 },
             Status = Status.Created,
             StartTime = DateTime.Now.AddDays(1),
-            Bundles = new List<Bundle> { new Bundle { Id = 2, Name = "qwe" } },
+            Bundles = new List<Bundle>() { _mapper.Map<Bundle>(bundles[0]) },
             Services = null,
             CleanersBand = new List<Cleaner> { new() { Id = 654 } },
             IsDeleted = false
         };
 
-        var updatedOrder = new Order
+        var updatedOrder = new OrderBusinessModel
         {
-            Status = Status.Edited,
+
             StartTime = DateTime.Now.AddDays(2),
             UpdateTime = DateTime.Now,
-            Bundles = new List<Bundle> { new() { Id = 2, Name = "qwe" }, new() { Id = 22, Name = "qwa" } },
-            Services = new List<Service> { new Service { Id = 3456 } },
-            CleanersBand = new List<Cleaner> { new() { Id = 654 }, new() { Id = 777 } }
+            Bundles = bundles,
+            Services = new List<Service> { new Service { Id = 3456} },
+            CleanersBand = new List<Cleaner> { new() { Id = 654 }, new() { Id = 777} }
         };
-
+        userValue = new() { Id = 11 };
         _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
-
+        _mockBundlesRepository.Setup(o => o.GetBundle(updatedOrder.Bundles[0].Id)).ReturnsAsync(_mapper.Map<Bundle>(bundles[0]));
+        _mockBundlesRepository.Setup(o => o.GetBundle(updatedOrder.Bundles[1].Id)).ReturnsAsync(_mapper.Map<Bundle>(bundles[1]));
+        _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(updatedOrder)).ReturnsAsync(cleaners);
         // when
-        _sut.UpdateOrder(updatedOrder, order.Id);
+        await _sut.UpdateOrder(updatedOrder, order.Id, userValue);
 
         // then
         _mockOrdersRepository.Verify(o => o.UpdateOrder(
@@ -78,10 +97,8 @@ public class OrdersServiceTests
                 i => i.Id == order.Id
                 && i.Client == order.Client
                 && i.CleaningObject == order.CleaningObject
-                && i.Status == updatedOrder.Status
                 && i.StartTime == updatedOrder.StartTime
                 && i.UpdateTime == updatedOrder.UpdateTime
-                && i.Bundles == updatedOrder.Bundles
                 && i.Services == updatedOrder.Services
                 && i.CleanersBand == updatedOrder.CleanersBand)),
             Times.Once);

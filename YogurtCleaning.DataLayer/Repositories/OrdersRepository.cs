@@ -42,6 +42,7 @@ public class OrdersRepository : IOrdersRepository
     {
         modelToUpdate.UpdateTime = DateTime.Now;
         _context.Orders.Update(modelToUpdate);
+        modelToUpdate.UpdateTime = DateTime.Now;
         await _context.SaveChangesAsync();
     }
 
@@ -49,6 +50,7 @@ public class OrdersRepository : IOrdersRepository
     {
         var order = await GetOrder(orderId);
         order.Status = statusToUpdate;
+        order.UpdateTime = DateTime.Now;
         await _context.SaveChangesAsync();
     }
 }

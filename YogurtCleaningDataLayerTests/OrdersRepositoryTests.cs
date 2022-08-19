@@ -12,8 +12,7 @@ public class OrdersRepositoryTests
     {
         _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
             .UseInMemoryDatabase(databaseName: "TestDbForOrders")
-            .Options;
-        
+            .Options;     
     }
 
     [Fact]
@@ -32,7 +31,8 @@ public class OrdersRepositoryTests
         var actual = await sut.CreateOrder(order);
 
         //then
-        Assert.True(actual > 0);        
+        Assert.True(actual > 0);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class OrdersRepositoryTests
         var sut = new OrdersRepository(context);
         var order = new Order
         {
-            Id = 1,
+            Id = 8,
             Client = new() 
             { 
                 Id = 1,
@@ -294,6 +294,7 @@ public class OrdersRepositoryTests
             EndTime = DateTime.Now,
             IsDeleted = false
         };
+        context.Database.EnsureDeleted();
         context.Orders.Add(oldOrder);
         context.SaveChanges();
         oldOrder.Price = 10;

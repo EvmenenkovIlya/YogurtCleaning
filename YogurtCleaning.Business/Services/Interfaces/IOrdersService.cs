@@ -9,7 +9,7 @@ public interface IOrdersService
 {
     Task<Order?> GetOrder(int id, UserValues userValues);
     Task<List<Service>> GetOrderServices(int id, UserValues userValues);
-    Task UpdateOrder(Order modelToUpdate, int id);
+    Task UpdateOrder(OrderBusinessModel modelToUpdate, int id, UserValues userValues);
     Task UpdateOrderStatus(int orderId, Status status); 
     Task UpdateOrderPaymentStatus(int orderId, PaymentStatus paymentStatus);
     Task DeleteOrder(int id, UserValues userValues);
