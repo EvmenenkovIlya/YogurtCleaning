@@ -37,12 +37,9 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public async Task <ActionResult<OrderResponse>> GetOrder(int orderId)
     {
-        var result = await _ordersRepository.GetOrder(orderId);
-
-        if (result == null)
-            return NotFound();
-        else
-            return Ok(result);
+        _userValues = this.GetClaimsValue();
+        var result = await _ordersService.GetOrder(orderId, _userValues);
+        return Ok(_mapper.Map<OrderResponse>(result));
     }
 
     [AuthorizeRoles]

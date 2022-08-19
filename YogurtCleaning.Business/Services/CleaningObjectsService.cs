@@ -57,11 +57,8 @@ public class CleaningObjectsService : ICleaningObjectsService
     public async Task UpdateCleaningObject(CleaningObject modelToUpdate, int id, UserValues userValues)
     {
         var cleaningObject = await _cleaningObjectsRepository.GetCleaningObject(id);
-        if (cleaningObject == null)
-        {
-            throw new BadRequestException($"Cleaninig object {id} not found");
-        }
-        AuthorizeEnitiyAccess(cleaningObject, userValues);
+        Validator.CheckThatObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
+        Validator.AuthorizeEnitiyAccess(cleaningObject, userValues);
 
         cleaningObject.NumberOfRooms = modelToUpdate.NumberOfRooms;
         cleaningObject.NumberOfBathrooms = modelToUpdate.NumberOfBathrooms;
@@ -69,7 +66,8 @@ public class CleaningObjectsService : ICleaningObjectsService
         cleaningObject.NumberOfBalconies = modelToUpdate.NumberOfBalconies;
         cleaningObject.Address = modelToUpdate.Address;
         cleaningObject.Square = modelToUpdate.Square;
-
+        cleaningObject.District = await _cleaningObjectsRepository.GetDistrict(modelToUpdate.District.Id);
+        Validator.CheckThatObjectNotNull(cleaningObject.District, ExceptionsErrorMessages.DistrictNotFound);
         await _cleaningObjectsRepository.UpdateCleaningObject(cleaningObject);
     }
 
@@ -77,7 +75,7 @@ public class CleaningObjectsService : ICleaningObjectsService
     {
         var cleaningObject = await _cleaningObjectsRepository.GetCleaningObject(id);
         Validator.CheckThatObjectNotNull(cleaningObject, ExceptionsErrorMessages.CleaningObjectNotFound);
-        AuthorizeEnitiyAccess(cleaningObject, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaningObject, userValues);
         await _cleaningObjectsRepository.DeleteCleaningObject(cleaningObject);
     }
 

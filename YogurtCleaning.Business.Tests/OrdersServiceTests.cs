@@ -290,8 +290,11 @@ public class OrdersServiceTests
         _mockOrdersRepository.Verify(c => c.GetAllOrders(), Times.Once);
     }
 
-    [Fact]
-    public async Task GetCleaningObject_WhenAdminGetCleaningObject_CleaningObjectReceived()
+    [Theory]
+    [InlineData(Role.Cleaner)]
+    [InlineData(Role.Client)]
+    [InlineData(Role.Admin)]
+    public async Task GetCleaningObject_WhenDifferentRolesGetCleaningObjectFromTheirOrder_CleaningObjectReceived(Role role)
     {
         //given
         var order = new Order()
@@ -308,7 +311,7 @@ public class OrdersServiceTests
             IsDeleted = false
         };
         _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
-        userValue = new UserValues() { Id = 7, Role = Role.Admin };
+        userValue = new UserValues() { Id = 1, Role = role };
 
         //when
         var actual = await _sut.GetCleaningObject(order.Id, userValue);
@@ -318,8 +321,10 @@ public class OrdersServiceTests
         _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
     }
 
-    [Fact]
-    public async Task GetCleaningObject_WhenClientGetHisCleaningObject_CleaningObjectReceived()
+    [Theory]
+    [InlineData(Role.Cleaner)]
+    [InlineData(Role.Client)]
+    public async Task GetCleaningObject_WhenSomeoneElseGetCleaningObject_ThrowAccessException(Role role)
     {
         //given
         var order = new Order()
@@ -336,43 +341,19 @@ public class OrdersServiceTests
             IsDeleted = false
         };
         _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
-        userValue = new UserValues() { Id = 1, Role = Role.Client };
-
-        //when
-        var actual = await _sut.GetCleaningObject(order.Id, userValue);
-
-        //then
-        Assert.NotNull(actual);
-        _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
-    }
-
-    [Fact]
-    public async Task GetCleaningObject_WhenClientGetSomeoneElseCleaningObject_CleaningObjectReceived()
-    {
-        //given
-        var order = new Order()
-        {
-            Id = 1,
-            Client = new Client() { Id = 1 },
-            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
-            CleaningObject = new CleaningObject() { Id = 1 },
-            StartTime = DateTime.Now,
-            EndTime = DateTime.Now,
-            UpdateTime = DateTime.Now,
-            Price = 20,
-            Status = Status.Created,
-            IsDeleted = false
-        };
-        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
-        userValue = new UserValues() { Id = 2, Role = Role.Client };
+        userValue = new UserValues() { Id = 7, Role = role };
         //when
 
         //then
         await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCleaningObject(order.Id, userValue));
     }
 
-    [Fact]
-    public async Task GetCleaningObject_WhenCleanerGetHisCleaningObject_CleaningObjectReceived()
+
+    [Theory]
+    [InlineData(Role.Cleaner)]
+    [InlineData(Role.Client)]
+    [InlineData(Role.Admin)]
+    public async Task GetOrder_WhenDifferentRolesGetTheirOrder_OrderReceived(Role role)
     {
         //given
         var order = new Order()
@@ -389,18 +370,20 @@ public class OrdersServiceTests
             IsDeleted = false
         };
         _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
-        userValue = new UserValues() { Id = 1, Role = Role.Cleaner };
+        userValue = new UserValues() { Id = 1, Role = role };
 
         //when
-        var actual = await _sut.GetCleaningObject(order.Id, userValue);
+        var actual = await _sut.GetOrder(order.Id, userValue);
 
         //then
         Assert.NotNull(actual);
         _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
     }
 
-    [Fact]
-    public async Task GetCleaningObject_WhenCleanerGetSomeoneElseCleaningObject_CleaningObjectReceived()
+    [Theory]
+    [InlineData(Role.Cleaner)]
+    [InlineData(Role.Client)]
+    public async Task GetOrder_WhenSomeoneElseGetOrder_ThrowAccessException(Role role)
     {
         //given
         var order = new Order()
@@ -417,10 +400,10 @@ public class OrdersServiceTests
             IsDeleted = false
         };
         _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
-        userValue = new UserValues() { Id = 7, Role = Role.Cleaner };
+        userValue = new UserValues() { Id = 7, Role = role };
         //when
 
         //then
-        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetCleaningObject(order.Id, userValue));
+        await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetOrder(order.Id, userValue));
     }
 }

@@ -361,10 +361,10 @@ YogurtCleaning.Business/YogurtCleaning.Business.v3.ncrunchproject
 
 YogurtCleaning.DataLayer/YogurtCleaning.DataLayer.v3.ncrunchproject
 
-YogurtCleaning.Tests/YogurtCleaning.API.Tests.v3.ncrunchproject
-
 YogurtCleaning.v3.ncrunchsolution
 
 YogurtCleaningDataLayerTests/YogurtCleaning.DataLayer.Tests.v3.ncrunchproject
+
+YogurtCleaning.Tests/YogurtCleaning.API.Tests.v3.ncrunchproject
 
 YogutrCleaning/YogurtCleaning.API.v3.ncrunchproject
