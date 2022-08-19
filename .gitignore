@@ -348,3 +348,23 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+YogutrCleaning/appsettings.Production.json
+
+YogutrCleaning/Properties/launchSettings.json
+
+YogutrCleaning/appsettings.Development.json
+
+YogurtCleaning.Business.Tests/YogurtCleaning.Business.Tests.v3.ncrunchproject
+
+YogurtCleaning.Business/YogurtCleaning.Business.v3.ncrunchproject
+
+YogurtCleaning.DataLayer/YogurtCleaning.DataLayer.v3.ncrunchproject
+
+YogurtCleaning.v3.ncrunchsolution
+
+YogurtCleaningDataLayerTests/YogurtCleaning.DataLayer.Tests.v3.ncrunchproject
+
+YogurtCleaning.Tests/YogurtCleaning.API.Tests.v3.ncrunchproject
+
+YogutrCleaning/YogurtCleaning.API.v3.ncrunchproject

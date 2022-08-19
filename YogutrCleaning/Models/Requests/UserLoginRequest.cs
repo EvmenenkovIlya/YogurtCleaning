@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.Infrastructure;
 
 namespace YogurtCleaning.Models;
 
 public class UserLoginRequest
 {
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.PasswordIsRequired)]
     public string Password { get; set; }
-    [Required]
+    [Required(ErrorMessage = ApiErrorMessages.EmailIsRequired)]
+    [EmailAddress(ErrorMessage = ApiErrorMessages.EmailNotValid)]
     public string Email { get; set; }
 }
