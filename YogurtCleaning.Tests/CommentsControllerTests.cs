@@ -5,6 +5,7 @@ using Moq;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API.Tests;
@@ -13,11 +14,13 @@ public class CommentsControllerTests
 {
     private CommentsController _sut;
     private Mock<ICommentsService> _mockCommentsService;
+    private Mock<ICommentsRepository> _mockCommentsRepository;
     private IMapper _mapper;
 
     [SetUp]
     public void Setup()
     {
+        _mockCommentsRepository = new Mock<ICommentsRepository>();
         _mockCommentsService = new Mock<ICommentsService>();
         _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
         _sut = new CommentsController(_mockCommentsService.Object, _mapper);
@@ -111,5 +114,27 @@ public class CommentsControllerTests
             Assert.That(commentsResponse[1].Rating, Is.EqualTo(comments[1].Rating));
         });
         _mockCommentsService.Verify(c => c.GetComments(), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteCommentById_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var expectedComment = new Comment()
+        {
+            Id = 1,           
+            IsDeleted = false
+        };
+
+        _mockCommentsRepository.Setup(o => o.GetCommentById(expectedComment.Id)).ReturnsAsync(expectedComment);
+
+        //when
+        var actual = await _sut.DeleteComment(expectedComment.Id);
+
+        //then
+        var actualResult = actual as NoContentResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _mockCommentsService.Verify(c => c.DeleteComment(expectedComment.Id), Times.Once);
     }
 }

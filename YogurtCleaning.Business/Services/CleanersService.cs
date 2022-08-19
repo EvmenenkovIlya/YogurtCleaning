@@ -1,6 +1,7 @@
 ﻿using YogurtCleaning.Business.Exceptions;
 using YogurtCleaning.Business.Models;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.Business.Services;
@@ -140,7 +141,14 @@ public class CleanersService : ICleanersService
                 freeCleaners.Add(cleaner);
             }
         }
-        return freeCleaners;
+        if (order.EndTime > order.StartTime.Date.AddHours(18))
+        {
+            freeCleaners = freeCleaners.FindAll(c => c.Schedule == Schedule.ShiftWork).ToList();
+        }
+        if (freeCleaners.Count(c => c.Districts.Contains(order.CleaningObject.District)) < order.CleanersCount)
+            return freeCleaners;
+        else
+            return freeCleaners.Where(c => c.Districts.Contains(order.CleaningObject.District)).ToList();
     }
 
     public async Task UpdateCleanerRating(int id)

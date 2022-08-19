@@ -579,10 +579,11 @@ public class CleanersServiceFacts
     public async Task GetFreeCleanersForOrder_WhenAreFreeCleaners_ThenCleanersRecieved()
     {
         //given
+        var district = new District() { Id = DistrictEnum.Vasileostrovskiy };
         var order = new OrderBusinessModel
         {
             Client = new() { Id = 1 },
-            CleaningObject = new() { Id = 56 },
+            CleaningObject = new() { Id = 56 , District = district },
             Status = Status.Created,
             StartTime = new DateTime(2022, 8, 1, 10, 00, 00),
             EndTime = new DateTime(2022, 8, 1, 18, 00, 00),
@@ -601,7 +602,8 @@ public class CleanersServiceFacts
                 BirthDate = DateTime.Today,
                 Schedule = Schedule.FullTime,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = new(){ district }
             },
             new Cleaner()
             {
@@ -613,7 +615,8 @@ public class CleanersServiceFacts
                 BirthDate = DateTime.Today,
                 Schedule = Schedule.FullTime,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = new(){ district }
             },
             new Cleaner()
             {
@@ -625,7 +628,8 @@ public class CleanersServiceFacts
                 BirthDate = DateTime.Today,
                 Schedule = Schedule.ShiftWork,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = new(){ district }
             }
         };
         _cleanersRepositoryMock.Setup(o => o.GetWorkingCleanersForDate(order.StartTime)).ReturnsAsync(cleaners);

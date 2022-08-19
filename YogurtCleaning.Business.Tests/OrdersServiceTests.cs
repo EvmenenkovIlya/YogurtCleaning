@@ -32,10 +32,10 @@ public class OrdersServiceTests
             cfg.AddProfile(new BusinessMapperConfigStorage());
         });
         _mapper = mapper.CreateMapper();
-        _sut = new OrdersService(_mockOrdersRepository.Object, 
-            _mockCleanersService.Object, 
-            _mockClientsRepository.Object, 
-            _mockBundlesRepository.Object, 
+        _sut = new OrdersService(_mockOrdersRepository.Object,
+            _mockCleanersService.Object,
+            _mockClientsRepository.Object,
+            _mockBundlesRepository.Object,
             _mockEmailSender.Object, _mapper);
     }
 
@@ -64,13 +64,13 @@ public class OrdersServiceTests
         var order = new Order
         {
             Id = 10,
-            Client = new() { Id = 11},
-            CleaningObject = new() { Id = 56},
+            Client = new() { Id = 11 },
+            CleaningObject = new() { Id = 56 },
             Status = Status.Created,
             StartTime = DateTime.Now.AddDays(1),
             Bundles = new List<Bundle>() { _mapper.Map<Bundle>(bundles[0]) },
             Services = null,
-            CleanersBand = new List<Cleaner> {new() { Id = 654 } },
+            CleanersBand = new List<Cleaner> { new() { Id = 654 } },
             IsDeleted = false
         };
 
@@ -109,6 +109,7 @@ public class OrdersServiceTests
     public async Task AddOrderTest_WhenCleanersIsEnough_ThenOrderStatusIsCreated()
     {
         // given
+        List<District> districts = new() { new() { Id = DistrictEnum.Vasileostrovskiy, Name = "Vasileostrovskiy" }, new() { Id = DistrictEnum.Kalininsky, Name = "Kalininsky" } };
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -116,23 +117,25 @@ public class OrdersServiceTests
                 Id = 11,
                 Schedule = Schedule.FullTime,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = districts,
             },
             new Cleaner()
             {
                 Id = 13,
                 Schedule = Schedule.ShiftWork,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = new() { new() { Id = DistrictEnum.Admiralteisky, Name = "Admiralteisky" } }
             }
         };
 
         var order = new OrderBusinessModel
         {
             Client = new() { Id = 11 },
-            CleaningObject = new() { Id = 56 },
+            CleaningObject = new() { Id = 56, District = districts[0] },
             StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
-            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2} },
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2 } },
             Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } },
             TotalDuration = 8,
             CleanersCount = 2,
@@ -179,7 +182,7 @@ public class OrdersServiceTests
             Client = new() { Id = 11 },
             CleaningObject = new() { Id = 56 },
             StartTime = new DateTime(2022, 8, 1, 14, 00, 00),
-            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2} },
+            Bundles = new List<BundleBusinessModel> { new BundleBusinessModel { Id = 2 } },
             Services = new List<Service> { new Service { Id = 42, Duration = 2, Price = 10 } },
             TotalDuration = 8,
             CleanersCount = 2,
@@ -405,5 +408,82 @@ public class OrdersServiceTests
 
         //then
         await Assert.ThrowsAsync<Exceptions.AccessException>(() => _sut.GetOrder(order.Id, userValue));
+    }
+
+    [Fact]
+    public async Task UpdateOrderStatus_WhenOrderInDb_OrderUpdated()
+    {
+        //given
+        var status = Status.Canceled;
+        var order = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+
+            Price = 20,
+            Status = Status.Created,
+            IsDeleted = false
+        };
+        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
+
+        //when
+        await _sut.UpdateOrderStatus(order.Id, status);
+
+        //then
+        _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
+        _mockOrdersRepository.Verify(c => c.UpdateOrder(It.Is<Order>(i => i.Status == status)), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateOrderPaymentStatus_WhenOrderInDb_OrderUpdated()
+    {
+        var paymentStatus = PaymentStatus.Paid;
+        var order = new Order()
+        {
+            Id = 1,
+            Client = new Client() { Id = 1 },
+            CleanersBand = new List<Cleaner>() { new Cleaner() { Id = 1 }, new Cleaner() { Id = 2 } },
+            CleaningObject = new CleaningObject() { Id = 1 },
+
+            Price = 20,
+            PaymentStatus = PaymentStatus.Unpaid,
+            IsDeleted = false
+        };
+        _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
+
+        //when
+        await _sut.UpdateOrderPaymentStatus(order.Id, paymentStatus);
+
+        //then
+        _mockOrdersRepository.Verify(c => c.GetOrder(order.Id), Times.Once);
+        _mockOrdersRepository.Verify(c => c.UpdateOrder(It.Is<Order>(i => i.PaymentStatus == paymentStatus)), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateOrderStatus_WhenOrderNotInDb_ThrowBadRequestException()
+    {
+        //given
+        var orderIdNotInDb = 1;
+        var status = Status.Canceled;
+
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.UpdateOrderStatus(orderIdNotInDb, status));
+    }
+
+    [Fact]
+    public async Task UpdateOrderPaymentStatus_WhenOrderNotInDb_ThrowBadRequestException()
+    {
+        //given
+        var orderIdNotInDb = 1;
+        var status = PaymentStatus.Paid;
+
+        //when
+
+        //then
+        await Assert.ThrowsAsync<Exceptions.BadRequestException>(() => _sut.UpdateOrderPaymentStatus(orderIdNotInDb, status));
     }
 }

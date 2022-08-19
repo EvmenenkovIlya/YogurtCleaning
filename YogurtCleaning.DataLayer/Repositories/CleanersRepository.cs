@@ -13,11 +13,11 @@ public class CleanersRepository : ICleanersRepository
         _context = context;
     }
 
-    public async Task<Cleaner?> GetCleaner(int clientId) => await _context.Cleaners.FirstOrDefaultAsync(o => o.Id == clientId);
+    public async Task<Cleaner?> GetCleaner(int clientId) => await _context.Cleaners.Include(c => c.Districts).Include(c => c.Services).FirstOrDefaultAsync(o => o.Id == clientId);
 
     public async Task<List<Cleaner>> GetAllCleaners()
     {
-        return await _context.Cleaners.AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
+        return await _context.Cleaners.Include(c => c.Districts).Include(c => c.Services).AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
     }
 
     public async Task<int> CreateCleaner(Cleaner cleaner)

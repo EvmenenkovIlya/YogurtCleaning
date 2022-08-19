@@ -12,8 +12,7 @@ public class OrdersRepositoryTests
     {
         _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
             .UseInMemoryDatabase(databaseName: "TestDbForOrders")
-            .Options;
-        
+            .Options;     
     }
 
     [Fact]
@@ -32,7 +31,8 @@ public class OrdersRepositoryTests
         var actual = await sut.CreateOrder(order);
 
         //then
-        Assert.True(actual > 0);        
+        Assert.True(actual > 0);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class OrdersRepositoryTests
         var sut = new OrdersRepository(context);
         var order = new Order
         {
-            Id = 1,
+            Id = 8,
             Client = new() 
             { 
                 Id = 1,
@@ -116,10 +116,10 @@ public class OrdersRepositoryTests
         {
             new Order()
             {
-                 Id = 1,
+                 Id = 4,
             Client = new()
             {
-                Id = 1,
+                Id = 4,
                 FirstName = "Madara",
                 LastName = "Smith",
                 Email = "ychiha@gmail.japan",
@@ -129,7 +129,7 @@ public class OrdersRepositoryTests
             },
             CleaningObject = new()
             {
-                Id = 1,
+                Id = 4,
                 NumberOfRooms = 1000,
                 NumberOfBathrooms = 1,
                 Square = 1,
@@ -140,7 +140,7 @@ public class OrdersRepositoryTests
             },
             CleanersBand = new() { new()
             {
-                Id = 1,
+                Id = 4,
                 FirstName = "Adam",
                 LastName = "Smith",
                 Email = "ccc@gmail.c",
@@ -151,14 +151,14 @@ public class OrdersRepositoryTests
             } },
             Bundles = new() { new()
             {
-                Id = 1,
+                Id = 4,
                 Name = "qweqwe",
                 Price = 2000,
                 Measure = Measure.Room,
             } },
             Services = new() { new()
             {
-                Id = 1,
+                Id = 4,
                 Name = "qwe",
                 Price = 1000,
                 Unit = "Unit",
@@ -168,10 +168,10 @@ public class OrdersRepositoryTests
             },
             new Order()
             {
-                 Id = 2,
+                 Id = 3,
             Client = new()
             {
-                Id = 2,
+                Id = 3,
                 FirstName = "Madara",
                 LastName = "Smith",
                 Email = "ychiha@gmail.japan",
@@ -181,7 +181,7 @@ public class OrdersRepositoryTests
             },
             CleaningObject = new()
             {
-                Id = 2,
+                Id = 3,
                 NumberOfRooms = 1000,
                 NumberOfBathrooms = 1,
                 Square = 1,
@@ -192,7 +192,7 @@ public class OrdersRepositoryTests
             },
             CleanersBand = new() { new()
             {
-                Id = 2,
+                Id = 3,
                 FirstName = "Adam",
                 LastName = "Smith",
                 Email = "ccc@gmail.c",
@@ -203,14 +203,14 @@ public class OrdersRepositoryTests
             } },
             Bundles = new() { new()
             {
-                Id = 2,
+                Id = 3,
                 Name = "qweqwe",
                 Price = 2000,
                 Measure = Measure.Room,
             } },
             Services = new() { new()
             {
-                Id = 2,
+                Id = 3,
                 Name = "qwe",
                 Price = 1000,
                 Unit = "Unit",
@@ -294,6 +294,7 @@ public class OrdersRepositoryTests
             EndTime = DateTime.Now,
             IsDeleted = false
         };
+        context.Database.EnsureDeleted();
         context.Orders.Add(oldOrder);
         context.SaveChanges();
         oldOrder.Price = 10;
@@ -306,144 +307,6 @@ public class OrdersRepositoryTests
         //then
         Assert.NotEqual(15, result.Price);
         Assert.Equal(result.EndTime, DateTime.MinValue);
-        context.Database.EnsureDeleted();
-    }
-
-    [Fact]
-    public async Task GetAllServicesByOrder_WhenOrderHasServices_ThenGetAllServicesByOrder()
-    {
-        // given
-        var context = new YogurtCleaningContext(_dbContextOptions);
-        var sut = new OrdersRepository(context);
-        var orders = new List<Order>()
-        {
-            new Order()
-            {
-                Id = 6,
-                Client = new()
-            {
-                Id = 1,
-                FirstName = "Madara",
-                LastName = "Smith",
-                Email = "ychiha@gmail.japan",
-                Password = "1234qwerty",
-                Phone = "899988873456",
-                IsDeleted = false
-            },
-            CleaningObject = new()
-            {
-                Id = 1,
-                NumberOfRooms = 1000,
-                NumberOfBathrooms = 1,
-                Square = 1,
-                NumberOfWindows = 1,
-                NumberOfBalconies = 0,
-                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
-                IsDeleted = false
-            },
-            CleanersBand = new() { new()
-            {
-                Id = 1,
-                FirstName = "Adam",
-                LastName = "Smith",
-                Email = "ccc@gmail.c",
-                Password = "1234qwerty",
-                Passport = "0000654321",
-                Phone = "89998887766",
-                IsDeleted = false
-            } },
-            Bundles = new() { new()
-            {
-                Id = 1,
-                Name = "qweqwe",
-                Price = 2000,
-                Measure = Measure.Room,
-            } },
-                Services = new List<Service>()
-                {
-                    new Service()
-                    {
-                        Id = 1,
-                        Name = "Wash Tables",
-                        Unit = "unit",
-                        IsDeleted = false
-                    },
-                    new Service()
-                    {
-                        Id = 2,
-                        Name = "Wash floor",
-                        Unit = "unit",
-                        IsDeleted = false
-                    }
-                },
-                IsDeleted = false
-            },
-            new Order()
-            {
-                Id = 7,
-                Client = new()
-            {
-                Id = 3,
-                FirstName = "Madara",
-                LastName = "Smith",
-                Email = "ychiha@gmail.japan",
-                Password = "1234qwerty",
-                Phone = "899988873456",
-                IsDeleted = false
-            },
-            CleaningObject = new()
-            {
-                Id = 3,
-                NumberOfRooms = 1000,
-                NumberOfBathrooms = 1,
-                Square = 1,
-                NumberOfWindows = 1,
-                NumberOfBalconies = 0,
-                Address = "г. Москва, ул. Льва Толстого, д. 16, кв. 10",
-                IsDeleted = false
-            },
-            CleanersBand = new() { new()
-            {
-                Id = 3,
-                FirstName = "Adam",
-                LastName = "Smith",
-                Email = "ccc@gmail.c",
-                Password = "1234qwerty",
-                Passport = "0000654321",
-                Phone = "89998887766",
-                IsDeleted = false
-            } },
-            Bundles = new() { new()
-            {
-                Id = 3,
-                Name = "qweqwe",
-                Price = 2000,
-                Measure = Measure.Room,
-            } },
-                Services = new List<Service>()
-                {
-                    new Service()
-                    {
-                        Id = 3,
-                        Name = "Wash wall",
-                        Unit = "unit",
-                        IsDeleted = false
-                    }
-                },
-                IsDeleted = false
-            }
-        };
-        context.Orders.AddRange(orders);
-        context.SaveChanges();
-
-        // when
-        var result = await sut.GetServices(orders[0].Id);
-
-        //then
-        Assert.NotNull(result);
-        Assert.Equal(typeof(List<Service>), result.GetType());
-        Assert.True(result.Count() == 2);
-        Assert.False(result[0].IsDeleted);
         context.Database.EnsureDeleted();
     }
 

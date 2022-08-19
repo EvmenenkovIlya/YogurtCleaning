@@ -39,7 +39,7 @@ public class OrdersControllerTests
         var expectedOrder = new Order()
         {
             Id = 1,
-            
+
             IsDeleted = false
         };
 
