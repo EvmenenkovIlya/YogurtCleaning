@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using YogurtCleaning.Business;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.DataLayer.Entities;
@@ -195,6 +196,40 @@ public class OrdersControllerTests
             Assert.That(orderResponse.Status, Is.EqualTo(expectedOrder.Status));
         });
         _ordersServiceMock.Verify(x => x.GetOrder(expectedOrder.Id, It.IsAny<UserValues>()), Times.Once);
+
+    }
+
+    [Test]
+    public async Task UpdateOrder_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+        };
+
+        var newOrderModel = new OrderUpdateRequest()
+        {
+            StartTime = DateTime.Now,
+            ServicesIds = new List<int>() { 1, 2, 3 },
+            BundlesIds = new List<int>() { 1, 2, 3 },
+            CleanersBandIds = new List<int>() { 1, 2, 3 },
+        };
+
+
+    //when
+    var actual = await _sut.UpdateOrder(newOrderModel, order.Id);
+
+        //then
+        var actualResult = actual as NoContentResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _ordersServiceMock.Verify(c => c.UpdateOrder(It.Is<OrderBusinessModel>(c =>
+        c.StartTime == newOrderModel.StartTime &&
+        c.Services.Count == newOrderModel.ServicesIds.Count &&
+        c.Bundles.Count == newOrderModel.BundlesIds.Count &&
+        c.CleanersBand.Count == newOrderModel.CleanersBandIds.Count
+        ), It.Is<int>(i => i == order.Id), It.IsAny<UserValues>()), Times.Once);
 
     }
 }

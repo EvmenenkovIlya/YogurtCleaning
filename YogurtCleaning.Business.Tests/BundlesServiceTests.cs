@@ -56,25 +56,28 @@ public class BundlesServiceTests
     public async Task UpdateBundle_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
+        var updateServices = new List<Service>() { new Service() { Id = 1, RoomType = RoomType.Apartment} };
         var bundle = new Bundle
         {
             Id = 10,
             Name = "qwe",
             Price = 1000,
+            RoomType = RoomType.Apartment,
             Measure = Measure.Room,
             IsDeleted = false,
-            Services = new() { new() { Id = 1 }, new() { Id = 2 } } 
+            Services = updateServices
         };
 
         var updatedBundle = new Bundle
         {
             Name = "qaz",
             Price = 9999,
+            RoomType = RoomType.Apartment,
             Measure = Measure.Unit,
             IsDeleted = false,
-            Services = new() { new() { Id = 3 }, new() { Id = 4 } }
+            Services = updateServices
         };
-
+        _bundlesRepositoryMock.Setup(b => b.GetServices(updateServices)).ReturnsAsync(updateServices);
         _bundlesRepositoryMock.Setup(b => b.GetBundle(bundle.Id)).ReturnsAsync(bundle);
         _bundlesRepositoryMock.Setup(b => b.GetServices(updatedBundle.Services)).ReturnsAsync(updatedBundle.Services);
 

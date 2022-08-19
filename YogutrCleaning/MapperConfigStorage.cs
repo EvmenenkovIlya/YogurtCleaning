@@ -25,8 +25,12 @@ public class MapperConfigStorage : Profile
 
 		CreateMap<Order, OrderResponse>();
 		CreateMap<OrderUpdateRequest, Order>()
-			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => src.CleanersBandIds.Select(t => new Cleaner { Id = t }).ToList()))
+			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => src.CleanersBandIds!.Select(t => new Cleaner { Id = t }).ToList()))
 			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new Bundle { Id = t }).ToList()))
+			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
+		CreateMap<OrderUpdateRequest, OrderBusinessModel>()
+			.ForMember(o => o.CleanersBand, opt => opt.MapFrom(src => src.CleanersBandIds!.Select(t => new Cleaner { Id = t }).ToList()))
+			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new BundleBusinessModel { Id = t }).ToList()))
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
 		CreateMap<OrderRequest, OrderBusinessModel>()
 			.ForMember(o => o.CleaningObject, opt => opt.MapFrom(src => new CleaningObject() { Id = src.CleaningObjectId }))
@@ -52,8 +56,8 @@ public class MapperConfigStorage : Profile
 			.ForMember(c => c.Order, opt => opt.MapFrom(src => new Order() { Id = src.OrderId}));
 		CreateMap<Comment, CommentResponse>()
 			.ForMember(c => c.OrderId, opt => opt.MapFrom(src => src.Order.Id))
-			.ForMember(c => c.CleanerId, opt => opt.MapFrom(src => src.Cleaner.Id))
-			.ForMember(c => c.ClientId, opt => opt.MapFrom(src => src.Client.Id));
+			.ForMember(c => c.CleanerId, opt => opt.MapFrom(src => src.Cleaner!.Id))
+			.ForMember(c => c.ClientId, opt => opt.MapFrom(src => src.Client!.Id));
 		CreateMap<Comment, CommentAboutResponse>();
 	}
 }

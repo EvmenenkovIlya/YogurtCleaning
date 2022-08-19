@@ -45,4 +45,12 @@ public static class Validator
             throw new AccessException($"Access denied");
         }
     }
+
+    public static void AuthorizeEnitiyAccess(UserValues userValues, int id)
+    {
+        if (!(userValues.Id == id || userValues.Role == Role.Admin))
+        {
+            throw new AccessException($"Access denied");
+        }
+    }
 }

@@ -7,7 +7,7 @@ namespace YogurtCleaning.Business.Services;
 public interface IOrdersService
 {
     Task<Order?> GetOrder(int id, UserValues userValues);
-    Task UpdateOrder(Order modelToUpdate, int id);
+    Task UpdateOrder(OrderBusinessModel modelToUpdate, int id, UserValues userValues);
     Task DeleteOrder(int id, UserValues userValues);
     Task<List<Order>> GetAllOrders();
     Task<int> AddOrder(OrderBusinessModel order);
