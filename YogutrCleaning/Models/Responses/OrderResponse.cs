@@ -15,5 +15,4 @@ public class OrderResponse
     public List<BundleResponse> Bundles { get; set; }
     public List<ServiceResponse> Services { get; set; }
     public List<CleanerResponse>? CleanersBand { get; set; }
-    public List<CommentResponse> Comments { get; set; }
 }

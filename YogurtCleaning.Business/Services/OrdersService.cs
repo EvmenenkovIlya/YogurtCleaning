@@ -43,6 +43,7 @@ public class OrdersService : IOrdersService
     {
         var order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
+        Validator.AuthorizeEnitiyAccess(order!, userValues);
         return order;
     }
 
@@ -65,11 +66,7 @@ public class OrdersService : IOrdersService
     {
         var order = await GetOrder(orderId, userValues);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
-        if (!(userValues.Id == order.Client.Id || userValues.Role == Role.Admin || 
-            (order.CleanersBand.Find(c => c.Id == userValues.Id) != null) && userValues.Role == Role.Cleaner))
-        {
-            throw new AccessException($"Access denied");
-        }
+        Validator.AuthorizeEnitiyAccess(order, userValues);
         return order.CleaningObject;
     }
 
