@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using MailKit.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -9,7 +8,6 @@ using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API.Tests;
@@ -18,7 +16,7 @@ public class OrdersControllerTests
 {
     private OrdersController _sut;
     private Mock<IOrdersService> _ordersServiceMock;
-    private Mock<IOrdersRepository> _ordersRepositoryMock;
+
     private IMapper _mapper;
     private UserValues _userValues;
 
@@ -27,8 +25,7 @@ public class OrdersControllerTests
     {
         _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
         _ordersServiceMock = new Mock<IOrdersService>();
-        _ordersRepositoryMock = new Mock<IOrdersRepository>();
-        _sut = new OrdersController(_ordersRepositoryMock.Object, _mapper, _ordersServiceMock.Object);
+        _sut = new OrdersController(_mapper, _ordersServiceMock.Object);
         _userValues = new UserValues();
     }
 
@@ -42,8 +39,6 @@ public class OrdersControllerTests
 
             IsDeleted = false
         };
-
-        _ordersRepositoryMock.Setup(o => o.GetOrder(expectedOrder.Id)).ReturnsAsync(expectedOrder);
 
         //when
         var actual = await _sut.DeleteOrder(expectedOrder.Id);
@@ -207,7 +202,6 @@ public class OrdersControllerTests
         {
             Id = 1,
         };
-
         var newOrderModel = new OrderUpdateRequest()
         {
             StartTime = DateTime.Now,
@@ -215,7 +209,6 @@ public class OrdersControllerTests
             BundlesIds = new List<int>() { 1, 2, 3 },
             CleanersBandIds = new List<int>() { 1, 2, 3 },
         };
-
 
     //when
     var actual = await _sut.UpdateOrder(newOrderModel, order.Id);
@@ -230,6 +223,76 @@ public class OrdersControllerTests
         c.Bundles.Count == newOrderModel.BundlesIds.Count &&
         c.CleanersBand.Count == newOrderModel.CleanersBandIds.Count
         ), It.Is<int>(i => i == order.Id), It.IsAny<UserValues>()), Times.Once);
+    }
 
+    [Test]
+    public async Task UpdateOrderStatus_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+        };
+        var status = Status.Done;
+
+        //when
+        var actual = await _sut.UpdateOrderStatus(order.Id, status);
+
+        //then
+        var actualResult = actual as NoContentResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _ordersServiceMock.Verify(c => c.UpdateOrderStatus(order.Id, status), Times.Once);
+    }
+
+    [Test]
+    public async Task UpdateOrderPaymentStatus_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var order = new Order()
+        {
+            Id = 1,
+        };
+        var status = PaymentStatus.Paid;
+
+        //when
+        var actual = await _sut.UpdateOrderPaymentStatus(order.Id, status);
+
+        //then
+        var actualResult = actual as NoContentResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _ordersServiceMock.Verify(c => c.UpdateOrderPaymentStatus(order.Id, status), Times.Once);
+    }
+
+    [Test]
+    public async Task CreateOrder_WhenValidRequestPassed_CreatedResultReceived()
+    {
+        //given
+        int expectedId = 1;
+        var order = new OrderRequest()
+        {
+            StartTime = DateTime.UtcNow,
+            BundlesIds = new() { 1, 2, 3},
+            CleaningObjectId = 1,
+            ServicesIds = new() { 1, 2, 3 },
+        };
+
+        var orderBusinessModel = _mapper.Map<OrderBusinessModel>(order);
+        _ordersServiceMock.Setup(c => c.AddOrder(It.IsAny<OrderBusinessModel>(), It.IsAny<UserValues>())).ReturnsAsync(expectedId);
+
+        //when
+        var actual = await _sut.AddOrder(order);
+
+        //then
+        var actualResult = actual.Result as CreatedResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
+        _ordersServiceMock.Verify(x => x.AddOrder(It.Is<OrderBusinessModel>(c => 
+        c.StartTime == order.StartTime &&
+        c.Bundles.Count == order.BundlesIds.Count && 
+        c.CleaningObject.Id == order.CleaningObjectId && 
+        c.Services.Count == order.ServicesIds.Count), It.IsAny<UserValues>()), Times.Once);
     }
 }

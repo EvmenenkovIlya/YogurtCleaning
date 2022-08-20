@@ -13,7 +13,14 @@ public static class Validator
             throw new BadRequestException(errorMessage);
         }
     }
-
+    public static void CheckThatListNotEmpty<T>(List<T> list, string errorMessage)
+    {
+        if (list == null || list.Count == 0)
+        {
+            throw new BadRequestException(errorMessage);
+        }
+    }
+    
     public static void CheckRequestAndDbList<T, B>(List<T> fromRequest, List<B> fromDb)
     {
         if (fromRequest.Count != fromDb.Count)

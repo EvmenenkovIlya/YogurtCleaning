@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
 
 namespace YogurtCleaning.DataLayer.Tests;
@@ -268,7 +269,7 @@ public class ClientsRepositoryTests
         var sut = new ClientsRepository(context);
         var client = new Client
         {
-            Id = 7,
+            Id = 17,
             FirstName = "Adam",
             LastName = "Smith",
             Email = "ccc@gmail.c",
@@ -278,12 +279,12 @@ public class ClientsRepositoryTests
             Comments = new List<Comment>(),
             Orders = new List<Order>()
             {
-                new Order(){ Id = 1, StartTime = DateTime.Now, CleaningObject = new(){ Id = 1, Address = ""} },
+                new Order(){ Id = 17, StartTime = DateTime.Now, CleaningObject = new(){ Id = 1, Address = ""} },
             }
         };
         context.Clients.Add(client);
         context.SaveChanges();
-        var expectedId = 1;
+        var expectedId = 17;
 
         // when
         var result = await sut.GetLastOrderForCleaningObject(client.Id, 1);
@@ -338,7 +339,7 @@ public class ClientsRepositoryTests
         var sut = new ClientsRepository(context);
         var client = new Client
         {
-            Id = 7,
+            Id = 18,
             FirstName = "Adam",
             LastName = "Smith",
             Email = "ccc@gmail.c",
@@ -364,7 +365,7 @@ public class ClientsRepositoryTests
     }
 
     [Fact]
-    public async Task GetCommentsAboutCientTest_WhenCommentsExist_ThenWeGotIts()
+    public async Task GetCommentsAboutClientTest_WhenCommentsExist_ThenWeGotIts()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -372,7 +373,7 @@ public class ClientsRepositoryTests
 
         var cleaner = new Cleaner
         {
-            Id = 8,
+            Id = 17,
             FirstName = "Adam",
             LastName = "Smith",
             Email = "ccc@gmail.c",
@@ -382,16 +383,15 @@ public class ClientsRepositoryTests
             Rating = 0,
             IsDeleted = false
         };
+        var cleaningObj = new CleaningObject() { Id = 1, Address = "qwa", District = new District() { Id = DistrictEnum.Krasnoselsky, Name = "qwe"} };
+        var cleanersBand = new List<Cleaner>() { cleaner };
 
-        var cleanersBand = new List<Cleaner>();
-        cleanersBand.Add(cleaner);
-
-        var client = new Client { Id = 7, Email = "a@b.c", FirstName = "asdfg", LastName = "dfdfdfd", Password = "kjha", Phone = "1234567890" };
-        var order1 = new Order { Id = 1, CleanersBand = cleanersBand, Client = client };
-        var order2 = new Order { Id = 2, CleanersBand = cleanersBand, Client = client };
-        var comment1 = new Comment { Id = 1, Order = order1, Cleaner = cleaner, Rating = 2 };
-        var comment2 = new Comment { Id = 2, Order = order2, Client = client, Rating = 1 };
-        var comment3 = new Comment { Id = 3, Order = order2, Cleaner = cleaner, Rating = 5 };
+        var client = new Client { Id = 28, Email = "a@b.c", FirstName = "asdfg", LastName = "dfdfdfd", Password = "kjha", Phone = "1234567890", Addresses = new() { cleaningObj } };
+        var order1 = new Order { Id = 18, CleanersBand = cleanersBand, Client = client, CleaningObject = cleaningObj };
+        var order2 = new Order { Id = 28, CleanersBand = cleanersBand, Client = client, CleaningObject = cleaningObj };
+        var comment1 = new Comment { Id = 18, Order = order1, Cleaner = cleaner, Rating = 2 };
+        var comment2 = new Comment { Id = 28, Order = order2, Client = client, Rating = 1 };
+        var comment3 = new Comment { Id = 38, Order = order2, Cleaner = cleaner, Rating = 5 };
 
         context.Cleaners.Add(cleaner);
         context.Clients.Add(client);

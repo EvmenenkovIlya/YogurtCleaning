@@ -14,4 +14,5 @@ public static class ExceptionsErrorMessages
     public const string CleanerOrdersNotFound = "Order for Cleaner with this requestId not found:";
     public const string ClientCommentsNotFound = "Comments for Client with this requestId not found:";
     public const string CleanerCommentsNotFound = "Comments for Cleaner with this requestId not found";
+    public const string AdditionalServicesNotFound = "AdditionalServices for this Bundle with this requestId not found";
 }

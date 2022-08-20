@@ -9,20 +9,19 @@ namespace YogurtCleaning.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
-    private readonly IEmailSender _sender;
 
-    public AuthController(IAuthService authService, IEmailSender sender)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
-        _sender = sender;
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public async Task<string> Login([FromBody] UserLoginRequest request)
+    public async Task<ActionResult<string>> Login([FromBody] UserLoginRequest request)
     {
         var user = await _authService.GetUserForLogin(request.Email, request.Password);
 
-        return _authService.GetToken(user);
+        return Ok(_authService.GetToken(user));
     }
 }

@@ -30,6 +30,8 @@ public class ServicesServiceTests
             Name = "qwe",
             Price = 1000,
             Unit = "Unit",
+            RoomType = RoomType.Kitchen,
+            Duration = 1,
             IsDeleted = false
         };
         _mockServicesRepository.Setup(s => s.GetService(service.Id)).ReturnsAsync(service);
@@ -39,6 +41,8 @@ public class ServicesServiceTests
             Name = "qaz",
             Price = 9999,
             Unit = "Meter",
+            RoomType= RoomType.Apartment,
+            Duration = 2,
             IsDeleted = false
         };
 
@@ -49,6 +53,8 @@ public class ServicesServiceTests
         Assert.Equal(updatedService.Name, service.Name);
         Assert.Equal(updatedService.Price, service.Price);
         Assert.Equal(updatedService.Unit, service.Unit);
+        Assert.Equal(updatedService.RoomType, service.RoomType);
+        Assert.Equal(updatedService.Duration, service.Duration);
         _mockServicesRepository.Verify(s => s.GetService(service.Id), Times.Once);
     }
 

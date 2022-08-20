@@ -40,15 +40,20 @@ public class ClientsRepository : IClientsRepository
     public async Task<List<Comment>> GetAllCommentsByClient(int clientId) => 
         await _context.Comments.Where(c => c.Client != null && c.Client.Id == clientId).ToListAsync();
 
-    public async Task<List<Order>> GetAllOrdersByClient(int id) => await _context.Orders.Where(o => o.Client.Id == id).ToListAsync();
+    public async Task<List<Order>> GetAllOrdersByClient(int id) => await _context.Orders.Include(x => x.Client).Include(x => x.CleaningObject).Include(x => x.Bundles).Include(x => x.Comments).Where(o => o.Client.Id == id).ToListAsync();
 
     public async Task<Client?> GetClientByEmail(string email) => await _context.Clients.FirstOrDefaultAsync(o => o.Email == email);
 
     public async Task<Order?> GetLastOrderForCleaningObject(int clientId, int cleaningObjectId)
     {
-        var clientOrders = (await GetAllOrdersByClient(clientId)).Where(o => o.CleaningObject.Id == cleaningObjectId);
-        var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
-        return lastOrder;
+        var clientOrders = (await GetAllOrdersByClient(clientId));
+        if (clientOrders.Count != 0)
+        {
+            clientOrders = clientOrders.Where(o => o.CleaningObject.Id == cleaningObjectId).ToList();
+            var lastOrder = clientOrders.FirstOrDefault(o => o.StartTime == ((clientOrders.Select(o => o.StartTime)).Max()));
+            return lastOrder;
+        }
+        return null;
     }
 
     public async Task<List<Comment>> GetCommentsAboutClient(int id)
