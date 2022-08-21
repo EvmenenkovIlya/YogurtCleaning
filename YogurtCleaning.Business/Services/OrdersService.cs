@@ -14,6 +14,7 @@ public class OrdersService : IOrdersService
     private readonly IClientsRepository _clientsRepository;
     private readonly IBundlesRepository _bundlesRepository;
     private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
+    private readonly ICleanersRepository _cleanersRepository;
     private readonly IEmailSender _emailSender;
     private readonly IMapper _mapper;
 
@@ -22,6 +23,7 @@ public class OrdersService : IOrdersService
         IClientsRepository clientsRepository, 
         IBundlesRepository bundlesRepository,
         ICleaningObjectsRepository cleaningObjectsRepository,
+        ICleanersRepository cleanersRepository,
         IEmailSender emailSender, 
         IMapper mapper)
     {
@@ -30,6 +32,7 @@ public class OrdersService : IOrdersService
         _clientsRepository = clientsRepository;
         _bundlesRepository = bundlesRepository;
         _cleaningObjectsRepository = cleaningObjectsRepository;
+        _cleanersRepository = cleanersRepository;
         _emailSender = emailSender;
         _mapper = mapper;
     }
@@ -95,7 +98,6 @@ public class OrdersService : IOrdersService
     {
         orderToSave.Services = order.Services;
         orderToSave.CleaningObject = order.CleaningObject;
-        order.Client = order.Client;
     }
 
     private void CheckStatusAndSendMail(OrderBusinessModel order, int orderId)
@@ -111,6 +113,7 @@ public class OrdersService : IOrdersService
         order.Bundles = await GetBundles(order);
         order.Price = await GetOrderPrice(order);
         order.CleanersBand = await GetCleanersForOrder(order);
+        order.Services = await _cleanersRepository.GetServices(order.Services);
         order.Client = await _clientsRepository.GetClient(order.Client.Id);
         order.CleaningObject = await _cleaningObjectsRepository.GetCleaningObject(order.CleaningObject.Id);
         Validator.CheckThatObjectNotNull(order.Client, ExceptionsErrorMessages.ClientNotFound);

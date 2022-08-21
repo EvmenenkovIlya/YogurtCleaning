@@ -50,6 +50,7 @@ public class BundlesService : IBundlesService
         oldBundle.Name = bundle.Name;
         oldBundle.Measure = bundle.Measure;
         oldBundle.Price = bundle.Price;
+        oldBundle.Duration = bundle.Duration;
         oldBundle.Services = await _bundlesRepository.GetServices(bundle.Services);
         Validator.CheckRequestAndDbList(bundle.Services, oldBundle.Services);
         oldBundle.Services = oldBundle.Services.Where(c => c.RoomType == oldBundle.RoomType).ToList();

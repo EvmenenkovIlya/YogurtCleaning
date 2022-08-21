@@ -14,6 +14,7 @@ public class OrdersServiceTests
     private Mock<ICleanersService> _mockCleanersService;
     private Mock<IClientsRepository> _mockClientsRepository;
     private Mock<IBundlesRepository> _mockBundlesRepository;
+    private Mock<ICleanersRepository> _mockCleanersRepository;
     private Mock<IEmailSender> _mockEmailSender;
     private Mock<ICleaningObjectsRepository> _mockCleaningObjectsRepository;
     private IMapper _mapper;
@@ -27,6 +28,7 @@ public class OrdersServiceTests
         _mockCleanersService = new Mock<ICleanersService>();
         _mockOrdersRepository = new Mock<IOrdersRepository>();
         _mockBundlesRepository = new Mock<IBundlesRepository>();
+        _mockCleanersRepository = new Mock<ICleanersRepository>();
         _mockEmailSender = new Mock<IEmailSender>();
         _mockCleaningObjectsRepository = new Mock<ICleaningObjectsRepository>();
         var mapper = new MapperConfiguration(cfg =>
@@ -39,6 +41,7 @@ public class OrdersServiceTests
             _mockClientsRepository.Object,
             _mockBundlesRepository.Object,
             _mockCleaningObjectsRepository.Object,
+            _mockCleanersRepository.Object,
             _mockEmailSender.Object, _mapper);
     }
 
