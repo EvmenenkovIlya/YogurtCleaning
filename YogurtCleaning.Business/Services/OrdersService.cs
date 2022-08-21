@@ -80,24 +80,16 @@ public class OrdersService : IOrdersService
         Validator.AuthorizeEnitiyAccess(order, userValues);
         return order.CleaningObject;
     }
-
     
     public async Task<int> AddOrder(OrderBusinessModel order, UserValues userValues)
     {
         Validator.AuthorizeEnitiyAccess(userValues, order.Client.Id);
         await FillOrder(order);
         var orderToSave = _mapper.Map<Order>(order);
-        GetPropertiesFromDb(ref orderToSave, order);
         orderToSave.Bundles = await _bundlesRepository.GetBundles(orderToSave.Bundles);
         var result = await _ordersRepository.CreateOrder(orderToSave);
         CheckStatusAndSendMail(order, result);
         return result;
-    }
-
-    private void GetPropertiesFromDb(ref Order orderToSave, OrderBusinessModel order)
-    {
-        orderToSave.Services = order.Services;
-        orderToSave.CleaningObject = order.CleaningObject;
     }
 
     private void CheckStatusAndSendMail(OrderBusinessModel order, int orderId)
@@ -110,13 +102,14 @@ public class OrdersService : IOrdersService
 
     private async Task FillOrder(OrderBusinessModel order)
     {
+        order.Client = await _clientsRepository.GetClient(order.Client.Id);
+        Validator.CheckThatObjectNotNull(order.Client, ExceptionsErrorMessages.ClientNotFound);
+        order.CleaningObject = await _cleaningObjectsRepository.GetCleaningObject(order.CleaningObject.Id);
+        order.Services = await _cleanersRepository.GetServices(order.Services);
         order.Bundles = await GetBundles(order);
         order.Price = await GetOrderPrice(order);
+        order.SetTotalDuration();
         order.CleanersBand = await GetCleanersForOrder(order);
-        order.Services = await _cleanersRepository.GetServices(order.Services);
-        order.Client = await _clientsRepository.GetClient(order.Client.Id);
-        order.CleaningObject = await _cleaningObjectsRepository.GetCleaningObject(order.CleaningObject.Id);
-        Validator.CheckThatObjectNotNull(order.Client, ExceptionsErrorMessages.ClientNotFound);
         if (order.CleanersBand.Count < order.CleanersCount)
         {
             order.Status = Status.Moderation;

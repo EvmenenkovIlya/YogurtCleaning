@@ -75,7 +75,7 @@ public class OrdersServiceTests
             Status = Status.Created,
             StartTime = DateTime.Now.AddDays(1),
             Bundles = new List<Bundle>() { _mapper.Map<Bundle>(bundles[0]) },
-            Services = null,
+            Services = new List<Service>(),
             CleanersBand = new List<Cleaner> { new() { Id = 654 } },
             IsDeleted = false
         };
@@ -89,6 +89,8 @@ public class OrdersServiceTests
             CleanersBand = new List<Cleaner> { new() { Id = 654 }, new() { Id = 777} }
         };
         userValue = new() { Id = 11 };
+        _mockCleanersRepository.Setup(c => c.GetServices(updatedOrder.Services)).ReturnsAsync(order.Services);
+        _mockCleaningObjectsRepository.Setup(c => c.GetCleaningObject(order.CleaningObject.Id)).ReturnsAsync(order.CleaningObject);
         _mockClientsRepository.Setup(c => c.GetClient(order.Client.Id)).ReturnsAsync(order.Client);
         _mockOrdersRepository.Setup(o => o.GetOrder(order.Id)).ReturnsAsync(order);
         _mockBundlesRepository.Setup(o => o.GetBundle(updatedOrder.Bundles[0].Id)).ReturnsAsync(_mapper.Map<Bundle>(bundles[0]));
@@ -153,6 +155,8 @@ public class OrdersServiceTests
         decimal expectedPrice = 110;
         var expectedStatus = Status.Created;
         userValue = new() { Id = 1, Role = Role.Admin };
+        _mockCleanersRepository.Setup(c => c.GetServices(order.Services)).ReturnsAsync(order.Services);
+        _mockCleaningObjectsRepository.Setup(c => c.GetCleaningObject(order.CleaningObject.Id)).ReturnsAsync(order.CleaningObject);
         _mockClientsRepository.Setup(c => c.GetClient(order.Client.Id)).ReturnsAsync(order.Client);
         _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).ReturnsAsync(cleaners);
         _mockBundlesRepository.Setup(b => b.GetBundle(2)).ReturnsAsync(bundle);
@@ -201,6 +205,8 @@ public class OrdersServiceTests
         decimal expectedPrice = 110;
         var expectedStatus = Status.Moderation;
         userValue = new() { Id = 1, Role = Role.Admin };
+        _mockCleanersRepository.Setup(c => c.GetServices(order.Services)).ReturnsAsync(order.Services);
+        _mockCleaningObjectsRepository.Setup(c => c.GetCleaningObject(order.CleaningObject.Id)).ReturnsAsync(order.CleaningObject);
         _mockClientsRepository.Setup(c => c.GetClient(order.Client.Id)).ReturnsAsync(order.Client);
         _mockCleanersService.Setup(c => c.GetFreeCleanersForOrder(order)).ReturnsAsync(cleaners);
         _mockBundlesRepository.Setup(b => b.GetBundle(2)).ReturnsAsync(bundle);
