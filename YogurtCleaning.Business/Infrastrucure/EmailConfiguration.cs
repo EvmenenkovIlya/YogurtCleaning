@@ -4,9 +4,9 @@ namespace YogurtCleaning.Business;
 
 public class EmailConfiguration
 {
-    public string From { get; set; }
-    public string SmtpServer { get; set; }
-    public int Port { get; set; }
-    public string UserName { get; set; }
-    public string Password { get; set; }
+    public string YOGFrom { get; set; }
+    public string YOGSmtpServer { get; set; }
+    public int YOGPort { get; set; }
+    public string YOGUserName { get; set; }
+    public string YOGPassword { get; set; }
 }
