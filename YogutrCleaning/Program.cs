@@ -105,6 +105,7 @@ builder.Services.AddScoped<ICommentsService, CommentsService>();
 builder.Services.AddScoped<IAdminsRepository, AdminsRepository>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfigStorage));
+builder.Services.AddAutoMapper(typeof(BusinessMapperConfigStorage));
 
 builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<ICleanersService, CleanersService>();

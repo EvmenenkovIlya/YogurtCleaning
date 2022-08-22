@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using YogurtCleaning.Business;
 using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
-using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -18,13 +16,11 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class OrdersController : ControllerBase
 {
-    private readonly IOrdersRepository _ordersRepository;
     private readonly IMapper _mapper;
     private readonly IOrdersService _ordersService;
     public UserValues? _userValues;
-    public OrdersController(IOrdersRepository ordersRepository, IMapper mapper, IOrdersService ordersService)
+    public OrdersController(IMapper mapper, IOrdersService ordersService)
     {
-        _ordersRepository = ordersRepository;
         _mapper = mapper;
         _ordersService = ordersService;
     }
@@ -73,7 +69,8 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<int>> AddOrder(OrderRequest order)
     {
-        int id = await _ordersService.AddOrder(_mapper.Map<OrderBusinessModel>(order));
+        _userValues = this.GetClaimsValue();
+        int id = await _ordersService.AddOrder(_mapper.Map<OrderBusinessModel>(order), _userValues);
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 

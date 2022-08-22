@@ -13,6 +13,8 @@ public class OrdersService : IOrdersService
     private readonly ICleanersService _cleanersService;
     private readonly IClientsRepository _clientsRepository;
     private readonly IBundlesRepository _bundlesRepository;
+    private readonly ICleaningObjectsRepository _cleaningObjectsRepository;
+    private readonly ICleanersRepository _cleanersRepository;
     private readonly IEmailSender _emailSender;
     private readonly IMapper _mapper;
 
@@ -20,6 +22,8 @@ public class OrdersService : IOrdersService
         ICleanersService cleanersService, 
         IClientsRepository clientsRepository, 
         IBundlesRepository bundlesRepository,
+        ICleaningObjectsRepository cleaningObjectsRepository,
+        ICleanersRepository cleanersRepository,
         IEmailSender emailSender, 
         IMapper mapper)
     {
@@ -27,6 +31,8 @@ public class OrdersService : IOrdersService
         _cleanersService = cleanersService;
         _clientsRepository = clientsRepository;
         _bundlesRepository = bundlesRepository;
+        _cleaningObjectsRepository = cleaningObjectsRepository;
+        _cleanersRepository = cleanersRepository;
         _emailSender = emailSender;
         _mapper = mapper;
     }
@@ -58,6 +64,7 @@ public class OrdersService : IOrdersService
         order.StartTime = modelToUpdate.StartTime;
         order.UpdateTime = modelToUpdate.UpdateTime;
         modelToUpdate.CleaningObject = order.CleaningObject;
+        modelToUpdate.Client = order.Client;
         await FillOrder(modelToUpdate);
         order.Bundles = _mapper.Map<List<Bundle>>(modelToUpdate.Bundles);
         order.Services = modelToUpdate.Services;
@@ -73,12 +80,14 @@ public class OrdersService : IOrdersService
         Validator.AuthorizeEnitiyAccess(order, userValues);
         return order.CleaningObject;
     }
-
     
-    public async Task<int> AddOrder(OrderBusinessModel order)
+    public async Task<int> AddOrder(OrderBusinessModel order, UserValues userValues)
     {
+        Validator.AuthorizeEnitiyAccess(userValues, order.Client.Id);
         await FillOrder(order);
-        var result = await _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
+        var orderToSave = _mapper.Map<Order>(order);
+        orderToSave.Bundles = await _bundlesRepository.GetBundles(orderToSave.Bundles);
+        var result = await _ordersRepository.CreateOrder(orderToSave);
         CheckStatusAndSendMail(order, result);
         return result;
     }
@@ -93,8 +102,13 @@ public class OrdersService : IOrdersService
 
     private async Task FillOrder(OrderBusinessModel order)
     {
+        order.Client = await _clientsRepository.GetClient(order.Client.Id);
+        Validator.CheckThatObjectNotNull(order.Client, ExceptionsErrorMessages.ClientNotFound);
+        order.CleaningObject = await _cleaningObjectsRepository.GetCleaningObject(order.CleaningObject.Id);
+        order.Services = await _cleanersRepository.GetServices(order.Services);
         order.Bundles = await GetBundles(order);
         order.Price = await GetOrderPrice(order);
+        order.SetTotalDuration();
         order.CleanersBand = await GetCleanersForOrder(order);
         if (order.CleanersBand.Count < order.CleanersCount)
         {
@@ -119,7 +133,7 @@ public class OrdersService : IOrdersService
         {
             var discount = (decimal)0.2;
             var lastOrder = await _clientsRepository.GetLastOrderForCleaningObject(order.Client.Id, order.CleaningObject.Id);
-            if (lastOrder != null && lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation)
+            if (lastOrder != null && (lastOrder.Bundles[0].Type == CleaningType.General || lastOrder.Bundles[0].Type == CleaningType.AfterRenovation))
             {
                 orderPrice -= orderPrice * discount;
             }

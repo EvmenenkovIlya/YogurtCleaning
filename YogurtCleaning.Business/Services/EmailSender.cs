@@ -24,7 +24,7 @@ public class EmailSender : IEmailSender
     private MimeMessage CreateEmailMessage(Message message)
     {
         var emailMessage = new MimeMessage();
-        emailMessage.From.Add(new MailboxAddress("email", _emailConfig.From));
+        emailMessage.From.Add(new MailboxAddress("email", _emailConfig.YOGFrom));
         emailMessage.To.AddRange(message.To);
         emailMessage.Subject = message.Subject;
         emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
@@ -38,9 +38,9 @@ public class EmailSender : IEmailSender
         {
             try
             {
-                client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
+                client.Connect(_emailConfig.YOGSmtpServer, _emailConfig.YOGPort, true);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
+                client.Authenticate(_emailConfig.YOGUserName, _emailConfig.YOGPassword);
 
                 client.Send(mailMessage);
             }

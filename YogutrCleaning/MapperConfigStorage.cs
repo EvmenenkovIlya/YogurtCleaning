@@ -36,6 +36,7 @@ public class MapperConfigStorage : Profile
 			.ForMember(o => o.CleaningObject, opt => opt.MapFrom(src => new CleaningObject() { Id = src.CleaningObjectId }))
 			.ForMember(o => o.Bundles, opt => opt.MapFrom(src => src.BundlesIds.Select(t => new BundleBusinessModel { Id = t }).ToList()))
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()))
+			.ForMember(o => o.Client, opt => opt.MapFrom(src => new Client() { Id = src.ClientId }))
 			.AfterMap((src, dest) => { dest.SetTotalDuration(); dest.SetCleanersCount(); dest.SetEndTime(); });
 
 		CreateMap<CleanerRegisterRequest, Cleaner>()
@@ -51,8 +52,9 @@ public class MapperConfigStorage : Profile
 		CreateMap<BundleRequest, Bundle>()
 			.ForMember(o => o.Services, opt => opt.MapFrom(src => src.ServicesIds.Select(t => new Service { Id = t }).ToList()));
 		CreateMap<Bundle, BundleResponse>();
+        CreateMap<Bundle, BundleBusinessModel>().ReverseMap();
 
-		CreateMap<CommentRequest, Comment>()
+        CreateMap<CommentRequest, Comment>()
 			.ForMember(c => c.Order, opt => opt.MapFrom(src => new Order() { Id = src.OrderId}));
 		CreateMap<Comment, CommentResponse>()
 			.ForMember(c => c.OrderId, opt => opt.MapFrom(src => src.Order.Id))

@@ -14,6 +14,6 @@ public interface IOrdersService
     Task UpdateOrderPaymentStatus(int orderId, PaymentStatus paymentStatus);
     Task DeleteOrder(int id, UserValues userValues);
     Task<List<Order>> GetAllOrders();
-    Task<int> AddOrder(OrderBusinessModel order);
+    Task<int> AddOrder(OrderBusinessModel order, UserValues userValues);
     Task<CleaningObject> GetCleaningObject(int orderId, UserValues userValues);
 }
