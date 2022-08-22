@@ -25,6 +25,7 @@ public class OrdersRepository : IOrdersRepository
 
     public async Task <int> CreateOrder(Order order)
     {
+        order.UpdateTime = DateTime.Now;
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
         

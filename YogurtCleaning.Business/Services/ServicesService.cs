@@ -19,6 +19,7 @@ public class ServicesService : IServicesService
         oldService.Price = service.Price;
         oldService.Unit = service.Unit;
         oldService.Duration = service.Duration;
+        oldService.RoomType = service.RoomType;
         await _servicesRepository.UpdateService(oldService); 
     }
     public async Task<Service> GetService(int id) => await _servicesRepository.GetService(id);

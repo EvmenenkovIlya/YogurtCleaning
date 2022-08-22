@@ -72,7 +72,7 @@ public class CleanersService : ICleanersService
         Validator.CheckRequestAndDbList(services, cleaner.Services);
         Validator.CheckRequestAndDbList(districts, cleaner.Districts);
         cleaner.Password = PasswordHash.HashPassword(cleaner.Password);
-        cleaner.DateOfStartWork = DateTime.Now;
+        cleaner.DateOfStartWork = DateTime.Today;
         return await _cleanersRepository.CreateCleaner(cleaner);
 
     }

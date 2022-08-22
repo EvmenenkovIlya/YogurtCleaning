@@ -50,6 +50,7 @@ public class BundlesService : IBundlesService
         oldBundle.Name = bundle.Name;
         oldBundle.Measure = bundle.Measure;
         oldBundle.Price = bundle.Price;
+        oldBundle.Duration = bundle.Duration;
         oldBundle.Services = await _bundlesRepository.GetServices(bundle.Services);
         Validator.CheckRequestAndDbList(bundle.Services, oldBundle.Services);
         oldBundle.Services = oldBundle.Services.Where(c => c.RoomType == oldBundle.RoomType).ToList();
@@ -60,6 +61,7 @@ public class BundlesService : IBundlesService
     {
         var bundle = await _bundlesRepository.GetBundle(id);
         var allServices = await _servicesRepository.GetAllServices();
+        Validator.CheckThatListNotEmpty(allServices, ExceptionsErrorMessages.AdditionalServicesNotFound);
         allServices = allServices.Where(t => t.RoomType == bundle.RoomType).ToList();
         var bundleServiceIds = bundle.Services.Select(t => t.Id).ToList();
         var result = allServices.Where(t => !bundleServiceIds.Contains(t.Id)).ToList();
