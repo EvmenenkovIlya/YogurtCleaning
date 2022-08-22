@@ -49,6 +49,7 @@ public class OrdersServiceTests
     public async Task UpdateOrder_WhenUpdatePassed_ThenPropertiesValuesChandged()
     {
         // given
+        var districts = new List<District>() { new District() { Id = DistrictEnum.Vasileostrovskiy, Name = "Vasileostrovskiy" }, new District() { Id = DistrictEnum.Kalininsky, Name = "Kalininsky" } };
         var cleaners = new List<Cleaner>
         {
             new Cleaner()
@@ -56,14 +57,16 @@ public class OrdersServiceTests
                 Id = 11,
                 Schedule = Schedule.FullTime,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = districts
             },
             new Cleaner()
             {
                 Id = 13,
                 Schedule = Schedule.ShiftWork,
                 Orders = new List<Order>(),
-                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00)
+                DateOfStartWork = new DateTime(2022, 8, 1, 00, 00, 00),
+                Districts = districts
             }
         };
         var bundles = new List<BundleBusinessModel> { new() { Id = 2, Name = "qwe" }, new() { Id = 22, Name = "qwa" } };
@@ -71,7 +74,7 @@ public class OrdersServiceTests
         {
             Id = 10,
             Client = new() { Id = 11 },
-            CleaningObject = new() { Id = 56 },
+            CleaningObject = new() { Id = 56 , District = districts[0] },
             Status = Status.Created,
             StartTime = DateTime.Now.AddDays(1),
             Bundles = new List<Bundle>() { _mapper.Map<Bundle>(bundles[0]) },

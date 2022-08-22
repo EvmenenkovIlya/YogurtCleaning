@@ -109,7 +109,9 @@ public class OrdersService : IOrdersService
         order.Bundles = await GetBundles(order);
         order.Price = await GetOrderPrice(order);
         order.SetTotalDuration();
+        order.SetCleanersCount();
         order.CleanersBand = await GetCleanersForOrder(order);
+        order.SetEndTime();
         if (order.CleanersBand.Count < order.CleanersCount)
         {
             order.Status = Status.Moderation;
