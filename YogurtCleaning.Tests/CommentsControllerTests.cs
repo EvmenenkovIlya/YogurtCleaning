@@ -136,5 +136,5 @@ public class CommentsControllerTests
 
         Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
         _mockCommentsService.Verify(c => c.DeleteComment(expectedComment.Id), Times.Once);
-    }
+    }    
 }
