@@ -20,6 +20,7 @@ public class BundlesService : IBundlesService
         bundle.Services = await _bundlesRepository.GetServices(bundle.Services);
         Validator.CheckRequestAndDbList(services, bundle.Services);
         bundle.Services = bundle.Services.Where(c => c.RoomType == bundle.RoomType).ToList();
+        bundle.Duration = bundle.Services.Sum(c => c.Duration);
         var result = await _bundlesRepository.AddBundle(bundle);
         return result;
     }
@@ -50,10 +51,10 @@ public class BundlesService : IBundlesService
         oldBundle.Name = bundle.Name;
         oldBundle.Measure = bundle.Measure;
         oldBundle.Price = bundle.Price;
-        oldBundle.Duration = bundle.Duration;
         oldBundle.Services = await _bundlesRepository.GetServices(bundle.Services);
         Validator.CheckRequestAndDbList(bundle.Services, oldBundle.Services);
         oldBundle.Services = oldBundle.Services.Where(c => c.RoomType == oldBundle.RoomType).ToList();
+        oldBundle.Duration = oldBundle.Services.Sum(c => c.Duration);
         await _bundlesRepository.UpdateBundle(oldBundle);
     }
 
