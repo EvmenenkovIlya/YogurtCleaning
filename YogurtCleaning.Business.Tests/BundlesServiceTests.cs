@@ -299,7 +299,6 @@ public class BundlesServiceTests
         var bundle = new Bundle()
         {
             Name = "Clean all",
-            Duration = 12,
             Services = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } },
             IsDeleted = false
         };
@@ -321,7 +320,6 @@ public class BundlesServiceTests
         var bundle = new Bundle()
         {
             Name = "Clean all",
-            Duration = 12,
             Services = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } },
             IsDeleted = false
         };
