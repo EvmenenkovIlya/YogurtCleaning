@@ -17,7 +17,7 @@ public class CleanersRepository : ICleanersRepository
 
     public async Task<List<Cleaner>> GetAllCleaners()
     {
-        return await _context.Cleaners.Include(c => c.Districts).Include(c => c.Services).AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
+        return await _context.Cleaners.Include(c => c.Orders).Include(c => c.Districts).Include(c => c.Services).Where(o => !o.IsDeleted).ToListAsync();
     }
 
     public async Task<int> CreateCleaner(Cleaner cleaner)

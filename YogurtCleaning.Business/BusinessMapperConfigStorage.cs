@@ -10,7 +10,8 @@ public class BusinessMapperConfigStorage : Profile
 	{
 		CreateMap<OrderBusinessModel, Order>()
             .ForMember(c => c.EndTime, opt => opt.MapFrom(src => src.StartTime.AddHours(Decimal.ToDouble(src.TotalDuration))));
-        CreateMap<Order, OrderBusinessModel>();
+        CreateMap<Order, OrderBusinessModel>()
+            .AfterMap((src, dest) => { dest.SetTotalDuration(); dest.SetCleanersCount(); dest.SetEndTime(); });
         CreateMap<Bundle, BundleBusinessModel>().ReverseMap();
 	}
 }

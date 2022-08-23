@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace YogurtCleaning.DataLayer.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class AddOrderPaymentStatusAndRoomStatusForBundleAndService : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

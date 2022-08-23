@@ -86,6 +86,7 @@ public class CleanersRepositoryTests
                 Password = "1234qwerty",
                 Passport = "0000654321",
                 Phone = "89998887766",
+                Orders = new(){new(){Id = 1}},
                 IsDeleted = false
             },
             new Cleaner()
@@ -97,6 +98,7 @@ public class CleanersRepositoryTests
                 Password = "1234qwerty",
                 Passport = "0000654321",
                 Phone = "899988873456",
+                Orders = new(){new(){Id = 2}},
                 IsDeleted = false
             }
         };
@@ -111,7 +113,6 @@ public class CleanersRepositoryTests
         Assert.NotNull(result);
         Assert.Equal(typeof(List<Cleaner>), result.GetType());
         Assert.Null(result[0].Comments);
-        Assert.Null(result[1].Orders);
         Assert.False(result[0].IsDeleted);
         Assert.False(result[1].IsDeleted);
         Assert.NotNull(result.Find(x => x.FirstName == "Madara"));
@@ -136,6 +137,7 @@ public class CleanersRepositoryTests
                 Password = "1234qwerty",
                 Passport = "0000654321",
                 Phone = "89998887766",
+                Orders = new(){new(){Id = 1}},
                 IsDeleted = false
             },
             new Cleaner()
@@ -147,6 +149,7 @@ public class CleanersRepositoryTests
                 Password = "1234qwerty",
                 Passport = "0000654321",
                 Phone = "899988873456",
+                Orders = new(){new(){Id = 2}},
                 IsDeleted = true
             }
         };
@@ -162,7 +165,6 @@ public class CleanersRepositoryTests
         Assert.Equal(typeof(List<Cleaner>), result.GetType());
         Assert.Equal(1, result.Count);
         Assert.Null(result[0].Comments);
-        Assert.Null(result[0].Orders);
         Assert.False(result[0].IsDeleted);
         Assert.Null(result.Find(x => x.FirstName == "Madara"));
         Assert.NotNull(result.Find(x => x.FirstName == "Adam"));
