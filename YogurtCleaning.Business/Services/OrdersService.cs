@@ -41,7 +41,7 @@ public class OrdersService : IOrdersService
     {
         var order = await _ordersRepository.GetOrder(id);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
-        Validator.AuthorizeEnitiyAccess(userValues, order.Client.Id);
+        Validator.AuthorizeEnitiyAccess(userValues, order!.Client.Id);
         await _ordersRepository.DeleteOrder(order);
     }
 
@@ -206,6 +206,6 @@ public class OrdersService : IOrdersService
     {
         Order order = await _ordersRepository.GetOrder(orderId);
         Validator.CheckThatObjectNotNull(order, ExceptionsErrorMessages.OrderNotFound);
-        return order.Services;
+        return order!.Services;
     }
 }

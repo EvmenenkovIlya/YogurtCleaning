@@ -64,7 +64,7 @@ public class ClientsRepositoryTests
 
         //then
         var actual = await sut.GetClient(client.Id);
-        Assert.True(actual.IsDeleted);
+        Assert.True(actual!.IsDeleted);
         context.Database.EnsureDeleted();
     }
 

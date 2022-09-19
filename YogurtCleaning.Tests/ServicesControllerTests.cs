@@ -8,9 +8,10 @@ using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.Models;
 using YogurtCleaning.API;
 using YogurtCleaning.Business;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YogurtCleaning.Tests;
-
+[ExcludeFromCodeCoverage]
 public class ServicesControllerTests
 {
     private ServicesController _sut;

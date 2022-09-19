@@ -44,7 +44,7 @@ public class CleanersService : ICleanersService
     {
         Cleaner cleaner = await _cleanersRepository.GetCleaner(id);
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner!.Email, userValues);
         cleaner.FirstName = modelToUpdate.FirstName;
         cleaner.LastName = modelToUpdate.LastName;
         cleaner.Services = modelToUpdate.Services;
@@ -82,7 +82,7 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner!.Email, userValues);
         return await _cleanersRepository.GetAllCommentsByCleaner(id);
     }
 
@@ -100,7 +100,7 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
 
         Validator.CheckThatObjectNotNull(cleaner, ExceptionsErrorMessages.CleanerCommentsNotFound);
-        Validator.AuthorizeEnitiyAccess(cleaner.Email, userValues);
+        Validator.AuthorizeEnitiyAccess(cleaner!.Email, userValues);
         return await _cleanersRepository.GetCommentsAboutCleaner(id);
     }
 
@@ -156,7 +156,7 @@ public class CleanersService : ICleanersService
         var cleaner = await _cleanersRepository.GetCleaner(id);
         var comments = await _cleanersRepository.GetCommentsAboutCleaner(id);
         var cleanerRating = (decimal)(comments.Select(c => c.Rating).Sum()) / (decimal)comments.Count();
-        cleaner.Rating = cleanerRating;
+        cleaner!.Rating = cleanerRating;
         await _cleanersRepository.UpdateCleaner(cleaner);
     }
 }
