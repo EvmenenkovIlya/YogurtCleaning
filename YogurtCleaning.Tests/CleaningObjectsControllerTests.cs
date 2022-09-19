@@ -9,8 +9,10 @@ using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.Business;
 using YogurtCleaning.API;
 using YogurtCleaning.DataLayer.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YogurtCleaning.Tests;
+[ExcludeFromCodeCoverage]
 public class CleaningObjectControllerTests
 {
     private CleaningObjectsController _sut;

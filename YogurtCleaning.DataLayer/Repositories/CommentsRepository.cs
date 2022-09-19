@@ -25,7 +25,7 @@ public class CommentsRepository : ICommentsRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Comment>> GetAllComments() => await _context.Comments.Where(c => !c.IsDeleted).ToListAsync();
+    public async Task<List<Comment>> GetAllComments() => await _context.Comments.Include(c => c.Cleaner).Include(c => c.Client).Include(c => c.Order).Where(c => !c.IsDeleted).ToListAsync();
 
-    public async Task<Comment?> GetCommentById(int id) => await _context.Comments.Include(c => c.Order).Include(c => c.Client).FirstOrDefaultAsync(c => c.Id == id);
+    public async Task<Comment?> GetCommentById(int id) => await _context.Comments.Include(c => c.Cleaner).Include(c => c.Client).Include(c => c.Order).Include(c => c.Client).FirstOrDefaultAsync(c => c.Id == id);
 }

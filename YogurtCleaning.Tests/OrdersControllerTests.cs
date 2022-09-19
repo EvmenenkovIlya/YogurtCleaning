@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 using YogurtCleaning.Business;
 using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
@@ -11,7 +12,7 @@ using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.API.Tests;
-
+[ExcludeFromCodeCoverage]
 public class OrdersControllerTests
 {
     private OrdersController _sut;

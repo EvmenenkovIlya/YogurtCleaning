@@ -53,7 +53,7 @@ public class BundlesServiceTests
     }
 
     [Fact]
-    public async Task UpdateBundle_WhenUpdatePassed_ThenPropertiesValuesChandged()
+    public async Task UpdateBundle_WhenUpdatePassed_ThenPropertiesValuesChanged()
     {
         // given
         var updateServices = new List<Service>() { new Service() { Id = 1, RoomType = RoomType.Apartment} };

@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using YogurtCleaning.DataLayer.Enums;
+using System.Diagnostics.CodeAnalysis;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 using YogurtCleaning.Tests.ModelSources;
 
 namespace YogurtCleaning.Tests;
-
+[ExcludeFromCodeCoverage]
 public class CleaningObjectModelsRequestTests
 {
     [TestCaseSource(typeof(CleaningObjectRequestTestSource))]

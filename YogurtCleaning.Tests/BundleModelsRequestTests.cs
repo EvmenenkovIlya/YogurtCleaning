@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -6,6 +7,7 @@ using YogurtCleaning.Tests.ModelSources;
 
 namespace YogurtCleaning.Tests;
 
+[ExcludeFromCodeCoverage]
 public class BundleModelsRequestTests
 {
     [TestCaseSource(typeof(BundleRequestTestSource))]

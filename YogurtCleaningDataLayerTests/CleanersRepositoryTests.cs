@@ -66,7 +66,7 @@ public class CleanersRepositoryTests
 
         //then
         var actual = await sut.GetCleaner(cleaner.Id);
-        Assert.True(actual.IsDeleted);
+        Assert.True(actual!.IsDeleted);
         context.Database.EnsureDeleted();
     }
 
@@ -247,7 +247,7 @@ public class CleanersRepositoryTests
         var result = await sut.GetCleaner(cleaner.Id);
 
         //then
-        Assert.NotEqual("Adam", result.FirstName);
+        Assert.NotEqual("Adam", result!.FirstName);
         Assert.NotEqual("Smith", result.LastName);
         Assert.Equal("ccc@gmail.c", result.Email);
         context.Database.EnsureDeleted();
