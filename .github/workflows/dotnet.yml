@@ -18,10 +18,10 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore YogurtCleaning.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore YogurtCleaning.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test YogurtCleaning.sln --configuration Debug --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
     - name: Codecov upload 
       uses: codecov/codecov-action@v2
