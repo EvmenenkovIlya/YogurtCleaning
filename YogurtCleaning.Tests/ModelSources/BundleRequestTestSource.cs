@@ -13,9 +13,11 @@ public class BundleRequestTestSource : IEnumerable
         return new BundleRequest()
         {
             Name = "Kitchen regular cleaning",
+            Type = CleaningType.Regular,
+            RoomType = RoomType.Apartment,
             Price = 1000,
             Measure = Measure.Room,
-            Services = new List<ServiceResponse>()
+            ServicesIds = new List<int>()
         };
     }
 
@@ -38,27 +40,11 @@ public class BundleRequestTestSource : IEnumerable
         };
 
         model = GetBundleRequestModel();
-        model.Price = null;
+        model.ServicesIds = null;
         yield return new object[]
         {
             model,
-            ApiErrorMessages.PriceIsRequired
+            ApiErrorMessages.ServicesIsRequired
         };
-
-        model = GetBundleRequestModel();
-        model.Measure = null;
-        yield return new object[]
-        {
-            model,
-            ApiErrorMessages.MeasureIsRequired
-        };
-
-        //model = GetBundleRequestModel();
-        //model.Services = null;
-        //yield return new object[]
-        //{
-        //    model,
-        //    ApiErrorMessages.ServicesIsRequired
-        //};
     }
 }

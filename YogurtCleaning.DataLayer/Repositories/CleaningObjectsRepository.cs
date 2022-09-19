@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -12,29 +13,33 @@ public class CleaningObjectsRepository :  ICleaningObjectsRepository
         _context = context;
     }
 
-    public int CreateCleaningObject(CleaningObject cleaningObject)
+    public async Task<int> CreateCleaningObject(CleaningObject cleaningObject)
     {
         _context.CleaningObjects.Add(cleaningObject);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return cleaningObject.Id;
     }
 
-    public void DeleteCleaningObject(int cleaningObjectId)
+    public async Task DeleteCleaningObject(CleaningObject cleaningObject)
     {
-        var cleaningObject = GetCleaningObject(cleaningObjectId);
         cleaningObject.IsDeleted = true;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public CleaningObject? GetCleaningObject(int cleaningObjectId) => 
-        _context.CleaningObjects.FirstOrDefault(o => o.Id == cleaningObjectId);
+    public async Task<CleaningObject?> GetCleaningObject(int cleaningObjectId) => 
+        await _context.CleaningObjects.Include(x => x.Client).Include(x => x.District).FirstOrDefaultAsync(o => o.Id == cleaningObjectId);
 
-    public List<CleaningObject> GetAllCleaningObjects() => 
-        _context.CleaningObjects.Where(o => o.IsDeleted == false).AsNoTracking().ToList();
+    public async Task<List<CleaningObject>> GetAllCleaningObjects() =>
+        await _context.CleaningObjects.Include(c => c.District).Include(c => c.Client).Where(o => o.IsDeleted == false).AsNoTracking().ToListAsync();
 
-    public void UpdateCleaningObject(CleaningObject modelToUpdate)
+    public async Task<List<CleaningObject>> GetAllCleaningObjectsByClientId(int clientId) => 
+        await _context.CleaningObjects.Include(c => c.District).Include(c => c.Client).Where(o => o.IsDeleted == false && o.Client.Id == clientId).AsNoTracking().ToListAsync();
+
+    public async Task UpdateCleaningObject(CleaningObject modelToUpdate)
     {       
         _context.CleaningObjects.Update(modelToUpdate);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
+
+    public async Task<District?> GetDistrict(DistrictEnum district) => await _context.Districts.FirstOrDefaultAsync(o => o.Id == district);
 }

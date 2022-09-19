@@ -1,0 +1,27 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore YogurtCleaning.sln
+    - name: Build
+      run: dotnet build --no-restore YogurtCleaning.sln
+    - name: Test
+      run: dotnet test YogurtCleaning.sln --configuration Debug --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+    - name: Codecov upload 
+      uses: codecov/codecov-action@v2

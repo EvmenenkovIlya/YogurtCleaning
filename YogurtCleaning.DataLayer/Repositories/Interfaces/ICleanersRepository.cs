@@ -4,10 +4,16 @@ namespace YogurtCleaning.DataLayer.Repositories;
 
 public interface ICleanersRepository
 {
-    int CreateCleaner(Cleaner cleaner);
-    void DeleteCleaner(int cleanerId);
-    List<Cleaner> GetAllCleaners();
-    List<Comment> GetAllCommentsByCleaner(int cleanerId);
-    Cleaner? GetCleaner(int clientId);
-    void UpdateCleaner(Cleaner cleaner);
+    Task<int> CreateCleaner(Cleaner cleaner);
+    Task<Cleaner?> GetCleaner(int clientId);
+    Task UpdateCleaner(Cleaner cleaner);
+    Task DeleteCleaner(Cleaner cleaner);
+    Task<List<Cleaner>> GetAllCleaners();
+    Task<List<Comment>> GetAllCommentsByCleaner(int cleanerId);
+    Task<List<Order>> GetAllOrdersByCleaner(int id);
+    Task<Cleaner?> GetCleanerByEmail(string email);
+    Task<List<Cleaner>> GetWorkingCleanersForDate(DateTime orderDate);
+    Task<List<Service>> GetServices(List<Service> services);
+    Task<List<District>> GetDistricts(List<District> districts);
+    Task<List<Comment>> GetCommentsAboutCleaner(int id);
 }

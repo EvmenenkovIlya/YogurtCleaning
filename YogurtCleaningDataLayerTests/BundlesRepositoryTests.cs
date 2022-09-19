@@ -1,10 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YogurtCleaning.DataLayer;
 using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.DataLayer.Repositories;
@@ -17,12 +11,12 @@ public class BundlesRepositoryTests
     public BundlesRepositoryTests()
     {
         _dbContextOptions = new DbContextOptionsBuilder<YogurtCleaningContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
+            .UseInMemoryDatabase(databaseName: "TestDbForBundles")
+            .Options;       
     }
 
     [Fact]
-    public void AddBundle_WhenBundleeAdded_ThenBundleIdMoreThanZero()
+    public async Task AddBundle_WhenBundleeAdded_ThenBundleIdMoreThanZero()
     {
         //given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -38,14 +32,15 @@ public class BundlesRepositoryTests
 
         // when 
         context.Bundles.Add(bundle);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         //then 
         Assert.True(bundle.Id > 0);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void DeleteSBundle_WhenCorrectIdPassed_ThenSoftDeleteApplied()
+    public async Task DeleteSBundle_WhenCorrectIdPassed_ThenSoftDeleteApplied()
     {
         // given 
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -63,14 +58,15 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        sut.DeleteBundle(bundle.Id);
+        await sut.DeleteBundle(bundle);
 
         //then 
         Assert.True(bundle.IsDeleted);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void GetAllBundles_WhenBundlesExist_ThenGetBundles()
+    public async Task GetAllBundles_WhenBundlesExist_ThenGetBundles()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -88,14 +84,15 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = sut.GetAllBundles();
+        var result = await sut.GetAllBundles();
 
         //then 
-        Assert.True(result.Contains(bundle));
+        Assert.Contains(bundle, result);
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
-    public void GetAllBundles_WhenBundleIsDeleted_ThenBundleDoesNotGet()
+    public async Task GetAllBundles_WhenBundleIsDeleted_ThenBundleDoesNotGet()
     {
         // given
         var context = new YogurtCleaningContext(_dbContextOptions);
@@ -113,9 +110,61 @@ public class BundlesRepositoryTests
         context.SaveChanges();
 
         // when 
-        var result = sut.GetAllBundles();
+        var result = await sut.GetAllBundles();
 
         //then 
-        Assert.False(result.Contains(bundle));
+        Assert.DoesNotContain(bundle, result);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public async Task GetListServices_WhenAllServicesInDb_ThenGetAllServices()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new BundlesRepository(context);
+        var expectedservices = new List<Service>() 
+        { 
+            new Service() { Id = 1, Name = "full clean" , Unit = "m2", Duration = 10, Price = 20}, 
+            new Service() { Id = 2, Name = "full clean2" , Unit = "m3", Duration = 5, Price = 10} 
+        };
+        var servicesFromRequest = new List<Service>() { new Service() { Id = 1 }, new Service() { Id = 2 } };
+
+        context.Services.AddRange(expectedservices);
+        context.SaveChanges();
+
+        // when 
+        var result = await sut.GetServices(servicesFromRequest);
+
+        //then 
+        Assert.Equal(expectedservices.Count, result.Count);
+        Assert.Equal(expectedservices[0].Name, result[0].Name);
+        Assert.Equal(expectedservices[0].Unit, result[0].Unit);
+        Assert.Equal(expectedservices[1].Duration, result[1].Duration);
+        Assert.Equal(expectedservices[1].Price, result[1].Price);
+        context.Database.EnsureDeleted();
+    }
+
+    [Fact]
+    public async Task GetListServices_WhenNotAllServicesInDb_ThenGetAllServices()
+    {
+        // given
+        var context = new YogurtCleaningContext(_dbContextOptions);
+        var sut = new BundlesRepository(context);
+        var expectedservices = new List<Service>()
+        {
+            new Service() { Id = 3, Name = "full clean" , Unit = "m2", Duration = 10, Price = 20}
+        };
+        var servicesFromRequest = new List<Service>() { new Service() { Id = 3 }, new Service() { Id = 2 } };
+
+        context.Services.AddRange(expectedservices);
+        context.SaveChanges();
+
+        // when 
+        var result = await sut.GetServices(servicesFromRequest);
+
+        //then 
+        Assert.True(servicesFromRequest.Count > result.Count);
+        context.Database.EnsureDeleted();
     }
 }

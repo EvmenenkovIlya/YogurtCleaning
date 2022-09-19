@@ -17,7 +17,7 @@ namespace YogurtCleaning.DataLayer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -35,6 +35,21 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.HasIndex("OrdersId");
 
                     b.ToTable("BundleOrder");
+                });
+
+            modelBuilder.Entity("BundleService", b =>
+                {
+                    b.Property<int>("BundlesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BundlesId", "ServicesId");
+
+                    b.HasIndex("ServicesId");
+
+                    b.ToTable("BundleService");
                 });
 
             modelBuilder.Entity("CleanerDistrict", b =>
@@ -67,6 +82,21 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.ToTable("CleanerOrder");
                 });
 
+            modelBuilder.Entity("CleanerService", b =>
+                {
+                    b.Property<int>("CleanersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CleanersId", "ServicesId");
+
+                    b.HasIndex("ServicesId");
+
+                    b.ToTable("CleanerService");
+                });
+
             modelBuilder.Entity("OrderService", b =>
                 {
                     b.Property<int>("OrdersId")
@@ -82,6 +112,30 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.ToTable("OrderService");
                 });
 
+            modelBuilder.Entity("YogurtCleaning.DataLayer.Entities.Admin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admin", (string)null);
+                });
+
             modelBuilder.Entity("YogurtCleaning.DataLayer.Entities.Bundle", b =>
                 {
                     b.Property<int>("Id")
@@ -89,6 +143,9 @@ namespace YogurtCleaning.DataLayer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Duration")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -102,6 +159,12 @@ namespace YogurtCleaning.DataLayer.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RoomType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -243,7 +306,9 @@ namespace YogurtCleaning.DataLayer.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.HasKey("Id");
 
@@ -398,6 +463,9 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -427,11 +495,8 @@ namespace YogurtCleaning.DataLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("BundleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CleanerId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Duration")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -443,15 +508,14 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("RoomType")
+                        .HasColumnType("int");
+
                     b.Property<string>("Unit")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BundleId");
-
-                    b.HasIndex("CleanerId");
 
                     b.ToTable("Service", (string)null);
                 });
@@ -467,6 +531,21 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.HasOne("YogurtCleaning.DataLayer.Entities.Order", null)
                         .WithMany()
                         .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BundleService", b =>
+                {
+                    b.HasOne("YogurtCleaning.DataLayer.Entities.Bundle", null)
+                        .WithMany()
+                        .HasForeignKey("BundlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("YogurtCleaning.DataLayer.Entities.Service", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -497,6 +576,21 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.HasOne("YogurtCleaning.DataLayer.Entities.Order", null)
                         .WithMany()
                         .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CleanerService", b =>
+                {
+                    b.HasOne("YogurtCleaning.DataLayer.Entities.Cleaner", null)
+                        .WithMany()
+                        .HasForeignKey("CleanersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("YogurtCleaning.DataLayer.Entities.Service", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -577,27 +671,9 @@ namespace YogurtCleaning.DataLayer.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("YogurtCleaning.DataLayer.Entities.Service", b =>
-                {
-                    b.HasOne("YogurtCleaning.DataLayer.Entities.Bundle", null)
-                        .WithMany("Services")
-                        .HasForeignKey("BundleId");
-
-                    b.HasOne("YogurtCleaning.DataLayer.Entities.Cleaner", null)
-                        .WithMany("Services")
-                        .HasForeignKey("CleanerId");
-                });
-
-            modelBuilder.Entity("YogurtCleaning.DataLayer.Entities.Bundle", b =>
-                {
-                    b.Navigation("Services");
-                });
-
             modelBuilder.Entity("YogurtCleaning.DataLayer.Entities.Cleaner", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("YogurtCleaning.DataLayer.Entities.CleaningObject", b =>

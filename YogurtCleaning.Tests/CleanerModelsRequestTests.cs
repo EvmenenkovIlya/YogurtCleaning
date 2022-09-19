@@ -9,7 +9,7 @@ namespace YogurtCleaning.Tests;
 public class CleanerModelsRequestTests
 {
     [TestCaseSource(typeof(CleanerRegisterRequestTestSource))]
-    public async Task CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerRegisterRequest cleaner, string errorMessage)
+    public void CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerRegisterRequest cleaner, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();  
@@ -20,11 +20,11 @@ public class CleanerModelsRequestTests
         //then
         Assert.IsFalse(isValid);
         var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
     [TestCaseSource(typeof(CleanerUpdateRequestTestSource))]
-    public async Task CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerUpdateRequest cleaner, string errorMessage)
+    public void CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived(CleanerUpdateRequest cleaner, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();
@@ -39,7 +39,7 @@ public class CleanerModelsRequestTests
     }
 
     [Test]
-    public async Task CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public void CleanerRegisterRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given eaner
         CleanerRegisterRequest cleaner = new CleanerRegisterRequest();
@@ -62,12 +62,12 @@ public class CleanerModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
     [Test]
-    public async Task CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public void CleanerUpdateRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
         CleanerUpdateRequest cleaner = new CleanerUpdateRequest();
@@ -86,17 +86,17 @@ public class CleanerModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
     [TestCase]
-    public async Task CleanerRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void CleanerRegisterRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         CleanerRegisterRequest cleaner = new CleanerRegisterRequest()
         {
-            Name = "Adam",
+            FirstName = "Adam",
             LastName = "Smith",
             Password = "12345678",
             ConfirmPassword = "12345678",
@@ -115,11 +115,11 @@ public class CleanerModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());
+        Assert.That(validationResults.Count, Is.EqualTo(0));
     }
 
     [Test]
-    public async Task CleanerUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void CleanerUpdateRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         CleanerUpdateRequest cleaner = new CleanerUpdateRequest()
@@ -138,6 +138,6 @@ public class CleanerModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());   
+        Assert.That(validationResults.Count, Is.EqualTo(0));   
     }
 }

@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using YogurtCleaning.Enams;
-using YogurtCleaning.Infrastructure;
+using YogurtCleaning.Business.Services;
 using YogurtCleaning.Models;
 
 namespace YogurtCleaning.Controllers;
@@ -12,34 +8,20 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class AuthController : Controller
 {
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public string Login([FromBody] UserLoginRequest request)
-    {
-        if (request == default || request.Email == default) return string.Empty;
-        dynamic roleClaim;
-        switch (request.Email)
-        {
-            case "Admin@gmail.com":
-                roleClaim = new Claim(ClaimTypes.Role, Role.Admin.ToString());
-                break;
-            case "Cleaner@gmail.com":
-                roleClaim = new Claim(ClaimTypes.Role, Role.Cleaner.ToString());
-                break;
-            case "Client@gmail.com":
-                roleClaim = new Claim(ClaimTypes.Role, Role.Client.ToString());
-                break;
-            default:
-                return string.Empty;
-        }
-        var claims = new List<Claim> { new Claim(ClaimTypes.Name, request.Email), roleClaim };
-        var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER,
-                audience: AuthOptions.AUDIENCE,
-                claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)), // время действия 10 минут
-                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+    private readonly IAuthService _authService;
 
-        return new JwtSecurityTokenHandler().WriteToken(jwt);
+    public AuthController(IAuthService authService)
+    {
+        _authService = authService;
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<string>> Login([FromBody] UserLoginRequest request)
+    {
+        var user = await _authService.GetUserForLogin(request.Email, request.Password);
+
+        return Ok(_authService.GetToken(user));
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace YogurtCleaning.Models
+﻿using YogurtCleaning.DataLayer.Enums;
+
+namespace YogurtCleaning.Models
 {
     public class CleaningObjectResponse
     {
@@ -10,5 +12,6 @@
         public int NumberOfWindows { get; set; }
         public int NumberOfBalconies { get; set; }
         public string Address { get; set; }
+        public DistrictEnum District { get; set; }
     }
 }

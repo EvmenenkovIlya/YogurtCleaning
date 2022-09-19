@@ -1,4 +1,5 @@
-﻿using YogurtCleaning.DataLayer.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -11,22 +12,20 @@ public class CommentsRepository : ICommentsRepository
         _context = context;
     }
 
-    public int AddComment(Comment comment)
+    public async Task<int> AddComment(Comment comment)
     {
         _context.Comments.Add(comment);
-        _context.SaveChanges();
-
+        await _context.SaveChangesAsync();
         return comment.Id;
     }
 
-    public void DeleteComment(int id)
+    public async Task DeleteComment(Comment comment)
     {
-        var comment = _context.Comments.FirstOrDefault(c => c.Id == id);
         comment.IsDeleted = true;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public List<Comment> GetAllComments() => _context.Comments.Where(c => !c.IsDeleted).ToList();
+    public async Task<List<Comment>> GetAllComments() => await _context.Comments.Where(c => !c.IsDeleted).ToListAsync();
 
-    public Comment? GetCommentById(int id) => _context.Comments.FirstOrDefault(c => c.Id == id);
+    public async Task<Comment?> GetCommentById(int id) => await _context.Comments.Include(c => c.Order).Include(c => c.Client).FirstOrDefaultAsync(c => c.Id == id);
 }

@@ -13,67 +13,45 @@ public class OrdersRepository : IOrdersRepository
         _context = context;
     }
 
-    public Order? GetOrder(int orderId) => _context.Orders.FirstOrDefault(o => o.Id == orderId);
+    public async Task <Order?> GetOrder(int orderId) => await _context.Orders
+        .Include(o => o.Client)
+        .Include(o => o.CleaningObject)
+        .Include(o => o.CleanersBand)
+        .Include(o => o.Bundles)
+        .Include(o => o.Services)
+        .FirstOrDefaultAsync(o => o.Id == orderId);
 
-    public List<Order> GetAllOrders() => _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToList();
+    public async Task <List<Order>> GetAllOrders() => await _context.Orders.AsNoTracking().Where(o => !o.IsDeleted).ToListAsync();
 
-    public int CreateOrder(Order order)
+    public async Task <int> CreateOrder(Order order)
     {
+        order.UpdateTime = DateTime.Now;
         _context.Orders.Add(order);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         
         return order.Id;
     }
 
-    public void DeleteOrder(int orderId)
+    public async Task DeleteOrder(Order order)
     {
-        var order = GetOrder(orderId);
-        if (order == null)
-            return;
-        else
-        {
-            order.IsDeleted = true;
-            order.UpdateTime = DateTime.Now;
-            _context.SaveChanges();
-        }
+        order.IsDeleted = true;
+        order.UpdateTime = DateTime.Now;
+        await _context.SaveChangesAsync();
     }
 
-    public void UpdateOrder(Order modelToUpdate)
+    public async Task UpdateOrder(Order modelToUpdate)
     {
+        modelToUpdate.UpdateTime = DateTime.Now;
         _context.Orders.Update(modelToUpdate);
-        _context.SaveChanges();
+        modelToUpdate.UpdateTime = DateTime.Now;
+        await _context.SaveChangesAsync();
     }
 
-    public List<Service> GetServices(int orderId)
+    public async Task UpdateOrderStatus(int orderId, Status statusToUpdate)
     {
-        var order = GetOrder(orderId);
-        if (order == null)
-        {
-            return null;
-        }
-        else
-        {
-            return order.Services;
-        }
-    }
-
-    public void UpdateOrderStatus(int orderId, Status statusToUpdate)
-    {
-        var order = GetOrder(orderId);
+        var order = await GetOrder(orderId);
         order.Status = statusToUpdate;
-        _context.SaveChanges();
-    }
-
-    public CleaningObject GetCleaningObject(int orderId)
-    {
-        var order = GetOrder(orderId);
-        if (order == null)
-        {
-            return null;
-        }
-        else
-        {
-            return order.CleaningObject;
-        }
+        order.UpdateTime = DateTime.Now;
+        await _context.SaveChangesAsync();
     }
 }

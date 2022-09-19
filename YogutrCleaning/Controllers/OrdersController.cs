@@ -1,11 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YogurtCleaning.Business;
+using YogurtCleaning.Business.Models;
 using YogurtCleaning.Business.Services;
-using YogurtCleaning.DataLayer.Entities;
 using YogurtCleaning.DataLayer.Enums;
-using YogurtCleaning.DataLayer.Repositories;
-using YogurtCleaning.Enams;
 using YogurtCleaning.Extensions;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
@@ -17,12 +16,11 @@ namespace YogurtCleaning.Controllers;
 [Route("[controller]")]
 public class OrdersController : ControllerBase
 {
-    private readonly IOrdersRepository _ordersRepository;
     private readonly IMapper _mapper;
     private readonly IOrdersService _ordersService;
-    public OrdersController(IOrdersRepository ordersRepository, IMapper mapper, IOrdersService ordersService)
+    public UserValues? _userValues;
+    public OrdersController(IMapper mapper, IOrdersService ordersService)
     {
-        _ordersRepository = ordersRepository;
         _mapper = mapper;
         _ordersService = ordersService;
     }
@@ -33,14 +31,11 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<OrderResponse> GetOrder(int orderId)
+    public async Task <ActionResult<OrderResponse>> GetOrder(int orderId)
     {
-        var result = _ordersRepository.GetOrder(orderId);
-
-        if (result == null)
-            return NotFound();
-        else
-            return Ok(result);
+        _userValues = this.GetClaimsValue();
+        var result = await _ordersService.GetOrder(orderId, _userValues);
+        return Ok(_mapper.Map<OrderResponse>(result));
     }
 
     [AuthorizeRoles]
@@ -48,10 +43,10 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(List<OrderResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<OrderResponse>> GetAllOrders()
+    public async Task<ActionResult<List<OrderResponse>>> GetAllOrders()
     {
-        var result = _ordersRepository.GetAllOrders();
-        return Ok(result);
+        var orders = await _ordersService.GetAllOrders();
+        return Ok(_mapper.Map<List<OrderResponse>>(orders));
     }
 
     [AuthorizeRoles(Role.Client)]
@@ -59,9 +54,10 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateOrder([FromBody] OrderUpdateRequest order, int orderId)
+    public async Task<ActionResult> UpdateOrder([FromBody] OrderUpdateRequest order, int orderId)
     {
-        _ordersService.UpdateOrder(_mapper.Map<Order>(order), orderId);
+        _userValues = this.GetClaimsValue();
+        await _ordersService.UpdateOrder(_mapper.Map<OrderBusinessModel>(order), orderId, _userValues);
         return NoContent();
     }
 
@@ -71,9 +67,10 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public ActionResult<int> AddOrder(OrderRequest order)
+    public async Task<ActionResult<int>> AddOrder(OrderRequest order)
     {
-        int id = _ordersRepository.CreateOrder(_mapper.Map<Order>(order));
+        _userValues = this.GetClaimsValue();
+        int id = await _ordersService.AddOrder(_mapper.Map<OrderBusinessModel>(order), _userValues);
         return Created($"{this.GetRequestFullPath()}/{id}", id);
     }
 
@@ -82,9 +79,10 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult DeleteOrder(int orderId)
+    public async Task<ActionResult> DeleteOrder(int orderId)
     {
-        _ordersRepository.DeleteOrder(orderId);
+        _userValues = this.GetClaimsValue();
+        await _ordersService.DeleteOrder(orderId, _userValues);
         return NoContent();
     }
 
@@ -93,10 +91,11 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult<List<ServiceResponse>> GetServices(int orderId)
+    public async Task<ActionResult<List<ServiceResponse>>> GetServices(int orderId)
     {
-
-        return Ok(_ordersRepository.GetServices(orderId));
+        _userValues = this.GetClaimsValue();
+        var services = await _ordersService.GetOrderServices(orderId, _userValues);
+        return Ok(_mapper.Map<List<ServiceResponse>>(services));
     }
 
     [AuthorizeRoles]
@@ -105,21 +104,34 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    public ActionResult UpdateOrderStatus(int orderId, [FromBody] Status statusToUpdate)
+    public async Task<ActionResult> UpdateOrderStatus(int orderId, [FromBody] Status statusToUpdate)
     {
-        _ordersRepository.UpdateOrderStatus(orderId, statusToUpdate);
+        await _ordersService.UpdateOrderStatus(orderId, statusToUpdate);
+        return NoContent();
+    }
+
+    [AuthorizeRoles]
+    [HttpPatch("{orderId}/payment-status")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult> UpdateOrderPaymentStatus(int orderId, [FromBody] PaymentStatus statusToUpdate)
+    {
+        await _ordersService.UpdateOrderPaymentStatus(orderId, statusToUpdate);
         return NoContent();
     }
 
     [AuthorizeRoles(Role.Client, Role.Cleaner)]
-    [HttpGet("{orderId}/CleaningObject")]
+    [HttpGet("{orderId}/cleaning-object")]
     [ProducesResponseType(typeof(CleaningObjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public ActionResult<CleaningObjectResponse> GetCleaningObject(int orderId)
-    {   
-        var cleaningObject = _ordersRepository.GetCleaningObject(orderId);
-        return Ok(new CleaningObjectResponse());
+    public async Task<ActionResult<CleaningObjectResponse>> GetCleaningObject(int orderId)
+    {
+        _userValues = this.GetClaimsValue();
+        var cleaningObject = await _ordersService.GetCleaningObject(orderId, _userValues);
+        return Ok(_mapper.Map<CleaningObjectResponse>(cleaningObject));
     }
 }

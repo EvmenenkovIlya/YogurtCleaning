@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using YogurtCleaning.DataLayer.Enums;
 using YogurtCleaning.Infrastructure;
 using YogurtCleaning.Models;
 using YogurtCleaning.Tests.ModelSources;
@@ -9,7 +8,7 @@ namespace YogurtCleaning.Tests;
 public class ServiceModelsRequestTests
 {
     [TestCaseSource(typeof(ServiceRequestTestSource))]
-    public async Task ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(ServiceRequest service, string errorMessage)
+    public void ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(ServiceRequest service, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();  
@@ -20,11 +19,11 @@ public class ServiceModelsRequestTests
         //then
         Assert.IsFalse(isValid);
         var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
     [Test]
-    public async Task ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public void ServiceRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
     {
         //given
         ServiceRequest service = new ServiceRequest();
@@ -43,12 +42,12 @@ public class ServiceModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
     [Test]
-    public async Task ServiceRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void ServiceRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         ServiceRequest service = new ServiceRequest()
@@ -64,6 +63,6 @@ public class ServiceModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());   
+        Assert.That(validationResults.Count(), Is.EqualTo(0));   
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Enums;
 
 namespace YogurtCleaning.DataLayer.Repositories;
 
@@ -12,36 +13,70 @@ public class CleanersRepository : ICleanersRepository
         _context = context;
     }
 
-    public Cleaner? GetCleaner(int clientId) => _context.Cleaners.FirstOrDefault(o => o.Id == clientId);
+    public async Task<Cleaner?> GetCleaner(int clientId) => await _context.Cleaners.Include(c => c.Districts).Include(c => c.Services).FirstOrDefaultAsync(o => o.Id == clientId);
 
-    public List<Cleaner> GetAllCleaners()
+    public async Task<List<Cleaner>> GetAllCleaners()
     {
-        return _context.Cleaners.AsNoTracking().Where(o => !o.IsDeleted).ToList();
+        return await _context.Cleaners.Include(c => c.Orders).Include(c => c.Districts).Include(c => c.Services).Where(o => !o.IsDeleted).ToListAsync();
     }
 
-    public int CreateCleaner(Cleaner cleaner)
+    public async Task<int> CreateCleaner(Cleaner cleaner)
     {
         _context.Cleaners.Add(cleaner);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return cleaner.Id;
     }
 
-    public void UpdateCleaner(Cleaner modelToUdate)
+    public async Task UpdateCleaner(Cleaner modelToUdate)
     {
         _context.Update(modelToUdate);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void DeleteCleaner(int cleanerId)
+    public async Task DeleteCleaner(Cleaner cleaner)
     {
-        var cleaner = GetCleaner(cleanerId);
         cleaner.IsDeleted = true;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public List<Comment> GetAllCommentsByCleaner(int cleanerId)
+    public async Task<List<Comment>> GetAllCommentsByCleaner(int clientId) =>
+        await _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == clientId).ToListAsync();
+
+    public async Task<List<Order>> GetAllOrdersByCleaner(int id) => await _context.Orders.Where(o => o.CleanersBand.Any(c => c.Id == id)).ToListAsync();
+
+    public async Task<Cleaner?> GetCleanerByEmail(string email) => await _context.Cleaners.FirstOrDefaultAsync(o => o.Email == email);
+
+    public async Task<List<Cleaner>> GetWorkingCleanersForDate(DateTime orderDate)
     {
-        var comments = _context.Comments.Where(c => c.Cleaner != null && c.Cleaner.Id == cleanerId).ToList();
+        var workingCleaners = (await GetAllCleaners())
+            .Where(c => (c.Schedule is Schedule.ShiftWork && Convert.ToInt32((orderDate - c.DateOfStartWork).TotalDays % 4) < 2) ||
+            (c.Schedule is Schedule.FullTime && orderDate.DayOfWeek != DayOfWeek.Sunday && orderDate.DayOfWeek != DayOfWeek.Saturday))
+            .ToList();
+        return workingCleaners;
+    }
+
+    public async Task<List<Service>> GetServices(List<Service> services)
+    {
+        List<int> servicesIds = services.Select(s => s.Id).ToList();
+
+        return await _context.Services.Where(c => servicesIds.Contains(c.Id)).ToListAsync();
+    }
+
+    public async Task<List<District>> GetDistricts(List<District> districts)
+    {
+        List<DistrictEnum> districtsIds = districts.Select(s => s.Id).ToList();
+
+        return await _context.Districts.Where(c => districtsIds.Contains(c.Id)).ToListAsync();
+    }
+    
+    public async Task<List<Comment>> GetCommentsAboutCleaner(int id)
+    {
+        var orders = await GetAllOrdersByCleaner(id);
+        var comments = new List<Comment>();
+        foreach (var order in orders)
+        {
+            comments.AddRange(await _context.Comments.Where(c => c.Order.Id == order.Id && !c.IsDeleted && c.Client != null).ToListAsync());
+        }
         return comments;
-    }  
+    }
 }

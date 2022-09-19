@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using YogurtCleaning.DataLayer.Entities;
 
 namespace YogurtCleaning.DataLayer.Repositories;
@@ -14,29 +10,27 @@ public class ServicesRepository : IServicesRepository
     {
         _context = context;
     }
-    public int AddService(Service service)
+    public async Task<int> AddService(Service service)
     {
         _context.Services.Add(service);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return service.Id;
     }
 
-    public void DeleteService(int id)
+    public async Task DeleteService(Service service)
     {
-        var service = _context.Services.FirstOrDefault(s => s.Id == id);
         service.IsDeleted = true;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public List<Service> GetAllServices() => _context.Services.Where(s => !s.IsDeleted).ToList();
+    public async Task<List<Service>> GetAllServices() => await _context.Services.Where(s => !s.IsDeleted).ToListAsync();
 
-    public Service GetService(int id) => _context.Services.FirstOrDefault(s => s.Id == id && !s.IsDeleted);
+    public async Task<Service> GetService(int id) => await _context.Services.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
 
-    public void UpdateService(Service service)
+    public async Task UpdateService(Service service)
     {
-        _context.Services.Update(service);
-        _context.SaveChanges();
+         _context.Services.Update(service);
+        await _context.SaveChangesAsync();
     }
 }
-       

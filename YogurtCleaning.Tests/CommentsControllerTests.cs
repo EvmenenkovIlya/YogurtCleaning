@@ -1,72 +1,140 @@
-using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.ComponentModel.DataAnnotations;
+using YogurtCleaning.Business.Services;
 using YogurtCleaning.Controllers;
-using YogurtCleaning.Infrastructure;
+using YogurtCleaning.DataLayer.Entities;
+using YogurtCleaning.DataLayer.Repositories;
 using YogurtCleaning.Models;
-using YogurtCleaning.Tests.ModelSources;
 
-namespace YogurtCleaning.Tests;
+namespace YogurtCleaning.API.Tests;
 
 public class CommentsControllerTests
 {
-    [TestCaseSource(typeof(CommentsControllerTestSource))]
-    public async Task CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(CommentRequest comment, string errorMessage)
+    private CommentsController _sut;
+    private Mock<ICommentsService> _mockCommentsService;
+    private Mock<ICommentsRepository> _mockCommentsRepository;
+    private IMapper _mapper;
+
+    [SetUp]
+    public void Setup()
     {
-        //given
-        var validationResults = new List<ValidationResult>();
-        
-        //when
-        var isValid = Validator.TryValidateObject(comment, new ValidationContext(comment), validationResults, true);
-        
-        //then
-        Assert.IsFalse(isValid);
-        var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        _mockCommentsRepository = new Mock<ICommentsRepository>();
+        _mockCommentsService = new Mock<ICommentsService>();
+        _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MapperConfigStorage>()));
+        _sut = new CommentsController(_mockCommentsService.Object, _mapper);
     }
 
     [Test]
-    public async Task CommentRequestValidation_WhenInvalidModelPassed_ValidationErrorsReceived()
+    public async Task AddCommentByClient_WhenValidRequestPassed_ThenCreatedResultRecived()
     {
-        //given
-        CommentRequest comment = new CommentRequest();
-        List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.AuthorIdIsRequred,
-            ApiErrorMessages.OrderIdIsRequred,
-            ApiErrorMessages.RatingIsRequred
-        };
-        var validationResults = new List<ValidationResult>();
-        
-        //when
-        var isValid = Validator.TryValidateObject(comment, new ValidationContext(comment), validationResults, true);
-        
-        //then
-        Assert.IsFalse(isValid);
-        for (int i = 0; i < expectedMessages.Count(); i++)
+        // given
+        int expectedId = 1;
+        _mockCommentsService.Setup(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>())).ReturnsAsync(expectedId);
+        var comment = new CommentRequest()
         {
-            var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
-        }
-    }
-
-    [Test]
-    public async Task CommentRequestValidation_WhenValidModelPassed_NoErrorsReceived()
-    {
-        //given
-        CommentRequest comment = new CommentRequest()
-        {
-            Summary = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempus suscipit tempus.",
-            AuthorId = 1,
+            Summary = "ok",
             OrderId = 1,
             Rating = 5
         };
-        var validationResults = new List<ValidationResult>();
+
+        // when
+        var actual = await _sut.AddCommentByClient(comment);
+
+        // then
+        var actualResult = actual.Result as CreatedResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
+        _mockCommentsService.Verify(o => o.AddCommentByClient(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
+    }
+
+    [Test]
+    public async Task AddCommentByCleaner_WhenValidRequestPassed_ThenCreatedResultRecived()
+    {
+        // given
+        int expectedId = 1;
+        _mockCommentsService.Setup(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>())).ReturnsAsync(expectedId);
+        var comment = new CommentRequest()
+        {
+            Summary = "ok",
+            OrderId = 1,
+            Rating = 5
+        };
+
+        // when
+        var actual = await _sut.AddCommentByCleaner(comment);
+
+        // then
+        var actualResult = actual.Result as CreatedResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status201Created));
+        Assert.That((int)actualResult.Value, Is.EqualTo(expectedId));
+        _mockCommentsService.Verify(o => o.AddCommentByCleaner(It.IsAny<Comment>(), It.IsAny<int>()), Times.Once);
+    }
+
+    [Test]
+    public async Task GetAllCommentsTest_WhenValidRequestPassed_ThenOkResultRecieved()
+    {
+        // given
+        var comments = new List<Comment>
+        {
+            new() 
+            {
+                Rating = 1,
+                Client = new() {Id = 1},
+                Order = new() {Id = 3},
+                IsDeleted = false
+            },
+            new()
+            {
+                Rating = 5,
+                Summary = "asjhdagldhsjg",
+                Cleaner = new() {Id = 3},
+                Order = new() {Id = 43},
+                IsDeleted = false
+            }
+
+        };
+        _mockCommentsService.Setup(c => c.GetComments()).ReturnsAsync(comments);
+
+        // when
+        var actual = await _sut.GetAllComments();
+
+        // then
+        var actualResult = actual.Result as ObjectResult;
+        var commentsResponse = actualResult.Value as List<CommentResponse>;
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+        Assert.Multiple(() =>
+        {
+            Assert.That(commentsResponse.Count, Is.EqualTo(comments.Count));
+            Assert.That(commentsResponse[0].Summary, Is.EqualTo(comments[0].Summary));
+            Assert.That(commentsResponse[0].ClientId, Is.EqualTo(comments[0].Client.Id));
+            Assert.That(commentsResponse[1].Rating, Is.EqualTo(comments[1].Rating));
+        });
+        _mockCommentsService.Verify(c => c.GetComments(), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteCommentById_WhenValidRequestPassed_NoContentReceived()
+    {
+        //given
+        var expectedComment = new Comment()
+        {
+            Id = 1,           
+            IsDeleted = false
+        };
+
+        _mockCommentsRepository.Setup(o => o.GetCommentById(expectedComment.Id)).ReturnsAsync(expectedComment);
 
         //when
-        var isValid = Validator.TryValidateObject(comment, new ValidationContext(comment), validationResults, true);
+        var actual = await _sut.DeleteComment(expectedComment.Id);
 
         //then
-        Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());
-    }
+        var actualResult = actual as NoContentResult;
+
+        Assert.That(actualResult.StatusCode, Is.EqualTo(StatusCodes.Status204NoContent));
+        _mockCommentsService.Verify(c => c.DeleteComment(expectedComment.Id), Times.Once);
+    }    
 }

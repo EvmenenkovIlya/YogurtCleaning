@@ -6,7 +6,6 @@ namespace YogurtCleaning.Models;
 
 public class CleanerUpdateRequest
 {
-    public int Id { get; set; }
     [Required(ErrorMessage = ApiErrorMessages.NameIsRequired)]
     [MaxLength(50, ErrorMessage = ApiErrorMessages.NameMaxLength)]
     public string FirstName { get; set; }

@@ -9,7 +9,7 @@ namespace YogurtCleaning.Tests;
 public class BundleModelsRequestTests
 {
     [TestCaseSource(typeof(BundleRequestTestSource))]
-    public async Task BundleRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(BundleRequest bundle, string errorMessage)
+    public void BundleRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived(BundleRequest bundle, string errorMessage)
     {
         //given
         var validationResults = new List<ValidationResult>();  
@@ -20,18 +20,16 @@ public class BundleModelsRequestTests
         //then
         Assert.IsFalse(isValid);
         var actualMessage = validationResults[0].ErrorMessage;
-        Assert.AreEqual(errorMessage, actualMessage);
+        Assert.That(actualMessage, Is.EqualTo(errorMessage));
     }
 
     [Test]
-    public async Task BundleRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived()
+    public void BundleRequestValidation_WhenInvalidModelPassed_ValidationErrorReceived()
     {
         //given
         BundleRequest bundle = new BundleRequest();
         List<string> expectedMessages = new List<string>() {
-            ApiErrorMessages.NameIsRequired, 
-            ApiErrorMessages.PriceIsRequired,
-            ApiErrorMessages.MeasureIsRequired,
+            ApiErrorMessages.NameIsRequired,
         };
         var validationResults = new List<ValidationResult>();
 
@@ -43,20 +41,21 @@ public class BundleModelsRequestTests
         for (int i = 0; i < expectedMessages.Count(); i++)
         {
             var actualMessage = validationResults[i].ErrorMessage;
-            Assert.AreEqual(expectedMessages[i], actualMessage);
+            Assert.That(actualMessage, Is.EqualTo(expectedMessages[i]));
         }
     }
 
     [Test]
-    public async Task BundleRequestValidation_WhenValidModelPassed_NoErrorsReceived()
+    public void BundleRequestValidation_WhenValidModelPassed_NoErrorsReceived()
     {
         //given
         BundleRequest bundle = new BundleRequest()
         {
             Name = "Kitchen regular cleaning",
+            Type = CleaningType.Regular,
             Price = 1000,
             Measure = Measure.Room,
-            Services = new List<ServiceResponse>()
+            ServicesIds = new List<int>()
         };
         var validationResults = new List<ValidationResult>();
 
@@ -65,6 +64,6 @@ public class BundleModelsRequestTests
 
         //then
         Assert.IsTrue(isValid);
-        Assert.AreEqual(0, validationResults.Count());
+        Assert.That(validationResults.Count(), Is.EqualTo(0));
     }
 }
